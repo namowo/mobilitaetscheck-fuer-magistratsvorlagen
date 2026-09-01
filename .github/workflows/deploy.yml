@@ -30,10 +30,8 @@ jobs:
           script: |
             set -e
             cd ${{ secrets.DEPLOY_PATH }}
-            source .venv/bin/activate
             uv sync
-            cd backend
-            alembic upgrade head
+            uv run --directory backend alembic upgrade head
             sudo systemctl restart mobilitaetscheck
 
       - name: Deploy frontend
