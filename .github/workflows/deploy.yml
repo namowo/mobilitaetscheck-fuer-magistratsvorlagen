@@ -10,6 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Pull latest changes
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd ${{ secrets.DEPLOY_PATH }}
+            git pull
+
       - name: Deploy backend
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -18,10 +29,10 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             set -e
-            cd ${{ secrets.DEPLOY_PATH }}/backend
-            git pull
+            cd ${{ secrets.DEPLOY_PATH }}
             source .venv/bin/activate
             uv sync
+            cd backend
             alembic upgrade head
             sudo systemctl restart mobilitaetscheck
 
@@ -34,6 +45,5 @@ jobs:
           script: |
             set -e
             cd ${{ secrets.DEPLOY_PATH }}/frontend
-            git pull
             npm ci
             npm run build
