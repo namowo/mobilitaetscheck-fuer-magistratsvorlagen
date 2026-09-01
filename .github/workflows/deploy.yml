@@ -29,7 +29,6 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             set -e
-            export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
             cd ${{ secrets.DEPLOY_PATH }}
             uv sync
             uv run --directory backend alembic upgrade head
