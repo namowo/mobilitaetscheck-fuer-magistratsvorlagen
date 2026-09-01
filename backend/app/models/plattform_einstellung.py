@@ -54,6 +54,12 @@ class PlattformEinstellung(Base):
     ueber_das_tool_inhalt: Mapped[Optional[str]] = mapped_column(
         nullable=True, comment="Inhalt (HTML) der Seite 'Über das Tool'"
     )
+    startseite_titel: Mapped[Optional[str]] = mapped_column(
+        nullable=True, comment="Titel des Hero-Bereichs der Startseite"
+    )
+    startseite_untertitel: Mapped[Optional[str]] = mapped_column(
+        nullable=True, comment="Untertitel des Hero-Bereichs der Startseite"
+    )
     startseite_inhalt: Mapped[Optional[str]] = mapped_column(
-        nullable=True, comment="Inhalt (HTML) der Startseite, ersetzt den Standard-Hero-Bereich"
+        nullable=True, comment="Textkörper (HTML) der Startseite, ersetzt den Standard-Hero-Text"
     )

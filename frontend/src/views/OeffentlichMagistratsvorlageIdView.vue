@@ -1,6 +1,8 @@
 <template>
   <div>
-    <router-link :to="{ name: 'startseite', query: { gemeinde: route.query.gemeinde } }">
+    <router-link
+      :to="{ name: 'oeffentlich-magistratsvorlagen', query: { gemeinde: route.query.gemeinde } }"
+    >
       <Button icon="pi pi-chevron-left" label="zur Übersicht" class="mb-5" severity="secondary" />
     </router-link>
 
