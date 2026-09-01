@@ -16,8 +16,13 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
+            set -e
             cd ${{ secrets.DEPLOY_PATH }}/backend
-            ./deploy.sh
+            git pull
+            source .venv/bin/activate
+            uv sync
+            alembic upgrade head
+            sudo systemctl restart pimoo-backend
 
       - name: Deploy frontend
         uses: appleboy/ssh-action@v1.2.0
@@ -26,5 +31,9 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
+            set -e
             cd ${{ secrets.DEPLOY_PATH }}/frontend
-            ./deploy.sh
+            git pull
+            npm ci
+            npm run build
+            sudo cp -rf dist/* /var/www/pimoo-1rz.fab.hs-rm.de/html/
