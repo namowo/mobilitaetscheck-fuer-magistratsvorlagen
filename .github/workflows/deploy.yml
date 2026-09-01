@@ -3,6 +3,7 @@ name: Deploy on Release
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -22,7 +23,7 @@ jobs:
             source .venv/bin/activate
             uv sync
             alembic upgrade head
-            sudo systemctl restart pimoo-backend
+            sudo systemctl restart mobilitaetscheck
 
       - name: Deploy frontend
         uses: appleboy/ssh-action@v1.2.0
@@ -36,4 +37,3 @@ jobs:
             git pull
             npm ci
             npm run build
-            sudo cp -rf dist/* /var/www/pimoo-1rz.fab.hs-rm.de/html/
