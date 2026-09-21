@@ -19,7 +19,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 import KlimarelevanzpruefungFormulare from '@/components/KlimarelevanzpruefungFormulare.vue'
 
 const route = useRoute()

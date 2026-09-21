@@ -13,8 +13,8 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { useTitle } from '@vueuse/core'
-import ConfirmDialog from 'primevue/confirmdialog'
-import Toast from 'primevue/toast'
+import ConfirmDialog from 'openvue/confirmdialog'
+import Toast from 'openvue/toast'
 import TheNavigationsmenuTopbar from './components/TheNavigationsmenuTopbar.vue'
 import TheFooter from './components/TheFooter.vue'
 

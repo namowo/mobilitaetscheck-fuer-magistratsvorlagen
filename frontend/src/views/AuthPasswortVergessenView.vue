@@ -30,13 +30,13 @@
 
 <script setup>
 import { ref } from 'vue'
-import InputText from 'primevue/inputtext'
+import InputText from 'openvue/inputtext'
 import { useAuthStore } from '@/stores/auth'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
-import { useToast } from 'primevue/usetoast'
-import Button from 'primevue/button'
-import FloatLabel from 'primevue/floatlabel'
+import { useToast } from 'openvue/usetoast'
+import Button from 'openvue/button'
+import FloatLabel from 'openvue/floatlabel'
 
 const isLoading = ref(false)
 const submit = ref(false)

@@ -51,16 +51,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import RichContentEditor from '@/components/RichContentEditor.vue'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import FloatLabel from 'primevue/floatlabel'
-import Accordion from 'primevue/accordion'
-import AccordionPanel from 'primevue/accordionpanel'
-import AccordionHeader from 'primevue/accordionheader'
-import AccordionContent from 'primevue/accordioncontent'
+import Button from 'openvue/button'
+import InputText from 'openvue/inputtext'
+import FloatLabel from 'openvue/floatlabel'
+import Accordion from 'openvue/accordion'
+import AccordionPanel from 'openvue/accordionpanel'
+import AccordionHeader from 'openvue/accordionheader'
+import AccordionContent from 'openvue/accordioncontent'
 import { apiClient } from '@/services/axios'
-import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'openvue/usetoast'
+import { useConfirm } from 'openvue/useconfirm'
 
 const labels = {
   'account-bestaetigen': 'Account bestätigen',

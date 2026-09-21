@@ -1,4 +1,7 @@
-export const STARTSEITE_STANDARD_INHALT = `<h1>Mobilitätscheck für Magistratsvorlagen</h1><p>Veröffentlichte Mobilitätschecks von Verwaltung und Kommunalpolitik einsehen – ohne Anmeldung.</p>`
+export const STARTSEITE_STANDARD_TITEL = 'Mobilitätscheck für Magistratsvorlagen'
+
+export const STARTSEITE_STANDARD_UNTERTITEL =
+  'Veröffentlichte Mobilitätschecks von Verwaltung und Kommunalpolitik einsehen – ohne Anmeldung.'
 
 export const UEBER_DAS_TOOL_STANDARD_INHALT = `<table>
 <tbody>

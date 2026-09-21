@@ -42,12 +42,12 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { fetchItems, deleteItem, createItem, updateItem } from '@/composables/crud'
-import InputText from 'primevue/inputtext'
-import FloatLabel from 'primevue/floatlabel'
+import InputText from 'openvue/inputtext'
+import FloatLabel from 'openvue/floatlabel'
 import EinstellungenTagFormular from '@/components/EinstellungenTagFormular.vue'
 import EinstellungenTagItem from '@/components/EinstellungenTagItem.vue'
 import BaseSpinner from '@/components/BaseSpinner.vue'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 
 const isLoading = ref(false)
 const isModalOpen = ref(false)

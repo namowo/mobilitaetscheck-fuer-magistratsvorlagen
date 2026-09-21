@@ -70,10 +70,10 @@ import { useForm } from 'vee-validate'
 import { schema } from '@/utils/schemas/authPasswortZuruecksetzen.js'
 
 import ButtonSave from '@/components/ButtonSpeichern.vue'
-import FloatLabel from 'primevue/floatlabel'
-import Password from 'primevue/password'
-import Divider from 'primevue/divider'
-import { useToast } from 'primevue/usetoast'
+import FloatLabel from 'openvue/floatlabel'
+import Password from 'openvue/password'
+import Divider from 'openvue/divider'
+import { useToast } from 'openvue/usetoast'
 
 const isLoading = ref(false)
 

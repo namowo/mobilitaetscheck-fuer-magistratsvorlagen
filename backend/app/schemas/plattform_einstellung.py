@@ -35,8 +35,12 @@ class PlattformEinstellungBase(BaseModel):
     ueber_das_tool_inhalt: Optional[str] = Field(
         None, description="Inhalt (HTML) der Seite 'Über das Tool'."
     )
+    startseite_titel: Optional[str] = Field(None, description="Titel des Hero-Bereichs der Startseite.")
+    startseite_untertitel: Optional[str] = Field(
+        None, description="Untertitel des Hero-Bereichs der Startseite."
+    )
     startseite_inhalt: Optional[str] = Field(
-        None, description="Inhalt (HTML) der Startseite, ersetzt den Standard-Hero-Bereich."
+        None, description="Textkörper (HTML) der Startseite, ersetzt den Standard-Hero-Text."
     )
 
 

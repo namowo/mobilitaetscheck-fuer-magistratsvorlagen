@@ -64,9 +64,9 @@ import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import KlimacheckFormular from '@/components/KlimacheckFormular.vue'
 import ButtonBearbeiten from '@/components/ButtonBearbeiten.vue'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 import ButtonLoeschen from '@/components/ButtonLoeschen.vue'
-import ToggleButton from 'primevue/togglebutton'
+import ToggleButton from 'openvue/togglebutton'
 
 const veroeffentlicht = ref(false)
 const editMode = ref(false)

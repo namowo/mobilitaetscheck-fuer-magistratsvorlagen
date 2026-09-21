@@ -30,8 +30,8 @@ import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { copyItem, deleteItem, exportItem, fetchItems, updateItem } from '@/composables/crud'
 import KlimacheckListeItem from '@/components/KlimacheckListeItem.vue'
-import InputText from 'primevue/inputtext'
-import FloatLabel from 'primevue/floatlabel'
+import InputText from 'openvue/inputtext'
+import FloatLabel from 'openvue/floatlabel'
 import BaseSpinner from '@/components/BaseSpinner.vue'
 
 const eingaben = ref([])

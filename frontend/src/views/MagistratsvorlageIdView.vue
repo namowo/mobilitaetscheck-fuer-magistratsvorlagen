@@ -40,8 +40,8 @@ import { computed, ref, onMounted } from 'vue'
 import { fetchItem } from '@/composables/crud'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import Button from 'primevue/button'
-import Menu from 'primevue/menu'
+import Button from 'openvue/button'
+import Menu from 'openvue/menu'
 
 const route = useRoute()
 const authStore = useAuthStore()

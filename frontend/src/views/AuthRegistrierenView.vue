@@ -36,7 +36,7 @@
 import { useRoute } from 'vue-router'
 import AuthRegistrierenPolitikFormular from '@/components/AuthRegistrierenPolitikFormular.vue'
 import AuthRegistrierenEinladungFormular from '@/components/AuthRegistrierenEinladungFormular.vue'
-import Message from 'primevue/message'
+import Message from 'openvue/message'
 import AuthLogoLeiste from '@/components/AuthLogoLeiste.vue'
 
 const route = useRoute()

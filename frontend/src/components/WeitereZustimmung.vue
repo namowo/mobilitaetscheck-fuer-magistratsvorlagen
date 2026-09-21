@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import Checkbox from 'primevue/checkbox'
+import Checkbox from 'openvue/checkbox'
 
 defineProps({
   errorMessage: {

@@ -43,9 +43,9 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { createItem, deleteItem, fetchItems, updateItem } from '@/composables/crud'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import FloatLabel from 'primevue/floatlabel'
+import Button from 'openvue/button'
+import InputText from 'openvue/inputtext'
+import FloatLabel from 'openvue/floatlabel'
 import BaseSpinner from '@/components/BaseSpinner.vue'
 import EinstellungenIndikatorFormular from '@/components/EinstellungenIndikatorFormular.vue'
 import EinstellungenIndikatorItem from '@/components/EinstellungenIndikatorItem.vue'

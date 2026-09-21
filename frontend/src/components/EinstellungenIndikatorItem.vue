@@ -57,8 +57,8 @@ import { useAuthStore } from '@/stores/auth'
 import EinstellungenIndikatorFormular from '@/components/EinstellungenIndikatorFormular.vue'
 import ButtonLoeschen from '@/components/ButtonLoeschen.vue'
 import ButtonBearbeiten from '@/components/ButtonBearbeiten.vue'
-import Tag from 'primevue/tag'
-import ToggleSwitch from 'primevue/toggleswitch'
+import Tag from 'openvue/tag'
+import ToggleSwitch from 'openvue/toggleswitch'
 
 const authStore = useAuthStore()
 const editMode = ref(false)

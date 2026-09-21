@@ -43,10 +43,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import draggable from 'vuedraggable'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
+import Button from 'openvue/button'
+import InputText from 'openvue/inputtext'
 import { apiClient } from '@/services/axios'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from 'openvue/usetoast'
 import BrandingAssetPicker from './BrandingAssetPicker.vue'
 
 const props = defineProps({

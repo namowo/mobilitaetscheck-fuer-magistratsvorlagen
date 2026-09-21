@@ -164,11 +164,11 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { apiClient } from '@/services/axios'
 import { useAuthStore } from '@/stores/auth'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import FloatLabel from 'primevue/floatlabel'
-import Message from 'primevue/message'
-import Dialog from 'primevue/dialog'
+import Button from 'openvue/button'
+import InputText from 'openvue/inputtext'
+import FloatLabel from 'openvue/floatlabel'
+import Message from 'openvue/message'
+import Dialog from 'openvue/dialog'
 
 const route = useRoute()
 const router = useRouter()

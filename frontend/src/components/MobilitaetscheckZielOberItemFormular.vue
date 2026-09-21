@@ -30,7 +30,7 @@
 import { onMounted } from 'vue'
 import { useForm } from 'vee-validate'
 import { schema } from '@/utils/schemas/mobilitaetscheckEingabeZielOber'
-import Checkbox from 'primevue/checkbox'
+import Checkbox from 'openvue/checkbox'
 import MobilityObjectiveFormItemSub from '@/components/MobilitaetscheckFormularZielUnterItem.vue'
 
 const props = defineProps({

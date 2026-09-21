@@ -43,11 +43,11 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import ToggleSwitch from 'primevue/toggleswitch'
+import ToggleSwitch from 'openvue/toggleswitch'
 import EinstellungenTextblockFormular from '@/components/EinstellungenTextblockFormular.vue'
 import ButtonLoeschen from '@/components/ButtonLoeschen.vue'
 import ButtonBearbeiten from '@/components/ButtonBearbeiten.vue'
-import Tag from 'primevue/tag'
+import Tag from 'openvue/tag'
 
 const props = defineProps({
   item: Object,

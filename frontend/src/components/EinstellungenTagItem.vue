@@ -29,7 +29,7 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import ToggleSwitch from 'primevue/toggleswitch'
+import ToggleSwitch from 'openvue/toggleswitch'
 import EinstellungenTagFormular from '@/components/EinstellungenTagFormular.vue'
 import ButtonLoeschen from '@/components/ButtonLoeschen.vue'
 import ButtonBearbeiten from '@/components/ButtonBearbeiten.vue'

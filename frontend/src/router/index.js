@@ -301,6 +301,12 @@ const router = createRouter({
     },
 
     {
+      path: '/oeffentlich/magistratsvorlagen',
+      name: 'oeffentlich-magistratsvorlagen',
+      component: () => import('@/views/OeffentlichMagistratsvorlagenView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
       path: '/oeffentlich/magistratsvorlage/:id',
       name: 'oeffentlich-magistratsvorlage-id',
       component: () => import('@/views/OeffentlichMagistratsvorlageIdView.vue'),

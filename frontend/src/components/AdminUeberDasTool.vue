@@ -25,11 +25,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 import RichContentEditor from './RichContentEditor.vue'
 import { apiClient } from '@/services/axios'
-import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'openvue/usetoast'
+import { useConfirm } from 'openvue/useconfirm'
 import { UEBER_DAS_TOOL_STANDARD_INHALT } from '@/utils/standardInhalte'
 
 const isLoading = ref(false)

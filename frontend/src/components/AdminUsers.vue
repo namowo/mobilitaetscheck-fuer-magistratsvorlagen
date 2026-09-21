@@ -138,18 +138,18 @@
 
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue'
-import { FilterMatchMode } from '@primevue/core/api'
-import { useConfirm } from 'primevue/useconfirm'
-import Button from 'primevue/button'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Dialog from 'primevue/dialog'
-import Select from 'primevue/select'
-import FloatLabel from 'primevue/floatlabel'
-import InputText from 'primevue/inputtext'
-import ToggleSwitch from 'primevue/toggleswitch'
+import { FilterMatchMode } from '@openvue/core/api'
+import { useConfirm } from 'openvue/useconfirm'
+import Button from 'openvue/button'
+import DataTable from 'openvue/datatable'
+import Column from 'openvue/column'
+import Dialog from 'openvue/dialog'
+import Select from 'openvue/select'
+import FloatLabel from 'openvue/floatlabel'
+import InputText from 'openvue/inputtext'
+import ToggleSwitch from 'openvue/toggleswitch'
 import { apiClient } from '@/services/axios'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from 'openvue/usetoast'
 
 const users = ref([])
 const gemeindeOptions = ref([])
