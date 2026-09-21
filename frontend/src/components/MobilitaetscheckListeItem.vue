@@ -95,13 +95,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { fetchItems } from '@/composables/crud'
 
-import ToggleButton from 'primevue/togglebutton'
+import ToggleButton from 'openvue/togglebutton'
 
 import MobilitaetscheckFormularEingabeZielOber from '@/components/MobilitaetscheckFormularEingabeZielOber.vue'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 
-import Skeleton from 'primevue/skeleton'
-import { useConfirm } from 'primevue/useconfirm'
+import Skeleton from 'openvue/skeleton'
+import { useConfirm } from 'openvue/useconfirm'
 
 const veroeffentlicht = ref()
 const editMode = ref(false)

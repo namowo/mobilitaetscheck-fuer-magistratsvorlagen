@@ -85,8 +85,8 @@
 
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
-import Tag from 'primevue/tag'
-import InputText from 'primevue/inputtext'
+import Tag from 'openvue/tag'
+import InputText from 'openvue/inputtext'
 import { fetchItems, createItem } from '@/composables/crud'
 import BaseModal from '@/components/BaseModal.vue'
 import EinstellungenTextblockFormular from '@/components/EinstellungenTextblockFormular.vue'

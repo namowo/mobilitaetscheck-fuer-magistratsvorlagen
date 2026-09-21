@@ -35,9 +35,9 @@
 import { onMounted } from 'vue'
 import { useForm } from 'vee-validate'
 import { schema } from '@/utils/schemas/textblock.js'
-import FloatLabel from 'primevue/floatlabel'
-import InputText from 'primevue/inputtext'
-import MultiSelect from 'primevue/multiselect'
+import FloatLabel from 'openvue/floatlabel'
+import InputText from 'openvue/inputtext'
+import MultiSelect from 'openvue/multiselect'
 import ButtonSpeichern from '@/components/ButtonSpeichern.vue'
 
 const props = defineProps({

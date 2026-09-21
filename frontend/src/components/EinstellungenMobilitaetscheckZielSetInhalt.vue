@@ -130,7 +130,7 @@ import { ref, onMounted } from 'vue'
 import draggable from 'vuedraggable'
 import { apiClient } from '@/services/axios'
 import { toastService } from '@/services/toast'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 import BaseSpinner from '@/components/BaseSpinner.vue'
 
 const props = defineProps({

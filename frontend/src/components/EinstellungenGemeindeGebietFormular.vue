@@ -17,9 +17,9 @@
 import { onMounted } from 'vue'
 import { useForm } from 'vee-validate'
 import { schema } from '@/utils/schemas/gemeindeGebiet'
-import FloatLabel from 'primevue/floatlabel'
-import InputText from 'primevue/inputtext'
-import Button from 'primevue/button'
+import FloatLabel from 'openvue/floatlabel'
+import InputText from 'openvue/inputtext'
+import Button from 'openvue/button'
 
 const props = defineProps({
   editMode: {

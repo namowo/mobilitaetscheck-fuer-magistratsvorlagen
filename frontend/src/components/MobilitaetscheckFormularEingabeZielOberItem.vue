@@ -56,7 +56,7 @@ import { useForm } from 'vee-validate'
 import { updateItemSilent } from '@/composables/crud'
 import { useDebounceFn } from '@vueuse/core'
 import { schema } from '@/utils/schemas/mobilitaetscheckEingabeZielOber'
-import ToggleSwitch from 'primevue/toggleswitch'
+import ToggleSwitch from 'openvue/toggleswitch'
 import MobilitaetscheckFormularEingabeZielUnterItem from '@/components/MobilitaetscheckFormularEingabeZielUnterItem.vue'
 
 const mobilitaetscheckFormularEingabeZielUnterRefs = ref([])

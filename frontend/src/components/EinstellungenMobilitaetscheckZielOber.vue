@@ -47,7 +47,7 @@ import {
   updateItemSilent,
   deleteItem
 } from '@/composables/crud'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 import Draggable from 'vuedraggable'
 import BaseSpinner from '@/components/BaseSpinner.vue'
 import EinstellungenMobilitaetscheckFormularZielOber from './EinstellungenMobilitaetscheckFormularZielOber.vue'

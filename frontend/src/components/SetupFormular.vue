@@ -84,10 +84,10 @@ import { useForm } from 'vee-validate'
 import { schema } from '@/utils/schemas/setup'
 import { apiClient } from '@/services/axios'
 import { resetSetupStatus } from '@/router'
-import InputText from 'primevue/inputtext'
-import FloatLabel from 'primevue/floatlabel'
-import Password from 'primevue/password'
-import Button from 'primevue/button'
+import InputText from 'openvue/inputtext'
+import FloatLabel from 'openvue/floatlabel'
+import Password from 'openvue/password'
+import Button from 'openvue/button'
 
 const router = useRouter()
 const isLoading = ref(false)

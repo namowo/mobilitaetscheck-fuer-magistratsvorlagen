@@ -48,11 +48,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
+import Button from 'openvue/button'
+import InputText from 'openvue/inputtext'
 import { apiClient } from '@/services/axios'
-import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'openvue/usetoast'
+import { useConfirm } from 'openvue/useconfirm'
 import RichContentEditor from './RichContentEditor.vue'
 import { STARTSEITE_STANDARD_TITEL, STARTSEITE_STANDARD_UNTERTITEL } from '@/utils/standardInhalte'
 

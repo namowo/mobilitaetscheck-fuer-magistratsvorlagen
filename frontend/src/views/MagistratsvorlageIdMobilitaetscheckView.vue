@@ -18,7 +18,7 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import MobilitaetscheckListe from '@/components/MobilitaetscheckListe.vue'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 
 const route = useRoute()
 </script>

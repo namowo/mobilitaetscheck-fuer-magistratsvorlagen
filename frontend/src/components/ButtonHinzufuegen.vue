@@ -4,7 +4,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 
 const props = defineProps({
   tooltip: {

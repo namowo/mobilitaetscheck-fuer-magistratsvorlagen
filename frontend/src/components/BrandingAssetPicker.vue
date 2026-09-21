@@ -43,11 +43,11 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import Button from 'primevue/button'
-import Dialog from 'primevue/dialog'
-import FileUpload from 'primevue/fileupload'
+import Button from 'openvue/button'
+import Dialog from 'openvue/dialog'
+import FileUpload from 'openvue/fileupload'
 import { apiClient } from '@/services/axios'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from 'openvue/usetoast'
 
 const props = defineProps({
   visible: {

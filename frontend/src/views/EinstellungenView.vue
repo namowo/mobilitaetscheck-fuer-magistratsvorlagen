@@ -27,7 +27,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import Menu from 'primevue/menu'
+import Menu from 'openvue/menu'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()

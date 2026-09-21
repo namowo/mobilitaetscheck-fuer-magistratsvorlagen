@@ -11,8 +11,8 @@
 
 <script setup>
 import { computed } from 'vue'
-import Button from 'primevue/button'
-import { useConfirm } from 'primevue/useconfirm'
+import Button from 'openvue/button'
+import { useConfirm } from 'openvue/useconfirm'
 
 const props = defineProps({
   noLabel: {

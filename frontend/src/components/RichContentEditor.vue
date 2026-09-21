@@ -229,9 +229,9 @@ import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import ImageExtension from '@tiptap/extension-image'
 import { Table, TableRow, TableHeader, TableCell } from '@tiptap/extension-table'
-import Select from 'primevue/select'
+import Select from 'openvue/select'
 import { apiClient } from '@/services/axios'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from 'openvue/usetoast'
 
 const props = defineProps({
   modelValue: {

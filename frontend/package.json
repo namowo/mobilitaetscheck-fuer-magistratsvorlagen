@@ -11,7 +11,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@primeuix/themes": "^1.0.0",
+    "@openvue/themes": "1.0.0",
     "@tiptap/extension-image": "^3.30.4",
     "@tiptap/extension-link": "^3.30.4",
     "@tiptap/extension-placeholder": "^3.30.4",
@@ -30,7 +30,7 @@
     "lucide-vue-next": "^0.447.0",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
-    "primevue": "^4.5.0",
+    "openvue": "1.0.0",
     "quill": "^2.0.2",
     "radix-vue": "^1.9.6",
     "tailwind-merge": "^2.5.2",

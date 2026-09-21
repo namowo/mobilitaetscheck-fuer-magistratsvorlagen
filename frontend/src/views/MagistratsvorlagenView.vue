@@ -17,7 +17,7 @@
 
 <script setup>
 import MagistrasvorlageListe from '@/components/MagistrasvorlageListe.vue'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()

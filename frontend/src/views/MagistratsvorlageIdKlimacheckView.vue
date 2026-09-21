@@ -18,7 +18,7 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import KlimacheckListe from '@/components/KlimacheckListe.vue'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 
 const route = useRoute()
 </script>

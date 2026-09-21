@@ -78,11 +78,11 @@ import { useForm } from 'vee-validate'
 import { schema } from '@/utils/schemas/klimarelevanzpruefungEingabe'
 import { createItem } from '@/composables/crud'
 import { useRoute, useRouter } from 'vue-router'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import FloatLabel from 'primevue/floatlabel'
-import ToggleSwitch from 'primevue/toggleswitch'
-import Divider from 'primevue/divider'
+import Button from 'openvue/button'
+import InputText from 'openvue/inputtext'
+import FloatLabel from 'openvue/floatlabel'
+import ToggleSwitch from 'openvue/toggleswitch'
+import Divider from 'openvue/divider'
 
 const route = useRoute()
 const router = useRouter()

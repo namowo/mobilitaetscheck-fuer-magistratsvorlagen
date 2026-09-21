@@ -44,9 +44,9 @@ import { fetchItems, deleteItem, createItem, updateItem } from '@/composables/cr
 import EinstellungenTextblockFormular from '@/components/EinstellungenTextblockFormular.vue'
 import EinstellungenTextblockItem from '@/components/EinstellungenTextblockItem.vue'
 import BaseSpinner from '@/components/BaseSpinner.vue'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import FloatLabel from 'primevue/floatlabel'
+import Button from 'openvue/button'
+import InputText from 'openvue/inputtext'
+import FloatLabel from 'openvue/floatlabel'
 
 const isLoading = ref(false)
 const isModalOpen = ref(false)

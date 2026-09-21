@@ -43,9 +43,9 @@
 import { onMounted } from 'vue'
 import { useForm } from 'vee-validate'
 import { schema } from '@/utils/schemas/ZielOber'
-import FloatLabel from 'primevue/floatlabel'
-import InputText from 'primevue/inputtext'
-import InputNumber from 'primevue/inputnumber'
+import FloatLabel from 'openvue/floatlabel'
+import InputText from 'openvue/inputtext'
+import InputNumber from 'openvue/inputnumber'
 import ButtonSpeichern from '@/components/ButtonSpeichern.vue'
 
 const props = defineProps({

@@ -78,10 +78,10 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useBrandingStore } from '@/stores/branding'
-import Avatar from 'primevue/avatar'
-import Button from 'primevue/button'
-import Toolbar from 'primevue/toolbar'
-import Popover from 'primevue/popover'
+import Avatar from 'openvue/avatar'
+import Button from 'openvue/button'
+import Toolbar from 'openvue/toolbar'
+import Popover from 'openvue/popover'
 import defaultLogo from '../assets/logos/pimoo-logo-invertiert.png'
 
 const authStore = useAuthStore()

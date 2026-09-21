@@ -111,10 +111,10 @@
 import { ref, computed, onUnmounted } from 'vue'
 import { apiClient } from '@/services/axios'
 import { useAuthStore } from '@/stores/auth'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import Dialog from 'primevue/dialog'
-import FloatLabel from 'primevue/floatlabel'
+import Button from 'openvue/button'
+import InputText from 'openvue/inputtext'
+import Dialog from 'openvue/dialog'
+import FloatLabel from 'openvue/floatlabel'
 
 const authStore = useAuthStore()
 

@@ -19,7 +19,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useEinstellungStore } from '@/stores/einstellung'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 import { STARTSEITE_STANDARD_TITEL, STARTSEITE_STANDARD_UNTERTITEL } from '@/utils/standardInhalte'
 
 const einstellungStore = useEinstellungStore()

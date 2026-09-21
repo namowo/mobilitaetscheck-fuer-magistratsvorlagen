@@ -100,11 +100,11 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { deleteItem, exportItem, fetchItems } from '@/composables/crud'
-import Button from 'primevue/button'
+import Button from 'openvue/button'
 import ButtonLoeschen from '@/components/ButtonLoeschen.vue'
-import DataView from 'primevue/dataview'
-import Tag from 'primevue/tag'
-import Skeleton from 'primevue/skeleton'
+import DataView from 'openvue/dataview'
+import Tag from 'openvue/tag'
+import Skeleton from 'openvue/skeleton'
 import BaseCard from '@/components/BaseCard.vue'
 
 const klimarelevanzpruefungListe = ref([])

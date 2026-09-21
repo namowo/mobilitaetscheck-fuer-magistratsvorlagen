@@ -122,10 +122,10 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { apiClient } from '@/services/axios'
 import BaseSpinner from '@/components/BaseSpinner.vue'
-import DataView from 'primevue/dataview'
-import InputText from 'primevue/inputtext'
-import Select from 'primevue/select'
-import Tag from 'primevue/tag'
+import DataView from 'openvue/dataview'
+import InputText from 'openvue/inputtext'
+import Select from 'openvue/select'
+import Tag from 'openvue/tag'
 
 const route = useRoute()
 const router = useRouter()

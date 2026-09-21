@@ -34,7 +34,7 @@ import { fetchItem } from '@/composables/crud'
 import ButtonZuruecksetzen from '@/components/ButtonZuruecksetzen.vue'
 import { useRoute, useRouter } from 'vue-router'
 import MobilitaetscheckFormularEingabeZielOber from '@/components/MobilitaetscheckFormularEingabeZielOber.vue'
-import Skeleton from 'primevue/skeleton'
+import Skeleton from 'openvue/skeleton'
 
 const route = useRoute()
 const router = useRouter()
