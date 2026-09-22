@@ -1,7 +1,9 @@
+import re
 from typing import Literal, Optional
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 RechtstextModus = Literal["inhalt", "url"]
+HEX_COLOR_PATTERN = r"^#[0-9A-Fa-f]{6}$"
 
 
 class PlattformEinstellungBase(BaseModel):
@@ -46,6 +48,19 @@ class PlattformEinstellungBase(BaseModel):
         None,
         description="Kontakt-E-Mail-Adresse für Freischaltungsanfragen bei der Registrierung.",
     )
+    theme_color: Optional[str] = Field(
+        None,
+        description="Primärfarbe der Plattform als Hex-Code (z. B. '#507C96'). Leer = Standardfarbe.",
+    )
+
+    @field_validator("theme_color")
+    @classmethod
+    def validate_theme_color(cls, value: Optional[str]) -> Optional[str]:
+        if value is None or value == "":
+            return None
+        if not re.match(HEX_COLOR_PATTERN, value):
+            raise ValueError("theme_color muss ein Hex-Farbcode im Format '#RRGGBB' sein.")
+        return value
 
 
 class PlattformEinstellungUpdate(PlattformEinstellungBase):

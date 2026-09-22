@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiClient } from '@/services/axios'
+import { applyThemeColor } from '@/utils/theme'
 
 export const useEinstellungStore = defineStore('einstellung', () => {
   const einstellung = ref({})
@@ -10,6 +11,9 @@ export const useEinstellungStore = defineStore('einstellung', () => {
     try {
       const res = await apiClient.get('/public/plattform-einstellung')
       einstellung.value = res.data
+      if (einstellung.value.themeColor) {
+        applyThemeColor(einstellung.value.themeColor)
+      }
     } catch {
       einstellung.value = {}
     } finally {

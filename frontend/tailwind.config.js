@@ -14,16 +14,16 @@ export default {
     extend: {
       colors: {
         blue: {
-          DEFAULT: '#193b4d',
-          100: '#eaf3f8',
-          200: '#bfdbea',
-          300: '#94c3dc',
-          400: '#69abce',
-          500: '#3f93c0',
-          600: '#317396',
-          700: '#23526b',
-          800: '#153140',
-          900: '#071015'
+          DEFAULT: 'rgb(var(--primary-900) / <alpha-value>)',
+          100: 'rgb(var(--primary-100) / <alpha-value>)',
+          200: 'rgb(var(--primary-200) / <alpha-value>)',
+          300: 'rgb(var(--primary-300) / <alpha-value>)',
+          400: 'rgb(var(--primary-400) / <alpha-value>)',
+          500: 'rgb(var(--primary-500) / <alpha-value>)',
+          600: 'rgb(var(--primary-600) / <alpha-value>)',
+          700: 'rgb(var(--primary-700) / <alpha-value>)',
+          800: 'rgb(var(--primary-800) / <alpha-value>)',
+          900: 'rgb(var(--primary-900) / <alpha-value>)'
         },
         red: {
           DEFAULT: '#E05A47',

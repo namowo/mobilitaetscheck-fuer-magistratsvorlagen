@@ -48,7 +48,10 @@ const items = ref([
   },
   {
     label: 'Design',
-    items: [{ label: 'Branding', icon: 'pi pi-palette', route: '/admin/branding' }]
+    items: [
+      { label: 'Branding', icon: 'pi pi-palette', route: '/admin/branding' },
+      { label: 'Farbschema', icon: 'pi pi-circle-fill', route: '/admin/design' }
+    ]
   }
 ])
 </script>

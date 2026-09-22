@@ -67,3 +67,7 @@ class PlattformEinstellung(Base):
         nullable=True,
         comment="Kontakt-E-Mail-Adresse für Freischaltungsanfragen bei der Registrierung",
     )
+    theme_color: Mapped[Optional[str]] = mapped_column(
+        nullable=True,
+        comment="Primärfarbe der Plattform als Hex-Code (z. B. '#507C96'). Leer = Standardfarbe.",
+    )

@@ -5,12 +5,6 @@ BRANDING_SLOTS = {
         "bereich": "Browser",
         "erlaubte_typen": ["image/x-icon", "image/png", "image/svg+xml"],
     },
-    "menue-logo": {
-        "label": "Logo in der Menüleiste",
-        "beschreibung": "Wird oben links in der Navigationsleiste angezeigt.",
-        "bereich": "Menüleiste",
-        "erlaubte_typen": ["image/png", "image/svg+xml", "image/webp"],
-    },
 }
 
 for _slot in BRANDING_SLOTS.values():
@@ -18,6 +12,10 @@ for _slot in BRANDING_SLOTS.values():
     _slot.setdefault("standard_link", None)
 
 LOGO_LISTEN_BEREICHE = {
+    "menueleiste": {
+        "label": "Menüleisten-Logos",
+        "beschreibung": "Beliebig viele Logos oben links in der Navigationsleiste anzeigen.",
+    },
     "footer": {
         "label": "Footer-Logos",
         "beschreibung": "Beliebig viele Logos im Footer anzeigen.",
