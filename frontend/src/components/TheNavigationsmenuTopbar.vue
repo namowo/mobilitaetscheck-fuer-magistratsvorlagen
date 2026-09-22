@@ -1,18 +1,22 @@
 <template>
-  <Toolbar style="border-radius: 0.5rem; background-color: #193b4d" class="w-full">
+  <Toolbar
+    style="border-radius: 0.5rem; background-color: rgb(var(--primary-base))"
+    class="w-full relative-toolbar"
+  >
     <template #start>
-      <div class="flex items-center gap-2 text-white">
-        <router-link
-          :to="{ name: 'startseite' }"
-          class="grid grid-cols-1 items-center justify-center justify-items-center menuItem-active-link"
-        >
-          <img
-            width="120px"
-            :src="brandingStore.url('menue-logo') || defaultLogo"
-            alt="Logo"
-          />
-          <!-- <div class="font-bold text-lg flex items-center">Mobilitätscheck</div>
-          <div class="font-bold text-xs">für Magistratsvorlagen</div> -->
+      <div class="flex items-center gap-3 text-white">
+        <template v-if="brandingStore.menueleisteLogos.length > 0">
+          <template v-for="logo in brandingStore.menueleisteLogos" :key="logo.id">
+            <BrandingLogoLink v-if="logo.link" :href="logo.link">
+              <img :src="logo.asset.url" alt="Logo" class="h-10 max-w-32 object-contain" />
+            </BrandingLogoLink>
+            <router-link v-else :to="{ name: 'startseite' }">
+              <img :src="logo.asset.url" alt="Logo" class="h-10 max-w-32 object-contain" />
+            </router-link>
+          </template>
+        </template>
+        <router-link v-else :to="{ name: 'startseite' }" class="menuItem-active-link">
+          <img width="120px" :src="defaultLogo" alt="Logo" />
         </router-link>
       </div>
     </template>
@@ -82,6 +86,7 @@ import Avatar from 'openvue/avatar'
 import Button from 'openvue/button'
 import Toolbar from 'openvue/toolbar'
 import Popover from 'openvue/popover'
+import BrandingLogoLink from './BrandingLogoLink.vue'
 import defaultLogo from '../assets/logos/pimoo-logo-invertiert.png'
 
 const authStore = useAuthStore()
@@ -101,5 +106,24 @@ const toggle = (event) => {
 .router-link-active,
 .router-link-exact-active {
   @apply block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500;
+}
+
+.relative-toolbar {
+  position: relative;
+}
+
+.relative-toolbar :deep(.p-toolbar-center) {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - 2rem);
+}
+
+@media (max-width: 767px) {
+  .relative-toolbar :deep(.p-toolbar-center) {
+    position: static;
+    transform: none;
+    max-width: none;
+  }
 }
 </style>

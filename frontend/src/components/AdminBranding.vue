@@ -82,6 +82,10 @@
       </template>
 
       <Divider />
+      <h6 class="text-sm font-semibold text-gray-600 mb-3">Menüleiste</h6>
+      <AdminLogoListe :key="`menueleiste-${resetCounter}`" bereich="menueleiste" />
+
+      <Divider />
       <h6 class="text-sm font-semibold text-gray-600 mb-3">Anmelde- und Registrierungsseite</h6>
       <AdminLogoListe :key="`login-${resetCounter}`" bereich="login" :verlinkbar="false" />
 
@@ -202,7 +206,7 @@ const saveLink = async (slot) => {
 const confirmResetAll = () => {
   confirm.require({
     message:
-      'Favicon, Menüleisten-Logo sowie alle Login- und Footer-Logos werden entfernt und die Standardgrafiken wieder angezeigt. Bereits hochgeladene Bilder bleiben in der Bildbibliothek erhalten.',
+      'Favicon sowie alle Menüleisten-, Login- und Footer-Logos werden entfernt und die Standardgrafiken wieder angezeigt. Bereits hochgeladene Bilder bleiben in der Bildbibliothek erhalten.',
     header: 'Branding zurücksetzen',
     icon: 'pi pi-exclamation-triangle',
     rejectProps: { label: 'Abbrechen', severity: 'secondary', outlined: true },

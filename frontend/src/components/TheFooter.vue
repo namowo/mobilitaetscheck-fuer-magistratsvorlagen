@@ -1,6 +1,9 @@
 <template>
   <div>
-    <footer class="footer w-full bg-blue text-white py-8 text-center mt-12">
+    <footer
+      class="footer w-full text-white py-8 text-center mt-12"
+      style="background-color: rgb(var(--primary-base))"
+    >
       <div class="footer-content max-w-screen-lg mx-auto px-4">
         <div class="grid grid-cols-1 sm:grid-cols-[auto_auto] items-start justify-center text-left gap-8">
           <div class="flex flex-wrap items-center justify-center gap-2 sm:col-span-2 sm:col-start-1 sm:row-start-1 sm:mx-auto">
@@ -101,7 +104,10 @@
             </router-link>
           </nav>
         </div>
-        <p class="mt-8 text-blue-200 flex items-center justify-center gap-1.5">
+        <p
+          class="mt-8 flex items-center justify-center gap-1.5"
+          style="color: rgb(var(--primary-200))"
+        >
           <Heart :size="14" class="shrink-0 fill-current text-red-400" />
           <span>&copy; 2026 Hochschule RheinMain</span>
         </p>
@@ -135,7 +141,7 @@ const einstellungStore = useEinstellungStore()
 }
 
 .footer-link:hover {
-  color: theme('colors.blue.200');
+  color: rgb(var(--primary-200));
   transform: translateX(3px);
 }
 
