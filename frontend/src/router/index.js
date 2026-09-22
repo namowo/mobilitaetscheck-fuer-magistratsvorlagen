@@ -55,6 +55,12 @@ const router = createRouter({
       component: UeberDasToolView
     },
     {
+      path: '/dokumentation',
+      name: 'dokumentation',
+      component: () => import('@/views/DokumentationView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
       path: '/auth/anmelden',
       name: 'anmelden',
       component: () => import('@/views/AuthAnmeldenView.vue'),
@@ -300,6 +306,11 @@ const router = createRouter({
           path: 'kontakt',
           name: 'admin-kontakt',
           component: () => import('@/views/AdminKontaktView.vue')
+        },
+        {
+          path: 'dokumentation',
+          name: 'admin-dokumentation',
+          component: () => import('@/views/AdminDokumentationView.vue')
         }
       ]
     },

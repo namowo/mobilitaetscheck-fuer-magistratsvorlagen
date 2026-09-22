@@ -23,6 +23,10 @@
   @apply text-lg font-bold mb-2 mt-4 text-blue dark:text-white;
 }
 
+.rich-content h4 {
+  @apply text-base font-bold mb-2 mt-4 text-blue dark:text-white;
+}
+
 .rich-content p {
   @apply mb-2;
 }

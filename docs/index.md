@@ -25,6 +25,6 @@ Der Mobilitätscheck für Magistratsvorlagen richtet sich an vier Benutzergruppe
 
 ## Ihre Kommune möchte den Mobilitätscheck ausprobieren?
 
-[Hier geht es zur Instanz auf dem Server der Hochschule RheinMain](https://pimoo-1rz.fab.hs-rm.de/)
+[Hier geht es zur Instanz des Fachzentrums Nachhaltige Mobilität Hessen](https://mobichecks-hessen.de/)
 
-Dann melden Sie sich gerne per Mail bei Johann Grobe (johann.grobe@hs-rm.de).
+Dann melden Sie sich gerne per Mail bei Johann Grobe (j.grobe@namowo.de).

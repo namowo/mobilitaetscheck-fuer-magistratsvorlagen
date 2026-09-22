@@ -43,7 +43,8 @@ const items = ref([
       { label: 'Datenschutz', icon: 'pi pi-shield', route: '/admin/datenschutz' },
       { label: 'Nutzungsbedingungen', icon: 'pi pi-file-edit', route: '/admin/nutzungsbedingungen' },
       { label: 'E-Mail-Vorlagen', icon: 'pi pi-envelope', route: '/admin/email-vorlagen' },
-      { label: 'Kontakt', icon: 'pi pi-at', route: '/admin/kontakt' }
+      { label: 'Kontakt', icon: 'pi pi-at', route: '/admin/kontakt' },
+      { label: 'Dokumentation', icon: 'pi pi-book', route: '/admin/dokumentation' }
     ]
   },
   {
