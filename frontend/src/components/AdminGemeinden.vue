@@ -24,18 +24,12 @@
         <Column header="" style="width: 100px">
           <template #body="{ data }">
             <div class="flex gap-1">
-              <Button
-                icon="pi pi-pencil"
-                text
-                @click="openEdit(data)"
-                :disabled="data.name === 'Systemadministration'"
-              />
+              <Button icon="pi pi-pencil" text @click="openEdit(data)" />
               <Button
                 icon="pi pi-trash"
                 severity="danger"
                 text
                 @click="deleteGemeinde(data.id)"
-                :disabled="data.name === 'Systemadministration'"
               />
             </div>
           </template>
@@ -222,10 +216,13 @@ onKeyStroke('Escape', () => {
   if (editVisible.value) editVisible.value = false
 })
 
+const SYSTEM_GEMEINDE_NAME = 'Systemadministration'
+
 const filteredGemeinden = computed(() => {
-  if (!searchQuery.value.trim()) return gemeinden.value
+  const visible = gemeinden.value.filter((g) => g.name !== SYSTEM_GEMEINDE_NAME)
+  if (!searchQuery.value.trim()) return visible
   const q = searchQuery.value.toLowerCase()
-  return gemeinden.value.filter((g) => g.name.toLowerCase().includes(q))
+  return visible.filter((g) => g.name.toLowerCase().includes(q))
 })
 
 const fetchGemeinden = async () => {

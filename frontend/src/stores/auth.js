@@ -102,6 +102,13 @@ export const useAuthStore = defineStore(
       }
     }
 
+    async function refreshVerified() {
+      const user = await getUser()
+      if (user) {
+        isVerified.value = user.isVerified
+      }
+    }
+
     apiClient.interceptors.response.use(
       (response) => response, // Pass through if response is successful
       (error) => {
@@ -181,6 +188,7 @@ export const useAuthStore = defineStore(
       logout,
       checkAuthStatus,
       getUser,
+      refreshVerified,
       updateUser,
       forgotPassword,
       resetPassword

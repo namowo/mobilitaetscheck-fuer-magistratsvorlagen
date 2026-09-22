@@ -168,7 +168,7 @@ const authMenuItems = ref([
   },
   {
     name: 'Administration',
-    link: '/admin/gemeinden',
+    link: '/admin/kommunen',
     icon: 'MaterialSymbolsSettings.svg',
     requiresAuth: true,
     requiresUserRolleId: [3]

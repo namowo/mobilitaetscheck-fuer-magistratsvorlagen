@@ -64,12 +64,23 @@
           </div>
         </div>
         <h2 class="text-2xl font-bold text-gray-800 mb-3">Account bestätigt!</h2>
-        <p class="text-gray-600 mb-8">
-          Ihr Account wurde erfolgreich bestätigt. Sie können sich jetzt anmelden.
-        </p>
-        <RouterLink :to="{ name: 'anmelden' }">
-          <Button label="Jetzt anmelden" icon="pi pi-sign-in" class="w-full" />
-        </RouterLink>
+        <template v-if="authStore.isLoggedIn">
+          <p class="text-gray-600 mb-8">Ihr Account wurde erfolgreich bestätigt.</p>
+          <Button
+            label="Weiter zur Anwendung"
+            icon="pi pi-arrow-right"
+            class="w-full"
+            @click="continueToApp"
+          />
+        </template>
+        <template v-else>
+          <p class="text-gray-600 mb-8">
+            Ihr Account wurde erfolgreich bestätigt. Sie können sich jetzt anmelden.
+          </p>
+          <RouterLink :to="{ name: 'anmelden' }">
+            <Button label="Jetzt anmelden" icon="pi pi-sign-in" class="w-full" />
+          </RouterLink>
+        </template>
       </div>
 
       <!-- error state -->
@@ -195,6 +206,9 @@ onMounted(async () => {
   try {
     const response = await apiClient.post('/auth/verify', { token })
     if (response?.status === 200) {
+      if (authStore.isLoggedIn) {
+        await authStore.refreshVerified()
+      }
       router.replace({ name: 'account-bestaetigen', query: { verify: 'success' } })
     } else {
       verifyError.value = true
@@ -218,6 +232,14 @@ async function resendVerification() {
     }, 1000)
   } finally {
     resendLoading.value = false
+  }
+}
+
+function continueToApp() {
+  if (authStore.userRolleId === 3) {
+    router.replace({ name: 'admin-kommunen' })
+  } else {
+    router.replace({ name: 'magistratsvorlage-liste' })
   }
 }
 

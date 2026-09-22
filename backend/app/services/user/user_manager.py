@@ -32,13 +32,16 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, UUID]):
 
         gruppe_id = getattr(user_create, "gruppe_id", None)
 
-        if verwaltung_rolle and user_create.rolle_id == verwaltung_rolle.id:
-            token = getattr(user_create, "einladungs_token", None)
-            if not token:
-                raise HTTPException(
-                    status_code=400,
-                    detail="Verwaltung-Registrierung erfordert einen gültigen Einladungslink.",
-                )
+        token = getattr(user_create, "einladungs_token", None)
+        is_verwaltung = verwaltung_rolle and user_create.rolle_id == verwaltung_rolle.id
+
+        if is_verwaltung and not token:
+            raise HTTPException(
+                status_code=400,
+                detail="Verwaltung-Registrierung erfordert einen gültigen Einladungslink.",
+            )
+
+        if token:
             try:
                 payload = decode_invite_token(token, settings.EINLADUNG_TOKEN_SECRET)
             except JWTError:
