@@ -220,10 +220,17 @@ async def get_public_kommune_anfrage_vorlage(
 
 @router.get("/gemeinden", response_model=list[GemeindeRead])
 async def get_public_gemeinden(db: AsyncSession = Depends(get_async_session)):
-    """Return all Gemeinden except the internal Systemadministration gemeinde."""
+    """Return Gemeinden that have at least one published Magistratsvorlage."""
     result = await db.execute(
         select(Gemeinde)
-        .where(Gemeinde.name != SYSTEM_GEMEINDE_NAME)
+        .where(
+            Gemeinde.name != SYSTEM_GEMEINDE_NAME,
+            Gemeinde.id.in_(
+                select(Magistratsvorlage.gemeinde_id).where(
+                    Magistratsvorlage.veroeffentlicht == True
+                )
+            ),
+        )
         .order_by(Gemeinde.name)
     )
     return result.scalars().all()

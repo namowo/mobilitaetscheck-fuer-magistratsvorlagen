@@ -1,10 +1,9 @@
 import datetime
 import re
 from io import BytesIO
-from os import path
 
 from app.models.mobilitaetscheck_eingabe import MobilitaetscheckEingabe
-from app.services.pdf.base_pdf import BasePDF
+from app.services.pdf.base_pdf import BasePDF, resolve_logo_path
 from app.utils.pdf_util import calculate_average_impact, get_display_impact
 
 # Colour palette – mirrors Tailwind classes used in the Vue UI
@@ -51,10 +50,8 @@ class MobilitaetscheckPDF(BasePDF):
     # ── page chrome ──────────────────────────────────────────────────
 
     def header(self):
-        script_dir = path.dirname(path.abspath(__file__))
-        image_path = path.normpath(path.join(script_dir, "./assests/pimoo-logo.png"))
         try:
-            self.image(image_path, 10, 8, 30)
+            self.image(resolve_logo_path(), 10, 8, 30)
         except Exception as e:
             print(e)
         self.set_font("free-sans", "", 9)
