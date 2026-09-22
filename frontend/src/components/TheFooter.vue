@@ -39,14 +39,10 @@
               <Info :size="18" class="shrink-0" />
               <span>Über das Tool</span>
             </router-link>
-            <a
-              class="footer-link"
-              href="https://ritmo-hsrm.github.io/mobilitaetscheck-fuer-magistratsvorlagen/"
-              target="_blank"
-            >
+            <router-link :to="{ name: 'dokumentation' }" class="footer-link">
               <BookOpen :size="18" class="shrink-0" />
               <span>Dokumentation und Hilfe</span>
-            </a>
+            </router-link>
             <a
               class="footer-link"
               href="https://github.com/ritmo-hsrm/mobilitaetscheck-fuer-magistratsvorlagen"
