@@ -42,7 +42,8 @@ const items = ref([
       { label: 'Impressum', icon: 'pi pi-file', route: '/admin/impressum' },
       { label: 'Datenschutz', icon: 'pi pi-shield', route: '/admin/datenschutz' },
       { label: 'Nutzungsbedingungen', icon: 'pi pi-file-edit', route: '/admin/nutzungsbedingungen' },
-      { label: 'E-Mail-Vorlagen', icon: 'pi pi-envelope', route: '/admin/email-vorlagen' }
+      { label: 'E-Mail-Vorlagen', icon: 'pi pi-envelope', route: '/admin/email-vorlagen' },
+      { label: 'Kontakt', icon: 'pi pi-at', route: '/admin/kontakt' }
     ]
   },
   {

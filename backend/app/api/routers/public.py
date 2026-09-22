@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.core.deps import get_async_session, get_user_manager
 from app.crud.exceptions import NotFoundError
 from app.crud.mobilitaetscheck_eingabe import crud_mobility_submission
+from app.crud.email_vorlage import crud_email_vorlage
 from app.crud.plattform_einstellung import crud_plattform_einstellung
 from app.crud.user import crud_user as crud
 from app.models.gemeinde import Gemeinde
@@ -179,6 +180,30 @@ async def get_einladung_info(
 async def get_public_plattform_einstellung(db: AsyncSession = Depends(get_async_session)):
     """Return the Datenschutzerklärung and other public platform settings."""
     return await crud_plattform_einstellung.get(db)
+
+
+class KommuneAnfrageVorlage(BaseModel):
+    betreff: str
+    inhalt: str
+
+
+KOMMUNE_ANFRAGE_ROLLEN = {
+    "politik": "kommune-anfrage-politik",
+    "verwaltung": "kommune-anfrage-verwaltung",
+}
+
+
+@router.get("/kommune-anfrage-vorlage/{rolle}", response_model=KommuneAnfrageVorlage)
+async def get_public_kommune_anfrage_vorlage(
+    rolle: str, db: AsyncSession = Depends(get_async_session)
+):
+    """Return the resolved (admin-editable or default) subject/body for the mailto used
+    when a user requests their Kommune be added to the Mobilitätscheck."""
+    key = KOMMUNE_ANFRAGE_ROLLEN.get(rolle)
+    if key is None:
+        raise HTTPException(status_code=404, detail="Unbekannte Rolle.")
+    betreff, inhalt = await crud_email_vorlage.get_resolved(db, key)
+    return KommuneAnfrageVorlage(betreff=betreff, inhalt=inhalt)
 
 
 @router.get("/gemeinden", response_model=list[GemeindeRead])

@@ -42,6 +42,10 @@ class PlattformEinstellungBase(BaseModel):
     startseite_inhalt: Optional[str] = Field(
         None, description="Textkörper (HTML) der Startseite, ersetzt den Standard-Hero-Text."
     )
+    kontakt_email: Optional[str] = Field(
+        None,
+        description="Kontakt-E-Mail-Adresse für Freischaltungsanfragen bei der Registrierung.",
+    )
 
 
 class PlattformEinstellungUpdate(PlattformEinstellungBase):

@@ -290,6 +290,11 @@ const router = createRouter({
           path: 'startseite',
           name: 'admin-startseite',
           component: () => import('@/views/AdminStartseiteView.vue')
+        },
+        {
+          path: 'kontakt',
+          name: 'admin-kontakt',
+          component: () => import('@/views/AdminKontaktView.vue')
         }
       ]
     },

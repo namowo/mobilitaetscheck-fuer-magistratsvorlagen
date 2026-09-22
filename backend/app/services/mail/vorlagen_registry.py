@@ -18,7 +18,19 @@ DEFAULT_VORLAGEN = {
         "datei": "passwort-zuruecksetzen.html",
         "platzhalter": ["vorname", "nachname", "url"],
     },
+    "kommune-anfrage-politik": {
+        "betreff": "Kommune für den Mobilitätscheck freischalten (Politik)",
+        "datei": "kommune-anfrage-politik.txt",
+        "platzhalter": [],
+    },
+    "kommune-anfrage-verwaltung": {
+        "betreff": "Kommune für den Mobilitätscheck freischalten (Verwaltung)",
+        "datei": "kommune-anfrage-verwaltung.txt",
+        "platzhalter": [],
+    },
 }
+
+TEXT_VORLAGEN = {"kommune-anfrage-politik", "kommune-anfrage-verwaltung"}
 
 
 def get_default_inhalt(key: str) -> str:

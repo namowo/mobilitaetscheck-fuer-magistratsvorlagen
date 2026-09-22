@@ -18,3 +18,6 @@ class EmailVorlageRead(EmailVorlageBase):
     standard_betreff: str = Field(..., description="Standard-Betreff, falls kein eigener gesetzt ist.")
     standard_inhalt: str = Field(..., description="Standard-Inhalt, falls kein eigener gesetzt ist.")
     platzhalter: list[str] = Field(..., description="In dieser Vorlage verfügbare Platzhalter.")
+    ist_text: bool = Field(
+        False, description="Ob der Inhalt reiner Text ist (statt HTML für den Rich-Text-Editor)."
+    )
