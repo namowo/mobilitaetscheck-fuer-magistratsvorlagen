@@ -22,8 +22,10 @@ from app.services.branding.slots_registry import (
     LOGO_LISTEN_BEREICHE,
     MAX_UPLOAD_SIZE_BYTES,
 )
+from app.services.pdf.base_pdf import sync_active_pdf_logo
 
 UPLOAD_DIR = Path(settings.BRANDING_UPLOAD_DIR)
+PDF_LOGO_SLOT = "pdf-logo"
 
 
 class CRUDBrandingAsset:
@@ -102,13 +104,17 @@ class CRUDBrandingSlotZuweisung:
 
     async def assign_asset(self, db: AsyncSession, slot: str, asset_id: int | None) -> BrandingSlotZuweisung:
         instance = await self._get_or_create(db, slot)
+        asset = None
         if asset_id is not None:
             asset_result = await db.execute(select(BrandingAsset).where(BrandingAsset.id == asset_id))
-            if asset_result.scalar_one_or_none() is None:
+            asset = asset_result.scalar_one_or_none()
+            if asset is None:
                 raise HTTPException(status_code=404, detail="Asset nicht gefunden.")
         instance.asset_id = asset_id
         await db.commit()
         await db.refresh(instance)
+        if slot == PDF_LOGO_SLOT:
+            sync_active_pdf_logo(str(UPLOAD_DIR / asset.dateiname) if asset else None)
         return instance
 
     async def update_link(self, db: AsyncSession, slot: str, link: str | None) -> BrandingSlotZuweisung:
@@ -126,6 +132,7 @@ class CRUDBrandingSlotZuweisung:
             instance.asset_id = None
             instance.link = BRANDING_SLOTS.get(instance.slot, {}).get("standard_link")
         await db.commit()
+        sync_active_pdf_logo(None)
 
 
 class CRUDLogoListeEintrag:

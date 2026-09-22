@@ -289,11 +289,6 @@ const router = createRouter({
           component: () => import('@/views/AdminBrandingView.vue')
         },
         {
-          path: 'design',
-          name: 'admin-design',
-          component: () => import('@/views/AdminDesignView.vue')
-        },
-        {
           path: 'ueber-das-tool',
           name: 'admin-ueber-das-tool',
           component: () => import('@/views/AdminUeberDasToolView.vue')

@@ -5,6 +5,12 @@ BRANDING_SLOTS = {
         "bereich": "Browser",
         "erlaubte_typen": ["image/x-icon", "image/png", "image/svg+xml"],
     },
+    "pdf-logo": {
+        "label": "PDF-Logo",
+        "beschreibung": "Wird oben links in exportierten PDFs angezeigt.",
+        "bereich": "PDF-Export",
+        "erlaubte_typen": ["image/png", "image/webp", "image/jpeg"],
+    },
 }
 
 for _slot in BRANDING_SLOTS.values():

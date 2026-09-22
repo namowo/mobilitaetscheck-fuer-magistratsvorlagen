@@ -62,6 +62,9 @@ class Settings(BaseSettings):
     HOST_URL: str = "http://localhost:8000"
     FRONTEND_DIR: str = "../frontend/dist"
     BRANDING_UPLOAD_DIR: str = "./uploads/branding"
+    # Local (non-public) cache of the active PDF-export logo, mirrored from BRANDING_UPLOAD_DIR
+    # so PDF rendering can read it synchronously without an async DB call.
+    PDF_LOGO_UPLOAD_DIR: str = "./uploads/pdf-logo"
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_list)] = (
