@@ -59,6 +59,11 @@
             <span :class="data.gruppe ? '' : 'text-gray-400'">{{ data.gruppe?.name ?? '–' }}</span>
           </template>
         </Column>
+        <Column header="Admin" style="width: 80px">
+          <template #body="{ data }">
+            <i v-if="data.isLocalSuperuser" class="pi pi-check text-green-600" />
+          </template>
+        </Column>
         <Column header="" style="width: 80px">
           <template #body="{ data }">
             <div class="flex gap-1">
@@ -114,8 +119,8 @@
           </FloatLabel>
         </div>
         <div class="flex items-center gap-x-3">
-          <ToggleSwitch v-model="editData.is_superuser" inputId="is_superuser" />
-          <label for="is_superuser" class="text-sm">Admin-Rechte</label>
+          <ToggleSwitch v-model="editData.is_local_superuser" inputId="is_local_superuser" />
+          <label for="is_local_superuser" class="text-sm">Admin-Rechte</label>
         </div>
       </div>
       <template #footer>
@@ -160,7 +165,7 @@ const editData = reactive({
   erstelltAm: '',
   rolle_id: null,
   gruppe_id: null,
-  is_superuser: false,
+  is_local_superuser: false,
 })
 const toast = useToast()
 const confirm = useConfirm()
@@ -225,7 +230,7 @@ const openEdit = (user) => {
     : '–'
   editData.rolle_id = user.rolleId
   editData.gruppe_id = user.gruppeId ?? null
-  editData.is_superuser = user.isSuperuser
+  editData.is_local_superuser = user.isLocalSuperuser
   editVisible.value = true
 }
 
@@ -235,10 +240,13 @@ const saveEdit = async () => {
     const res = await apiClient.patch(`/einstellungen/benutzer/${editData.user_id}`, {
       rolle_id: editData.rolle_id,
       gruppe_id: editData.gruppe_id,
-      is_superuser: editData.is_superuser,
+      is_local_superuser: editData.is_local_superuser,
     })
     const idx = users.value.findIndex((u) => u.id === editData.user_id)
     if (idx !== -1) users.value[idx] = res.data
+    if (editData.user_id === authStore.userId) {
+      await authStore.refreshUser()
+    }
     editVisible.value = false
     toast.add({ severity: 'success', summary: 'Gespeichert', life: 3000 })
   } catch {

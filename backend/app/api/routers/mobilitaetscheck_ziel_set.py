@@ -46,6 +46,15 @@ async def get_ziel_sets(
     return result
 
 
+@router.get("/hat-eigene")
+async def get_hat_eigene_ziel_sets(
+    db: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+):
+    """Return whether the user's Gemeinde has created any own Leitziele-Set."""
+    return {"hat_eigene": await crud.hat_eigene(db, user.gemeinde_id)}
+
+
 @router.get("/{id}", response_model=ReadSchema)
 async def get_ziel_set(
     id: int,
@@ -54,7 +63,7 @@ async def get_ziel_set(
 ):
     instance = await crud.get(db, id)
     # Allow access if own set or public
-    if instance.gemeinde_id != user.gemeinde_id and not instance.ist_oeffentlich and not user.is_superuser:
+    if instance.gemeinde_id != user.gemeinde_id and not instance.ist_oeffentlich and not user.is_superuser and not user.is_local_superuser:
         from app.crud.exceptions import AuthorizationError
         raise AuthorizationError("Kein Zugriff auf dieses Set")
     return instance
@@ -129,7 +138,7 @@ async def kopieren_zu_leitziele(
     """Copy the ZielSet's Ziele into the user's own active Leitziele."""
     instance = await crud.get(db, id)
     # Allow access if own set or public
-    if instance.gemeinde_id != user.gemeinde_id and not instance.ist_oeffentlich and not user.is_superuser:
+    if instance.gemeinde_id != user.gemeinde_id and not instance.ist_oeffentlich and not user.is_superuser and not user.is_local_superuser:
         from app.crud.exceptions import AuthorizationError
         raise AuthorizationError("Kein Zugriff auf dieses Set")
     await crud.kopieren_zu_leitziele(db, id, user, request.modus)
@@ -143,7 +152,7 @@ async def duplizieren(
 ):
     """Create a deep copy of a ZielSet (own or public) within the user's municipality."""
     instance = await crud.get(db, id)
-    if instance.gemeinde_id != user.gemeinde_id and not instance.ist_oeffentlich and not user.is_superuser:
+    if instance.gemeinde_id != user.gemeinde_id and not instance.ist_oeffentlich and not user.is_superuser and not user.is_local_superuser:
         from app.crud.exceptions import AuthorizationError
         raise AuthorizationError("Kein Zugriff auf dieses Set")
     return await crud.duplizieren(db, id, user)
@@ -158,7 +167,7 @@ async def set_als_standard(
     """Set a ZielSet as the standard for the current municipality."""
     instance = await crud.get(db, id)
     # Allow access if own set or public
-    if instance.gemeinde_id != user.gemeinde_id and not instance.ist_oeffentlich and not user.is_superuser:
+    if instance.gemeinde_id != user.gemeinde_id and not instance.ist_oeffentlich and not user.is_superuser and not user.is_local_superuser:
         from app.crud.exceptions import AuthorizationError
         raise AuthorizationError("Kein Zugriff auf dieses Set")
 

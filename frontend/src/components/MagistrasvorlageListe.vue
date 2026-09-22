@@ -245,7 +245,7 @@ import ToggleSwitch from 'openvue/toggleswitch'
 import Listbox from 'openvue/listbox'
 
 const authStore = useAuthStore()
-const isPolitik = computed(() => authStore.userRolleId === 2)
+const isPolitik = computed(() => authStore.effectiveRolleId === 2)
 
 const magistratsvorlageListe = ref([])
 const searchQuery = ref('')

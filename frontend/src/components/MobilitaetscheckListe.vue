@@ -104,8 +104,8 @@ const authStore = useAuthStore()
 const isLoading = ref(false)
 const eingaben = ref([])
 
-const isPolitik = computed(() => authStore.userRolleId === 2)
-const activeTab = ref(authStore.userRolleId === 2 ? 'meine' : 'verwaltung')
+const isPolitik = computed(() => authStore.effectiveRolleId === 2)
+const activeTab = ref(authStore.effectiveRolleId === 2 ? 'meine' : 'verwaltung')
 
 const fetchEingaben = async () => {
   isLoading.value = true
@@ -127,10 +127,12 @@ const meineListe = computed(() =>
   eingaben.value.filter((e) => String(e.erstelltVon) === String(authStore.userId))
 )
 
-// Verwaltung: Verwaltung-role items; Politik sees only published ones
+// Verwaltung: Verwaltung-role items (or local-superuser acting as Verwaltung); Politik sees only published ones
 const verwaltungListe = computed(() =>
   eingaben.value.filter(
-    (e) => e.autor?.rolle?.name === 'Verwaltung' && (!isPolitik.value || e.veroeffentlicht)
+    (e) =>
+      (e.autor?.rolle?.name === 'Verwaltung' || e.autor?.isLocalSuperuser) &&
+      (!isPolitik.value || e.veroeffentlicht)
   )
 )
 

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.crud.mobilitaetscheck_eingabe import crud_mobility_submission as crud
-from app.core.deps import current_active_user, get_async_session
+from app.core.deps import current_active_user, get_async_session, get_effective_is_politik
 from app.models.user import User
 from app.schemas.mobilitaetscheck_eingabe import (
     MobilitaetscheckEingabeCreate as CreateSchema,
@@ -51,6 +51,15 @@ async def get_mobility_submissions(
     )
 
 
+@router.get("/hat-eigene")
+async def get_hat_eigene_mobilitaetschecks(
+    db: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+):
+    """Return whether the current user has created any own Mobilitätscheck."""
+    return {"hat_eigene": await crud.hat_eigene(db, user.id)}
+
+
 @router.get(
     "/nach-parametern",
     response_model=List[ReadSchema],
@@ -82,9 +91,6 @@ async def filter_mobility_submissions(
     return await crud.get_by_multi_keys(db=db, keys=keys, sort_params=sort_params)
 
 
-POLITIK_ROLLE_NAME = "Politik"
-
-
 @router.get(
     "/magistratsvorlage/{magistratsvorlage_id}",
     response_model=List[ReadSchema],
@@ -94,10 +100,9 @@ async def get_mobility_submission(
     magistratsvorlage_id: int,
     db: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
+    is_politik: bool = Depends(get_effective_is_politik),
 ):
     sort_params = [("erstellt_am", "desc")]
-
-    is_politik = not user.is_superuser and user.rolle.name == POLITIK_ROLLE_NAME
 
     if is_politik:
         stmt = (

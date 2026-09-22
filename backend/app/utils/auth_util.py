@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from app.crud.exceptions import AuthorizationError
 
-ADMIN_ROLLE_NAME = "Admin"
-
 
 def check_user_authorization(user: User, gemeinde_id: int):
     """
@@ -15,9 +13,9 @@ def check_user_authorization(user: User, gemeinde_id: int):
     """
     grant_access = gemeinde_id == user.gemeinde_id
 
-    # Gemeinde Admins (is_superuser + Verwaltung role) bypass Gemeinde checks.
-    # Platform Admins (is_superuser + Admin role) do NOT get access to Gemeinde resources.
-    if user.is_superuser and user.rolle.name != ADMIN_ROLLE_NAME:
+    # Gemeinde Admins (is_local_superuser) bypass Gemeinde checks within their own Gemeinde.
+    # Platform Admins (is_superuser) do NOT automatically get access to Gemeinde resources.
+    if user.is_local_superuser:
         grant_access = True
 
     if not grant_access:

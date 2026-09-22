@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.magistratsvorlage import crud_magistratsvorlage as crud
-from app.core.deps import current_active_user, get_async_session
+from app.core.deps import current_active_user, get_async_session, get_effective_is_politik
 from app.models.gemeinde_gebiet import GemeindeGebiet
 from app.models.user import User
 from app.models.tag import Tag
@@ -23,17 +23,13 @@ association_fields = {
 }
 
 
-POLITIK_ROLLE_NAME = "Politik"
-
-
 @router.get("", response_model=List[ReadSchema])
 async def get_magistratsvorlagen(
     db: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
+    is_politik: bool = Depends(get_effective_is_politik),
 ):
     sort_params = [("erstellt_am", "desc")]
-
-    is_politik = not user.is_superuser and user.rolle.name == POLITIK_ROLLE_NAME
 
     keys = {"gemeinde_id": user.gemeinde_id}
     if is_politik:

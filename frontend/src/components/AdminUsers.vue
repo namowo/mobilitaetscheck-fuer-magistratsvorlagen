@@ -57,6 +57,16 @@
         <Column field="rolle.name" header="Rolle" sortable>
           <template #body="{ data }">{{ data.rolle?.name }}</template>
         </Column>
+        <Column header="Systemadmin" style="width: 100px">
+          <template #body="{ data }">
+            <i v-if="data.isSuperuser" class="pi pi-check text-green-600" />
+          </template>
+        </Column>
+        <Column header="Kommunaler Admin" style="width: 100px">
+          <template #body="{ data }">
+            <i v-if="data.isLocalSuperuser" class="pi pi-check text-green-600" />
+          </template>
+        </Column>
         <Column header="" style="width: 80px">
           <template #body="{ data }">
             <div class="flex gap-1">
@@ -125,7 +135,11 @@
         </div>
         <div class="flex items-center gap-x-3">
           <ToggleSwitch v-model="editData.is_superuser" inputId="is_superuser" />
-          <label for="is_superuser">Admin-Rechte</label>
+          <label for="is_superuser">Systemadministrator</label>
+        </div>
+        <div class="flex items-center gap-x-3">
+          <ToggleSwitch v-model="editData.is_local_superuser" inputId="is_local_superuser" />
+          <label for="is_local_superuser">Kommunaler Administrator (Gemeinde-Admin)</label>
         </div>
       </div>
       <template #footer>
@@ -149,8 +163,10 @@ import FloatLabel from 'openvue/floatlabel'
 import InputText from 'openvue/inputtext'
 import ToggleSwitch from 'openvue/toggleswitch'
 import { apiClient } from '@/services/axios'
+import { useAuthStore } from '@/stores/auth'
 import { useToast } from 'openvue/usetoast'
 
+const authStore = useAuthStore()
 const users = ref([])
 const gemeindeOptions = ref([])
 const rolleOptions = ref([])
@@ -165,7 +181,8 @@ const editData = reactive({
   erstelltAm: '',
   gemeinde_id: null,
   rolle_id: null,
-  is_superuser: false
+  is_superuser: false,
+  is_local_superuser: false
 })
 const toast = useToast()
 const confirm = useConfirm()
@@ -230,6 +247,7 @@ const openEdit = (user) => {
   editData.gemeinde_id = user.gemeindeId
   editData.rolle_id = user.rolleId
   editData.is_superuser = user.isSuperuser
+  editData.is_local_superuser = user.isLocalSuperuser
   editVisible.value = true
 }
 
@@ -239,10 +257,14 @@ const saveEdit = async () => {
     const res = await apiClient.patch(`/admin/user/${editData.user_id}`, {
       gemeinde_id: editData.gemeinde_id,
       rolle_id: editData.rolle_id,
-      is_superuser: editData.is_superuser
+      is_superuser: editData.is_superuser,
+      is_local_superuser: editData.is_local_superuser
     })
     const idx = users.value.findIndex((u) => u.id === editData.user_id)
     if (idx !== -1) users.value[idx] = res.data
+    if (editData.user_id === authStore.userId) {
+      await authStore.refreshUser()
+    }
     editVisible.value = false
     toast.add({ severity: 'success', summary: 'Gespeichert', life: 3000 })
   } catch {

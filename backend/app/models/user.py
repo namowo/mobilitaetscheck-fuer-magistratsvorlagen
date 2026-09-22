@@ -2,9 +2,9 @@ from typing import Optional
 
 from datetime import datetime
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
-from sqlalchemy import ForeignKey
+from sqlalchemy import Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql import text
+from sqlalchemy.sql import text, false
 
 from app.core.db import Base
 
@@ -12,6 +12,12 @@ from app.core.db import Base
 class User(SQLAlchemyBaseUserTableUUID, Base):
     __tablename__ = "user"
 
+    is_local_superuser: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        server_default=false(),
+        comment="Gemeinde-Admin: Adminrechte innerhalb der eigenen Gemeinde (unabhängig von is_superuser, das nur Plattform-Administratoren vorbehalten ist)",
+    )
     vorname: Mapped[str] = mapped_column(
         nullable=False, comment="Vorname des Benutzers"
     )

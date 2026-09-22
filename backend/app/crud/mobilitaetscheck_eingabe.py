@@ -1,6 +1,8 @@
 from typing import Any
+from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from app.crud.base_eingabe import CRUDEingabe
 from app.models.mobilitaetscheck_eingabe import MobilitaetscheckEingabe as Model
@@ -41,6 +43,12 @@ class CRUDMobilitySubmission(CRUDEingabe[Model, CreateSchema, UpdateSchema]):
 
     async def export(self, db: AsyncSession, id: int):
         return await super().export(db=db, id=id, PDF=MobilitaetscheckPDF)
+
+    async def hat_eigene(self, db: AsyncSession, user_id: UUID) -> bool:
+        """Return whether this user has created any Mobilitätscheck."""
+        statement = select(self.model.id).where(self.model.erstellt_von == user_id).limit(1)
+        result = await db.execute(statement)
+        return result.scalar_one_or_none() is not None
 
 
 crud_mobility_submission = CRUDMobilitySubmission()

@@ -354,6 +354,8 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
+    } else if (to.hash) {
+      return { el: to.hash, top: 80 }
     } else {
       return { top: 0 }
     }
@@ -384,7 +386,8 @@ router.beforeEach(async (to) => {
     }
     if (
       to.meta.requiredUserRolleId &&
-      !to.meta.requiredUserRolleId.includes(authStore.userRolleId)
+      !to.meta.requiredUserRolleId.includes(authStore.effectiveRolleId) &&
+      !authStore.isLocalSuperuser
     ) {
       return { name: 'keine-zugangsberechtigung' }
     }
