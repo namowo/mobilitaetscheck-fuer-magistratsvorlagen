@@ -51,14 +51,21 @@
           <Button label="Anmelden" type="submit" class="w-full mt-1" :loading="isLoading" />
         </form>
 
-        <div class="border-t border-gray-100 mt-6 pt-4 grid grid-cols-1 gap-y-2 text-sm">
+        <div class="mt-6 text-sm text-center">
           <RouterLink class="text-blue-600 hover:underline" :to="{ name: 'passwort-vergessen' }">
             Passwort vergessen?
           </RouterLink>
-          <RouterLink class="text-blue-600 hover:underline" :to="{ name: 'registrieren' }">
-            Noch kein Konto? Hier registrieren
-          </RouterLink>
         </div>
+
+        <Divider />
+
+        <Button
+          label="Registrieren"
+          severity="secondary"
+          outlined
+          class="w-full"
+          @click="router.push({ name: 'registrieren' })"
+        />
       </BaseCard>
     </div>
   </div>
@@ -67,12 +74,13 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useForm } from 'vee-validate'
 import InputText from 'openvue/inputtext'
 import FloatLabel from 'openvue/floatlabel'
 import Password from 'openvue/password'
 import Button from 'openvue/button'
+import Divider from 'openvue/divider'
 import AuthLogoLeiste from '@/components/AuthLogoLeiste.vue'
 
 const isLoading = ref(false)
@@ -83,6 +91,7 @@ const [email] = defineField('email')
 const [password] = defineField('password')
 
 const route = useRoute()
+const router = useRouter()
 
 const sessionExpired = computed(() => route.query.redirect === 'sessionExpired')
 

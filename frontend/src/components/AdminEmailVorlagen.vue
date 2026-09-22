@@ -25,12 +25,19 @@
             </FloatLabel>
           </div>
 
-          <p class="text-xs text-gray-500 mb-2">
+          <p v-if="vorlage.platzhalter.length" class="text-xs text-gray-500 mb-2">
             Verfügbare Platzhalter:
             <code v-for="p in vorlage.platzhalter" :key="p" class="mr-2">{{ placeholderLabel(p) }}</code>
           </p>
 
-          <RichContentEditor v-model="vorlage.inhaltEdit" editorStyle="min-height: 280px" />
+          <Textarea
+            v-if="vorlage.istText"
+            v-model="vorlage.inhaltEdit"
+            class="w-full"
+            rows="8"
+            autoResize
+          />
+          <RichContentEditor v-else v-model="vorlage.inhaltEdit" editorStyle="min-height: 280px" />
 
           <div class="flex justify-end gap-2 mt-4">
             <Button
@@ -53,6 +60,7 @@ import { ref, onMounted } from 'vue'
 import RichContentEditor from '@/components/RichContentEditor.vue'
 import Button from 'openvue/button'
 import InputText from 'openvue/inputtext'
+import Textarea from 'openvue/textarea'
 import FloatLabel from 'openvue/floatlabel'
 import Accordion from 'openvue/accordion'
 import AccordionPanel from 'openvue/accordionpanel'
@@ -65,7 +73,9 @@ import { useConfirm } from 'openvue/useconfirm'
 const labels = {
   'account-bestaetigen': 'Account bestätigen',
   einladung: 'Einladung zur Registrierung',
-  'passwort-zuruecksetzen': 'Passwort zurücksetzen'
+  'passwort-zuruecksetzen': 'Passwort zurücksetzen',
+  'kommune-anfrage-politik': 'Kommune anfragen (Politik)',
+  'kommune-anfrage-verwaltung': 'Kommune anfragen (Verwaltung)'
 }
 
 const isLoading = ref(false)

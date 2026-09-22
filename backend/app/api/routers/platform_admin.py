@@ -19,7 +19,7 @@ from app.schemas.plattform_einstellung import (
     PlattformEinstellungUpdate,
 )
 from app.schemas.user import UserRead
-from app.services.mail.vorlagen_registry import DEFAULT_VORLAGEN, get_default_inhalt
+from app.services.mail.vorlagen_registry import DEFAULT_VORLAGEN, TEXT_VORLAGEN, get_default_inhalt
 
 router = APIRouter()
 
@@ -33,6 +33,7 @@ def _to_email_vorlage_read(instance) -> EmailVorlageRead:
         standard_betreff=default["betreff"],
         standard_inhalt=get_default_inhalt(instance.key),
         platzhalter=default["platzhalter"],
+        ist_text=instance.key in TEXT_VORLAGEN,
     )
 
 

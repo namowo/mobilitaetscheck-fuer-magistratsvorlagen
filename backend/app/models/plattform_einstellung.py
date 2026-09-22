@@ -63,3 +63,7 @@ class PlattformEinstellung(Base):
     startseite_inhalt: Mapped[Optional[str]] = mapped_column(
         nullable=True, comment="Textkörper (HTML) der Startseite, ersetzt den Standard-Hero-Text"
     )
+    kontakt_email: Mapped[Optional[str]] = mapped_column(
+        nullable=True,
+        comment="Kontakt-E-Mail-Adresse für Freischaltungsanfragen bei der Registrierung",
+    )
