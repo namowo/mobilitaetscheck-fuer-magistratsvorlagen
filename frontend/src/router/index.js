@@ -242,11 +242,17 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: () => import('@/views/AdminView.vue'),
+      redirect: { name: 'admin-dashboard' },
       meta: {
         requiresAuth: true,
         requiresPlatformAdmin: true
       },
       children: [
+        {
+          path: 'dashboard',
+          name: 'admin-dashboard',
+          component: () => import('@/views/AdminDashboardView.vue')
+        },
         {
           path: 'kommunen',
           name: 'admin-kommunen',

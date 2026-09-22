@@ -32,7 +32,7 @@
           >
             <Button label="Magistratsvorlagen" />
           </router-link>
-          <router-link v-if="[3].includes(authStore.userRolleId)" :to="{ name: 'admin-kommunen' }">
+          <router-link v-if="[3].includes(authStore.userRolleId)" :to="{ name: 'admin-dashboard' }">
             <Button label="Administration" />
           </router-link>
         </template>
