@@ -139,7 +139,7 @@
         </div>
         <div class="flex items-center gap-x-3">
           <ToggleSwitch v-model="editData.is_local_superuser" inputId="is_local_superuser" />
-          <label for="is_local_superuser">Kommunaler Administrator (Gemeinde-Admin)</label>
+          <label for="is_local_superuser">Kommunaler Administrator</label>
         </div>
       </div>
       <template #footer>

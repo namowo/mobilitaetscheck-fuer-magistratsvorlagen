@@ -22,7 +22,7 @@
       <!-- Verwaltung admin toggle -->
       <div v-if="isVerwaltung" class="flex items-center gap-x-3">
         <ToggleSwitch v-model="isVerwaltungAdmin" inputId="verwaltungAdmin" />
-        <label for="verwaltungAdmin" class="text-sm">Admin-Rechte gewähren</label>
+        <label for="verwaltungAdmin" class="text-sm">Als kommunaler Administrator einladen</label>
       </div>
 
       <div class="field">
@@ -72,7 +72,7 @@
 
       <div v-if="isVerwaltung && isVerwaltungAdmin" class="flex items-center gap-2 text-sm text-gray-500">
         <i class="pi pi-info-circle" />
-        Einladung als Verwaltung mit Admin-Rechten.
+        Einladung als kommunaler Administrator (Verwaltung mit Admin-Rechten).
       </div>
 
       <Button label="Einladung senden" type="submit" :loading="isSubmitting" class="w-fit" />

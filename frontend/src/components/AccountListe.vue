@@ -59,7 +59,7 @@
             <span :class="data.gruppe ? '' : 'text-gray-400'">{{ data.gruppe?.name ?? '–' }}</span>
           </template>
         </Column>
-        <Column header="Admin" style="width: 80px">
+        <Column header="Kommunaler Admin" style="width: 100px">
           <template #body="{ data }">
             <i v-if="data.isLocalSuperuser" class="pi pi-check text-green-600" />
           </template>
@@ -120,7 +120,7 @@
         </div>
         <div class="flex items-center gap-x-3">
           <ToggleSwitch v-model="editData.is_local_superuser" inputId="is_local_superuser" />
-          <label for="is_local_superuser" class="text-sm">Admin-Rechte</label>
+          <label for="is_local_superuser" class="text-sm">Kommunaler Administrator</label>
         </div>
       </div>
       <template #footer>
