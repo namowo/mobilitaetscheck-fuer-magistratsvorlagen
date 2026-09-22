@@ -21,6 +21,9 @@ class UserRead(schemas.BaseUser[UUID]):
     gemeinde: "GemeindeRead" = Field(
         ..., description="Detailed information about the associated municipality."
     )
+    is_local_superuser: bool = Field(
+        ..., description="Gemeinde-Admin: Adminrechte innerhalb der eigenen Gemeinde."
+    )
     gruppe_id: Optional[int] = Field(None)
     gruppe: Optional["UserGruppeRead"] = Field(None)
     erstellt_am: datetime = Field(
@@ -37,6 +40,9 @@ class UserCreate(schemas.BaseUserCreate):
     nachname: str = Field(..., description="User's last name.")
     rolle_id: int = Field(..., description="Role of the user in the system.")
     gemeinde_id: int = Field(..., description="ID of the associated municipality.")
+    is_local_superuser: bool = Field(
+        False, description="Gemeinde-Admin: Adminrechte innerhalb der eigenen Gemeinde."
+    )
     gruppe_id: Optional[int] = Field(None, description="Gruppe des Benutzers.")
     einladungs_token: Optional[str] = Field(
         None, description="Invite token (required for Verwaltung registration)."
@@ -65,6 +71,9 @@ class UserUpdate(schemas.BaseUserUpdate):
     )
     gemeinde_id: Optional[int] = Field(
         None, description="Updated ID of the associated municipality."
+    )
+    is_local_superuser: Optional[bool] = Field(
+        None, description="Gemeinde-Admin: Adminrechte innerhalb der eigenen Gemeinde."
     )
 
 

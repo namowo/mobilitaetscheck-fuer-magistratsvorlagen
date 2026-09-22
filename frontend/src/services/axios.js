@@ -25,6 +25,22 @@ export const apiClient = applyCaseMiddleware(
   })
 )
 
+// Attach the Platform Admin's "view as" role, if any, so the backend can
+// narrow read-scoping accordingly. Read directly from localStorage (rather
+// than importing the Pinia auth store here) to avoid a circular dependency —
+// the auth store persists these same keys via useStorage.
+apiClient.interceptors.request.use((config) => {
+  const userRolleId = localStorage.getItem('userRolleId')
+  const viewAsRolleId = localStorage.getItem('viewAsRolleId')
+  if (userRolleId === '3' && viewAsRolleId) {
+    const rolleName = { 1: 'Verwaltung', 2: 'Politik' }[viewAsRolleId]
+    if (rolleName) {
+      config.headers['X-View-As-Rolle'] = rolleName
+    }
+  }
+  return config
+})
+
 // Add global response interceptor
 apiClient.interceptors.response.use(
   (response) => response, // Pass successful responses through

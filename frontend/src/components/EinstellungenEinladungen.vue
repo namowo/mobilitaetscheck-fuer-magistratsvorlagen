@@ -140,7 +140,7 @@ onMounted(async () => {
 })
 
 // Politik users can only invite other Politik users
-const isPolitik = computed(() => authStore.userRolleId === 2)
+const isPolitik = computed(() => authStore.effectiveRolleId === 2)
 
 const availableRollen = computed(() => {
   if (isPolitik.value) {
@@ -177,7 +177,7 @@ const onSubmit = handleSubmit(async (values) => {
       email: values.email,
       rolle_id: values.rolleId,
       gueltig_stunden: values.gueltigStunden,
-      is_superuser: isVerwaltung.value ? isVerwaltungAdmin.value : false,
+      is_local_superuser: isVerwaltung.value ? isVerwaltungAdmin.value : false,
     })
     toast.add({
       severity: 'success',

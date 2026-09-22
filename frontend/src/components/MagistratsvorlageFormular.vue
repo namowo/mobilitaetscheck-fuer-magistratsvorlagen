@@ -206,7 +206,7 @@ import Tag from 'openvue/tag'
 
 const confirm = useConfirm()
 const authStore = useAuthStore()
-const isPolitik = computed(() => authStore.userRolleId === 2)
+const isPolitik = computed(() => authStore.effectiveRolleId === 2)
 
 const props = defineProps({
   editMode: {

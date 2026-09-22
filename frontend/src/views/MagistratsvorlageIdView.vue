@@ -45,7 +45,7 @@ import Menu from 'openvue/menu'
 
 const route = useRoute()
 const authStore = useAuthStore()
-const isPolitik = computed(() => authStore.userRolleId === 2)
+const isPolitik = computed(() => authStore.effectiveRolleId === 2)
 
 const vorlage = ref(null)
 

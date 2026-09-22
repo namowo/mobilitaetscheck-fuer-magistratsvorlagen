@@ -24,7 +24,8 @@ class EinladungCreate(BaseModel):
     rolle_id: int = Field(..., description="Rolle der eingeladenen Person")
     gueltig_stunden: int = Field(72, ge=1, description="Gültigkeitsdauer in Stunden")
     gemeinde_id: Optional[int] = Field(None, description="Nur für Platform-Admins: Ziel-Gemeinde")
-    is_superuser: bool = Field(False, description="Nur für Platform-Admins: Gemeinde-Admin einladen")
+    is_superuser: bool = Field(False, description="Nur für Platform-Admins: Systemadministrator einladen")
+    is_local_superuser: bool = Field(False, description="Gemeinde-Admin einladen")
 
 
 @router.post("")
@@ -34,8 +35,8 @@ async def create_einladung(
     admin: User = Depends(current_active_user),
 ):
     is_platform_admin = admin.is_superuser and admin.rolle.name == ADMIN_ROLLE_NAME
-    is_gemeinde_admin = admin.is_superuser and admin.rolle.name != ADMIN_ROLLE_NAME
-    is_politik = not admin.is_superuser and admin.rolle.name == POLITIK_ROLLE_NAME
+    is_gemeinde_admin = admin.is_local_superuser and admin.rolle.name != ADMIN_ROLLE_NAME
+    is_politik = not admin.is_superuser and not admin.is_local_superuser and admin.rolle.name == POLITIK_ROLLE_NAME
 
     if not is_platform_admin and not is_gemeinde_admin and not is_politik:
         raise HTTPException(status_code=403, detail="Keine Berechtigung")
@@ -60,6 +61,7 @@ async def create_einladung(
             raise HTTPException(status_code=400, detail="gemeinde_id ist erforderlich")
         target_gemeinde_id = obj_in.gemeinde_id
         invite_is_superuser = obj_in.is_superuser
+        invite_is_local_superuser = obj_in.is_local_superuser
         gemeinde_result = await db.execute(select(Gemeinde).where(Gemeinde.id == target_gemeinde_id))
         target_gemeinde = gemeinde_result.scalar_one_or_none()
         if target_gemeinde is None:
@@ -67,7 +69,8 @@ async def create_einladung(
         target_gemeinde_name = target_gemeinde.name
     else:
         target_gemeinde_id = admin.gemeinde_id
-        invite_is_superuser = obj_in.is_superuser if is_gemeinde_admin else False
+        invite_is_superuser = False
+        invite_is_local_superuser = obj_in.is_local_superuser if is_gemeinde_admin else False
         target_gemeinde_name = admin.gemeinde.name
 
     token = create_invite_token(
@@ -77,6 +80,7 @@ async def create_einladung(
         secret=settings.EINLADUNG_TOKEN_SECRET,
         valid_hours=obj_in.gueltig_stunden,
         is_superuser=invite_is_superuser,
+        is_local_superuser=invite_is_local_superuser,
     )
 
     await send_einladung(

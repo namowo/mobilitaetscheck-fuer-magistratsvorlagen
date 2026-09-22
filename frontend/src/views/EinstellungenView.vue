@@ -96,7 +96,11 @@ const allItems = [
 ]
 
 const items = computed(() =>
-  allItems.filter((group) => group.requiresRolleId.includes(authStore.userRolleId))
+  allItems.filter(
+    (group) =>
+      group.requiresRolleId.includes(authStore.effectiveRolleId) ||
+      (authStore.isLocalSuperuser && group.requiresRolleId.includes(1))
+  )
 )
 </script>
 

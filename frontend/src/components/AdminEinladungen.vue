@@ -210,8 +210,10 @@ watch([emailLocal, verwaltungDomain], ([local, domain]) => {
   }
 })
 
-const derivedIsSuperuser = computed(() => {
-  if (isSystemadministration.value) return true
+const derivedIsSuperuser = computed(() => isSystemadministration.value)
+
+const derivedIsLocalSuperuser = computed(() => {
+  if (isSystemadministration.value) return false
   if (isVerwaltung.value) return isVerwaltungAdmin.value
   return false
 })
@@ -231,7 +233,8 @@ const onSubmit = handleSubmit(async (values) => {
       rolle_id: values.rolleId,
       gueltig_stunden: values.gueltigStunden,
       gemeinde_id: values.gemeindeId,
-      is_superuser: derivedIsSuperuser.value
+      is_superuser: derivedIsSuperuser.value,
+      is_local_superuser: derivedIsLocalSuperuser.value
     })
     toast.add({
       severity: 'success',

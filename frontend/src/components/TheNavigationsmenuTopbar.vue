@@ -27,12 +27,12 @@
         </router-link>
         <template v-if="authStore.isLoggedIn">
           <router-link
-            v-if="![3].includes(authStore.userRolleId)"
+            v-if="![3].includes(authStore.effectiveRolleId) || authStore.isLocalSuperuser"
             :to="{ name: 'magistratsvorlage-liste' }"
           >
             <Button label="Magistratsvorlagen" />
           </router-link>
-          <router-link v-if="[3].includes(authStore.userRolleId)" :to="{ name: 'admin-dashboard' }">
+          <router-link v-if="authStore.canSwitchView" :to="{ name: 'admin-dashboard' }">
             <Button label="Administration" />
           </router-link>
         </template>
@@ -41,12 +41,27 @@
 
     <template #end>
       <div v-if="authStore.isLoggedIn" class="flex items-center gap-2">
-        <router-link v-if="[1].includes(authStore.userRolleId)" :to="{ name: 'leitziel-sets' }">
+        <router-link
+          v-if="[1].includes(authStore.effectiveRolleId) || authStore.isLocalSuperuser"
+          :to="{ name: 'leitziel-sets' }"
+        >
           <Button v-tooltip.left="'Einstellungen'" icon="pi pi-cog" />
         </router-link>
-        <router-link v-if="[2].includes(authStore.userRolleId)" :to="{ name: 'einladungen' }">
+        <router-link v-if="[2].includes(authStore.effectiveRolleId)" :to="{ name: 'einladungen' }">
           <Button v-tooltip.left="'Einladungen'" icon="pi pi-user-plus" />
         </router-link>
+
+        <Select
+          v-if="authStore.canSwitchView"
+          :modelValue="authStore.viewAsRolleId ?? VIEW_AS_NONE"
+          @update:modelValue="onChangeViewAs"
+          :options="viewAsOptions"
+          optionLabel="label"
+          optionValue="value"
+          size="small"
+          v-tooltip.left="'Ansicht wechseln (nur für Systemadministratoren)'"
+          class="w-40"
+        />
 
         <Avatar
           v-tooltip.right="'Profil und Abmelden'"
@@ -86,13 +101,27 @@ import Avatar from 'openvue/avatar'
 import Button from 'openvue/button'
 import Toolbar from 'openvue/toolbar'
 import Popover from 'openvue/popover'
+import Select from 'openvue/select'
 import BrandingLogoLink from './BrandingLogoLink.vue'
 import defaultLogo from '../assets/logos/pimoo-logo-invertiert.png'
 
 const authStore = useAuthStore()
 const brandingStore = useBrandingStore()
 
+const VIEW_AS_NONE = 0
+
+const viewAsOptions = [
+  { label: 'Systemadmin', value: VIEW_AS_NONE },
+  { label: 'Verwaltung', value: 1 },
+  { label: 'Politik', value: 2 }
+]
+
 const op = ref()
+
+const onChangeViewAs = (rolleId) => {
+  authStore.setViewAsRolleId(rolleId === VIEW_AS_NONE ? null : rolleId)
+  window.location.reload()
+}
 
 const toggle = (event) => {
   op.value.toggle(event)

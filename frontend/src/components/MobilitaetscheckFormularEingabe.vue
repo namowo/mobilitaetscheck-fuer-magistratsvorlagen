@@ -87,7 +87,7 @@ const authStore = useAuthStore()
 const isLoadingData = ref(true)
 const isSubmitting = ref(false)
 const zielSets = ref([])
-const isPolitik = computed(() => authStore.userRolleId === 2)
+const isPolitik = computed(() => authStore.effectiveRolleId === 2)
 const eigeneSets = computed(() => zielSets.value.filter((s) => s.gemeindeId === authStore.gemeindeId))
 const hasStandard = computed(() => zielSets.value.some((s) => s.istStandard))
 

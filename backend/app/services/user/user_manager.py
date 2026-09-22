@@ -52,9 +52,13 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, UUID]):
             user_create.gemeinde_id = payload["gemeinde_id"]
             user_create.rolle_id = payload["rolle_id"]
             is_superuser_from_token = payload.get("is_superuser", False)
+            is_local_superuser_from_token = payload.get("is_local_superuser", False)
 
-            if is_superuser_from_token:
-                user_create.is_superuser = True
+            if is_superuser_from_token or is_local_superuser_from_token:
+                if is_superuser_from_token:
+                    user_create.is_superuser = True
+                if is_local_superuser_from_token:
+                    user_create.is_local_superuser = True
                 user = await super().create(user_create, safe=False, request=request)
             else:
                 user = await super().create(user_create, safe=safe, request=request)

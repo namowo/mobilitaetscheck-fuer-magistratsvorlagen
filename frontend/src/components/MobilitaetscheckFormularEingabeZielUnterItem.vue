@@ -230,7 +230,7 @@ import Slider from 'openvue/slider'
 import ButtonTextblockHinzufuegen from '@/components/ButtonTextblockHinzufuegen.vue'
 
 const authStore = useAuthStore()
-const isPolitik = computed(() => authStore.userRolleId === 2)
+const isPolitik = computed(() => authStore.effectiveRolleId === 2)
 
 const props = defineProps({
   editMode: {

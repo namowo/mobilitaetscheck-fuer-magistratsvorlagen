@@ -15,7 +15,7 @@ router = APIRouter()
 
 class GemeindeUserUpdate(BaseModel):
     rolle_id: Optional[int] = None
-    is_superuser: Optional[bool] = None
+    is_local_superuser: Optional[bool] = None
     gruppe_id: Optional[int] = None
 
 
@@ -37,8 +37,8 @@ async def update_gemeinde_user(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Benutzer nicht gefunden")
     if obj_in.rolle_id is not None:
         target.rolle_id = obj_in.rolle_id
-    if obj_in.is_superuser is not None:
-        target.is_superuser = obj_in.is_superuser
+    if obj_in.is_local_superuser is not None:
+        target.is_local_superuser = obj_in.is_local_superuser
     if "gruppe_id" in obj_in.model_fields_set:
         target.gruppe_id = obj_in.gruppe_id
     await db.commit()

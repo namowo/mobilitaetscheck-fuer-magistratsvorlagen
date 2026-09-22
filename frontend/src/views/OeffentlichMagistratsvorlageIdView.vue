@@ -173,7 +173,9 @@ const modalVisible = ref(false)
 const activeCheck = ref(null)
 
 const verwaltungChecks = computed(() =>
-  mobilitaetschecks.value.filter((c) => c.autor?.rolle?.name === 'Verwaltung')
+  mobilitaetschecks.value.filter(
+    (c) => c.autor?.rolle?.name === 'Verwaltung' || c.autor?.isLocalSuperuser
+  )
 )
 const politikChecks = computed(() =>
   mobilitaetschecks.value.filter((c) => c.autor?.rolle?.name === 'Politik')

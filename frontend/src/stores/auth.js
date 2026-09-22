@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useStorage } from '@vueuse/core'
 import { apiClient } from '@/services/axios'
@@ -26,6 +26,29 @@ export const useAuthStore = defineStore(
         write: (v) => String(v)
       }
     })
+
+    const isLocalSuperuser = useStorage('isLocalSuperuser', false)
+
+    // Platform Admins (rolleId 3) may switch their view to demo the app as
+    // another role. This is purely a frontend navigation aid — it does not
+    // change any backend permission and is not sent to the API.
+    const viewAsRolleId = useStorage('viewAsRolleId', null, undefined, {
+      serializer: {
+        read: (v) => (v === 'none' || v === null || v === undefined ? null : Number(v)),
+        write: (v) => String(v)
+      }
+    })
+
+    const canSwitchView = computed(() => userRolleId.value === 3)
+
+    const effectiveRolleId = computed(() =>
+      canSwitchView.value && viewAsRolleId.value !== null ? viewAsRolleId.value : userRolleId.value
+    )
+
+    function setViewAsRolleId(rolleId) {
+      if (!canSwitchView.value) return
+      viewAsRolleId.value = rolleId
+    }
 
     const userId = useStorage('userId')
     const userEmail = useStorage('userEmail')
@@ -59,6 +82,7 @@ export const useAuthStore = defineStore(
           user.vorname.charAt(0).toUpperCase() + user.nachname.charAt(0).toUpperCase()
         userRolleId.value = user.rolleId
         gemeindeId.value = user.gemeindeId
+        isLocalSuperuser.value = user.isLocalSuperuser
         userId.value = user.id
         userEmail.value = user.email
         isVerified.value = user.isVerified
@@ -81,6 +105,8 @@ export const useAuthStore = defineStore(
         isLoggedIn.value = false
         isVerified.value = false
         userRolleId.value = null
+        isLocalSuperuser.value = false
+        viewAsRolleId.value = null
         router.replace({ name: 'startseite' })
       } catch (error) {
         if (error instanceof Error) {
@@ -109,6 +135,19 @@ export const useAuthStore = defineStore(
       }
     }
 
+    async function refreshUser() {
+      const user = await getUser()
+      if (user) {
+        userRolleId.value = user.rolleId
+        gemeindeId.value = user.gemeindeId
+        isLocalSuperuser.value = user.isLocalSuperuser
+        isVerified.value = user.isVerified
+        if (user.rolleId !== 3) {
+          viewAsRolleId.value = null
+        }
+      }
+    }
+
     apiClient.interceptors.response.use(
       (response) => response, // Pass through if response is successful
       (error) => {
@@ -117,6 +156,8 @@ export const useAuthStore = defineStore(
           router.replace({ name: 'anmelden', query: { redirect: 'sessionExpired' } })
           isLoggedIn.value = false
           userRolleId.value = null
+          isLocalSuperuser.value = false
+          viewAsRolleId.value = null
         }
         // return Promise.reject(error) // Continue to reject the error to handle it locally if needed
       }
@@ -180,6 +221,11 @@ export const useAuthStore = defineStore(
       isVerified,
       userInitialien,
       gemeindeId,
+      isLocalSuperuser,
+      viewAsRolleId,
+      canSwitchView,
+      effectiveRolleId,
+      setViewAsRolleId,
       userId,
       userRolleId,
       userEmail,
@@ -189,6 +235,7 @@ export const useAuthStore = defineStore(
       checkAuthStatus,
       getUser,
       refreshVerified,
+      refreshUser,
       updateUser,
       forgotPassword,
       resetPassword

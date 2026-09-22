@@ -1,6 +1,6 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Optional
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, Header, HTTPException, status
 from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import (
     AuthenticationBackend,
@@ -69,6 +69,40 @@ async def current_platform_admin(user: User = Depends(current_active_user)) -> U
 
 
 async def current_gemeinde_admin(user: User = Depends(current_active_user)) -> User:
-    if not user.is_superuser or user.rolle.name != VERWALTUNG_ROLLE_NAME:
+    if not user.is_local_superuser or user.rolle.name != VERWALTUNG_ROLLE_NAME:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Keine Berechtigung")
     return user
+
+
+POLITIK_ROLLE_NAME = "Politik"
+
+# Roles a Platform Admin may demo the read-scoping of. This is a
+# view/authorship-attribution hint only — it never grants any permission
+# beyond what the real account already has, and is ignored for anyone who
+# isn't a genuine Platform Admin (user.is_superuser + Admin role).
+VIEW_AS_ROLLEN = {VERWALTUNG_ROLLE_NAME, POLITIK_ROLLE_NAME}
+
+
+async def get_effective_is_politik(
+    user: User = Depends(current_active_user),
+    x_view_as_rolle: Optional[str] = Header(None),
+) -> bool:
+    """
+    Whether the request should be treated as coming from a Politik user for
+    read-scoping and content-authorship purposes.
+
+    For a real Politik user this always mirrors their actual role. For a
+    genuine Platform Admin (is_superuser + Admin role), the optional
+    X-View-As-Rolle header lets them narrow their own view to demo what a
+    Politik/Verwaltung user would see — it can only ever restrict what the
+    request returns, never widen it, and is ignored for every other account.
+    """
+    is_real_politik = not user.is_superuser and user.rolle.name == POLITIK_ROLLE_NAME
+    if is_real_politik:
+        return True
+
+    is_platform_admin = user.is_superuser and user.rolle.name == ADMIN_ROLLE_NAME
+    if is_platform_admin and x_view_as_rolle in VIEW_AS_ROLLEN:
+        return x_view_as_rolle == POLITIK_ROLLE_NAME
+
+    return False

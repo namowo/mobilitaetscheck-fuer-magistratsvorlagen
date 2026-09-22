@@ -42,6 +42,14 @@ class CRUDZielSet(CRUDBase[Model, CreateSchema, UpdateSchema]):
         result = await db.execute(statement)
         return result.scalars().all()
 
+    async def hat_eigene(self, db: AsyncSession, gemeinde_id: int) -> bool:
+        """Return whether this municipality owns at least one ZielSet."""
+        statement = select(self.model.id).where(
+            self.model.gemeinde_id == gemeinde_id
+        ).limit(1)
+        result = await db.execute(statement)
+        return result.scalar_one_or_none() is not None
+
     async def create_with_ziele(
         self, db: AsyncSession, obj_in: CreateSchema, user: User
     ) -> Model:

@@ -131,6 +131,7 @@ class UserAdminUpdate(BaseModel):
     rolle_id: Optional[int] = Field(None)
     gemeinde_id: Optional[int] = Field(None)
     is_superuser: Optional[bool] = Field(None)
+    is_local_superuser: Optional[bool] = Field(None)
 
 
 @router.get("/user", response_model=List[UserRead])
@@ -173,6 +174,8 @@ async def update_user_by_admin(
         user.gemeinde_id = obj_in.gemeinde_id
     if obj_in.is_superuser is not None:
         user.is_superuser = obj_in.is_superuser
+    if obj_in.is_local_superuser is not None:
+        user.is_local_superuser = obj_in.is_local_superuser
     await db.commit()
     await db.refresh(user)
     return user

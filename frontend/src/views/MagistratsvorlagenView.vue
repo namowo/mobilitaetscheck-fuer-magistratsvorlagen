@@ -2,7 +2,10 @@
   <div class="mx-auto p-6">
     <div class="flex items-center gap-5">
       <BaseHeading>Magistratsvorlagen</BaseHeading>
-      <RouterLink v-if="authStore.userRolleId === 1" :to="{ name: 'magistratsvorlage-neu' }">
+      <RouterLink
+        v-if="authStore.effectiveRolleId === 1 || authStore.isLocalSuperuser"
+        :to="{ name: 'magistratsvorlage-neu' }"
+      >
         <Button
           v-tooltip="'Neue Magistratsvorlage anlegen'"
           icon="pi pi-plus"

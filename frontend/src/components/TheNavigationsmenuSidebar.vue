@@ -193,7 +193,16 @@ const filteredMenuItems = computed(() => {
 const filteredAuthMenuItems = computed(() => {
   return authMenuItems.value.filter((item) => {
     if (authStore.isLoggedIn) {
-      return item.requiresAuth && item.requiresUserRolleId.includes(authStore.userRolleId)
+      if (!item.requiresAuth) return false
+      // Administration always reflects the real role, unaffected by the
+      // Platform Admin's "view as" switcher, so /admin stays reachable.
+      if (item.requiresUserRolleId.includes(3)) {
+        return authStore.canSwitchView
+      }
+      return (
+        item.requiresUserRolleId.includes(authStore.effectiveRolleId) ||
+        (authStore.isLocalSuperuser && item.requiresUserRolleId.includes(1))
+      )
     } else {
       return !item.requiresAuth
     }
