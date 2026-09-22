@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from jose import JWTError
 from pydantic import BaseModel, EmailStr
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -226,6 +227,17 @@ async def get_public_gemeinden(db: AsyncSession = Depends(get_async_session)):
         .order_by(Gemeinde.name)
     )
     return result.scalars().all()
+
+
+@router.get("/magistratsvorlage/vorhanden")
+async def get_public_magistratsvorlage_vorhanden(db: AsyncSession = Depends(get_async_session)):
+    """Return whether at least one Magistratsvorlage has been published."""
+    result = await db.execute(
+        select(func.count())
+        .select_from(Magistratsvorlage)
+        .where(Magistratsvorlage.veroeffentlicht == True)
+    )
+    return {"vorhanden": result.scalar_one() > 0}
 
 
 @router.get("/magistratsvorlage", response_model=list[MagistratsvorlageRead])

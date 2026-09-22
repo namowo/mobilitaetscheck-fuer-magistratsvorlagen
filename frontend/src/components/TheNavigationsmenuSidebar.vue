@@ -168,7 +168,7 @@ const authMenuItems = ref([
   },
   {
     name: 'Administration',
-    link: '/admin/kommunen',
+    link: '/admin/dashboard',
     icon: 'MaterialSymbolsSettings.svg',
     requiresAuth: true,
     requiresUserRolleId: [3]

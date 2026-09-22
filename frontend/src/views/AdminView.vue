@@ -14,7 +14,6 @@
         </Menu>
       </div>
       <div class="container col-span-6">
-        <BaseHeading>Administration</BaseHeading>
         <Router-View />
       </div>
     </div>
@@ -26,6 +25,10 @@ import { ref } from 'vue'
 import Menu from 'openvue/menu'
 
 const items = ref([
+  {
+    label: 'Statistik',
+    items: [{ label: 'Dashboard', icon: 'pi pi-chart-bar', route: '/admin/dashboard' }]
+  },
   {
     label: 'Benutzerverwaltung',
     items: [

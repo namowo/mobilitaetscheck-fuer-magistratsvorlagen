@@ -5,6 +5,7 @@ from app.core.config import settings
 from app.api.routers import (
     bool_erweitert,
     branding,
+    dashboard,
     dokumentation_seite,
     gemeinde_gebiet,
     indikator,
@@ -188,6 +189,11 @@ router.include_router(
     dokumentation_seite.router,
     prefix="/admin/dokumentation",
     tags=["Systemadmin", "Dokumentation"],
+)
+router.include_router(
+    dashboard.router,
+    prefix="/admin/dashboard",
+    tags=["Systemadmin", "Dashboard"],
 )
 router.include_router(
     user_gruppe.router,
