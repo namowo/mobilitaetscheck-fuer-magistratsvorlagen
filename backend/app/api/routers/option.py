@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 # from app.crud.klimacheck_klimarelevanz import crud_klimacheck_klimarelevanz
 # from app.crud.klimacheck_auswirkung_dauer import crud_klimacheck_auswirkung_dauer
@@ -11,6 +12,7 @@ from app.crud.mobilitaetscheck_auswirkung_raeumlich import (
 from app.crud.gemeinde import crud_gemeinde
 from app.crud.user_rolle import crud_user_rolle
 from app.core.deps import current_active_user, get_async_session
+from app.models.gemeinde import Gemeinde
 
 # from app.schemas.klimacheck_klimarelevanz import KlimacheckKlimarelevanzRead
 # from app.schemas.klimacheck_auswirkung_dauer import KlimacheckAuswirkungDauerRead
@@ -26,6 +28,8 @@ from app.utils.label_util import (
 
 router = APIRouter()
 
+SYSTEM_GEMEINDE_NAME = "Systemadministration"
+
 
 @router.get(
     "/gemeinde",
@@ -33,7 +37,12 @@ router = APIRouter()
     status_code=status.HTTP_200_OK,
 )
 async def get_municipality_options(db: AsyncSession = Depends(get_async_session)):
-    return await crud_gemeinde.get_all(db=db, sort_params=[("name", "asc")])
+    result = await db.execute(
+        select(Gemeinde)
+        .where(Gemeinde.name != SYSTEM_GEMEINDE_NAME)
+        .order_by(Gemeinde.name)
+    )
+    return result.scalars().all()
 
 
 @router.get(

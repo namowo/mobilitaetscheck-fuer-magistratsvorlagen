@@ -59,6 +59,15 @@
           Erneut senden möglich in {{ cooldown }} Sekunden
         </p>
 
+        <Button
+          label="Bereits bestätigt? Erneut prüfen"
+          icon="pi pi-refresh"
+          text
+          class="w-full mb-4"
+          :loading="checkLoading"
+          @click="checkVerified"
+        />
+
         <RouterLink :to="{ name: 'anmelden' }" class="text-sm text-blue-600 hover:underline">
           Zurück zur Anmeldung
         </RouterLink>
@@ -108,7 +117,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { apiClient } from '@/services/axios'
 import { useAuthStore } from '@/stores/auth'
 import Button from 'openvue/button'
@@ -117,6 +127,26 @@ import Dialog from 'openvue/dialog'
 import FloatLabel from 'openvue/floatlabel'
 
 const authStore = useAuthStore()
+const router = useRouter()
+const checkLoading = ref(false)
+
+async function checkVerified() {
+  checkLoading.value = true
+  try {
+    await authStore.refreshVerified()
+    if (authStore.isVerified) {
+      if (authStore.userRolleId === 3) {
+        router.replace({ name: 'admin-kommunen' })
+      } else {
+        router.replace({ name: 'magistratsvorlage-liste' })
+      }
+    }
+  } finally {
+    checkLoading.value = false
+  }
+}
+
+onMounted(checkVerified)
 
 const isPolitik = computed(() => authStore.userRolleId === 2)
 
