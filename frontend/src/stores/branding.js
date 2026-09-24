@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { useFavicon } from '@vueuse/core'
 import { apiClient } from '@/services/axios'
 
 export const useBrandingStore = defineStore('branding', () => {
@@ -8,6 +9,7 @@ export const useBrandingStore = defineStore('branding', () => {
   const footerLogos = ref([])
   const loginLogos = ref([])
   const isLoaded = ref(false)
+  const favicon = useFavicon()
 
   async function fetchBranding() {
     try {
@@ -42,14 +44,20 @@ export const useBrandingStore = defineStore('branding', () => {
 
   function applyFavicon() {
     const faviconUrl = url('favicon')
-    if (!faviconUrl) return
-    let linkEl = document.querySelector("link[rel~='icon']")
-    if (!linkEl) {
-      linkEl = document.createElement('link')
-      linkEl.rel = 'icon'
-      document.head.appendChild(linkEl)
+    if (!faviconUrl) {
+      try {
+        localStorage.removeItem('brandingFaviconUrl')
+      } catch {
+        // localStorage unavailable, ignore
+      }
+      return
     }
-    linkEl.href = faviconUrl
+    favicon.value = faviconUrl
+    try {
+      localStorage.setItem('brandingFaviconUrl', faviconUrl)
+    } catch {
+      // localStorage unavailable, ignore
+    }
   }
 
   return {

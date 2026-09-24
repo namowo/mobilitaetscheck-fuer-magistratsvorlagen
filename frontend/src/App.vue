@@ -14,15 +14,12 @@
 
 <script setup>
 import { RouterView } from 'vue-router'
-import { useTitle } from '@vueuse/core'
 import ConfirmDialog from 'openvue/confirmdialog'
 import Toast from 'openvue/toast'
 import TheNavigationsmenuTopbar from './components/TheNavigationsmenuTopbar.vue'
 import TheLeitzieleFehlenBanner from './components/TheLeitzieleFehlenBanner.vue'
 import TheDokumentationHinweisBanner from './components/TheDokumentationHinweisBanner.vue'
 import TheFooter from './components/TheFooter.vue'
-
-useTitle('pimoo Mobilitätscheck')
 </script>
 
 <style>
