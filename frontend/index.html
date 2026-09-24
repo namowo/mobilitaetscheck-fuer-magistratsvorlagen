@@ -5,6 +5,27 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>pimoo - Mobilitätscheck für Magistratsvorlagen</title>
+    <script>
+      // Apply the last-known custom title/favicon synchronously, before Vue
+      // loads, so returning visitors don't see the default flash before the
+      // branding store's fetch resolves.
+      try {
+        var cachedTitle = localStorage.getItem('brandingWebAppTitle')
+        if (cachedTitle) document.title = cachedTitle
+        var cachedFavicon = localStorage.getItem('brandingFaviconUrl')
+        if (cachedFavicon) {
+          var link = document.querySelector("link[rel~='icon']")
+          if (!link) {
+            link = document.createElement('link')
+            link.rel = 'icon'
+            document.head.appendChild(link)
+          }
+          link.href = cachedFavicon
+        }
+      } catch (e) {
+        /* localStorage unavailable, fall back to defaults */
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>

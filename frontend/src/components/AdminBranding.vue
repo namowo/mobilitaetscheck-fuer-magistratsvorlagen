@@ -11,12 +11,29 @@
       />
     </div>
     <p class="text-sm text-gray-500 mb-4">
-      Passen Sie Favicon und Logos der Anwendung an. Nicht gesetzte Bilder verwenden weiterhin die
-      Standardgrafiken.
+      Passen Sie Titel, Favicon und Logos der Anwendung an. Nicht gesetzte Werte verwenden
+      weiterhin die Standardwerte.
     </p>
 
     <BaseSpinner v-if="isLoading" />
     <template v-else>
+      <div class="flex flex-col gap-1 mb-6">
+        <label for="web-app-title" class="font-semibold text-sm">Anwendungstitel</label>
+        <div class="flex items-center gap-3">
+          <InputText
+            id="web-app-title"
+            v-model="webAppTitle"
+            placeholder="pimoo - Mobilitätscheck für Magistratsvorlagen"
+            class="w-full max-w-md"
+          />
+          <Button label="Speichern" @click="saveWebAppTitle" :loading="isSavingTitle" />
+        </div>
+        <p class="text-xs text-gray-500">
+          Wird als Titel im Browser-Tab angezeigt. Leer = Standardtitel.
+        </p>
+      </div>
+      <Divider />
+
       <template v-for="(bereich, index) in bereiche" :key="bereich">
         <Divider v-if="index > 0" />
         <h6 class="text-sm font-semibold text-gray-600 mb-3">{{ bereich }}</h6>
@@ -108,6 +125,7 @@ import { apiClient } from '@/services/axios'
 import { useToast } from 'openvue/usetoast'
 import { useConfirm } from 'openvue/useconfirm'
 import { useBrandingStore } from '@/stores/branding'
+import { useEinstellungStore } from '@/stores/einstellung'
 import BrandingAssetPicker from './BrandingAssetPicker.vue'
 import AdminLogoListe from './AdminLogoListe.vue'
 
@@ -119,6 +137,10 @@ const resetCounter = ref(0)
 const toast = useToast()
 const confirm = useConfirm()
 const brandingStore = useBrandingStore()
+const einstellungStore = useEinstellungStore()
+
+const webAppTitle = ref('')
+const isSavingTitle = ref(false)
 
 const bereiche = computed(() => [...new Set(slotList.value.map((s) => s.bereich))])
 const slotsByBereich = computed(() =>
@@ -137,7 +159,39 @@ const fetchSlots = async () => {
   }
 }
 
-onMounted(fetchSlots)
+const fetchWebAppTitle = async () => {
+  try {
+    const res = await apiClient.get('/admin/einstellung')
+    webAppTitle.value = res.data.webAppTitle || ''
+  } catch {
+    webAppTitle.value = ''
+  }
+}
+
+onMounted(() => {
+  fetchSlots()
+  fetchWebAppTitle()
+})
+
+const saveWebAppTitle = async () => {
+  isSavingTitle.value = true
+  try {
+    await apiClient.patch('/admin/einstellung', {
+      webAppTitle: webAppTitle.value || null
+    })
+    toast.add({ severity: 'success', summary: 'Gespeichert', life: 3000 })
+    await einstellungStore.fetchEinstellung()
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: 'Fehler',
+      detail: 'Anwendungstitel konnte nicht gespeichert werden.',
+      life: 3000
+    })
+  } finally {
+    isSavingTitle.value = false
+  }
+}
 
 const openPicker = (slot) => {
   activeSlot.value = slot

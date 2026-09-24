@@ -71,3 +71,7 @@ class PlattformEinstellung(Base):
         nullable=True,
         comment="Primärfarbe der Plattform als Hex-Code (z. B. '#507C96'). Leer = Standardfarbe.",
     )
+    web_app_title: Mapped[Optional[str]] = mapped_column(
+        nullable=True,
+        comment="Titel der Anwendung (Browser-Tab-Titel). Leer = Standardtitel.",
+    )

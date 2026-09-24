@@ -52,6 +52,10 @@ class PlattformEinstellungBase(BaseModel):
         None,
         description="Primärfarbe der Plattform als Hex-Code (z. B. '#507C96'). Leer = Standardfarbe.",
     )
+    web_app_title: Optional[str] = Field(
+        None,
+        description="Titel der Anwendung (Browser-Tab-Titel). Leer = Standardtitel.",
+    )
 
     @field_validator("theme_color")
     @classmethod
