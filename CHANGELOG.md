@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/compare/v1.5.0...v1.5.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* deploy ([9b4dfb7](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/9b4dfb781622cdb77c786aba6dbe46715f9c0f5a))
+
 ## [1.5.0](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/compare/v1.4.2...v1.5.0) (2026-11-03)
 
 
