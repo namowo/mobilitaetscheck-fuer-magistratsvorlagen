@@ -1,0 +1,44 @@
+name: Contribute to upstream
+
+# Opens/updates a pull request to the upstream repository with everything on main that
+# upstream does not have yet (without fork-only files, see the script's EXCLUDES).
+# The branch contrib/upstream is pushed to this fork with the built-in GITHUB_TOKEN. Opening the
+# pull request upstream needs rights there, which GITHUB_TOKEN does not have: the job then prints a
+# one-click link in its summary (the PR only has to be opened once, later pushes update it).
+# Optional: set the secret UPSTREAM_PR_TOKEN (PAT with `public_repo`) to open it fully automatically.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - ".github/**"
+      - "CHANGELOG.md"
+      - ".release-please-manifest.json"
+      - "release-please-config.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: contribute-upstream
+  cancel-in-progress: false
+
+jobs:
+  contribute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Open or update upstream pull request
+        env:
+          GH_TOKEN: ${{ secrets.UPSTREAM_PR_TOKEN || github.token }}
+          UPSTREAM_REPO: ritmo-hsrm/mobilitaetscheck-fuer-magistratsvorlagen
+          CONTRIB_BRANCH: contrib/upstream
+          FORK_REF: origin/main
+        run: .github/scripts/contribute-upstream.sh
