@@ -52,9 +52,7 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             set -e
-            export NVM_DIR="$HOME/.nvm"
-            . "$NVM_DIR/nvm.sh"
-            nvm use default
+            export PATH="$HOME/.local/bin:$PATH"
             cd ${{ secrets.DEPLOY_PATH }}/frontend
             npm ci
             npm run build
