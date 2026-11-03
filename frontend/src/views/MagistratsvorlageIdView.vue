@@ -69,7 +69,11 @@ const allItems = [
   }
 ]
 
-const items = computed(() => allItems.filter((item) => !item.verwaltungOnly || !isPolitik.value))
+const items = computed(() =>
+  allItems.filter(
+    (item) => !item.verwaltungOnly || (!isPolitik.value && authStore.klimacheckAktiv)
+  )
+)
 </script>
 
 <style></style>

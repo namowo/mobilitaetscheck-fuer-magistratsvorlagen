@@ -4,7 +4,8 @@ from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase
-from app.services.pdf.base_pdf import BasePDF
+from app.crud.plattform_einstellung import crud_plattform_einstellung
+from app.services.pdf.base_pdf import BasePDF, resolve_gemeinde_logo_path
 
 ModelType = TypeVar("ModelType")
 CreateSchemaType = TypeVar("CreateSchemaType")
@@ -125,5 +126,16 @@ class CRUDEingabe(CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     async def export(self, db: AsyncSession, id: int, PDF: BasePDF) -> bytes:
         instance = await self.get(db, id)
-        pdf = PDF(orientation="P", unit="mm", format="A4")
+        gemeinde = getattr(instance, "gemeinde", None)
+        logo_path = resolve_gemeinde_logo_path(
+            getattr(gemeinde, "pdf_logo_dateiname", None)
+        )
+        einstellung = await crud_plattform_einstellung.get(db)
+        pdf = PDF(
+            orientation="P",
+            unit="mm",
+            format="A4",
+            logo_path=logo_path,
+            footer_text=(einstellung.pdf_fusszeile_text or "").strip() or None,
+        )
         return pdf.export(instance)

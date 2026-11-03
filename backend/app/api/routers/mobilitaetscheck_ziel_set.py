@@ -9,6 +9,7 @@ from app.crud.mobilitaetscheck_ziel_set import crud_ziel_set as crud
 from app.core.deps import current_active_user, get_async_session
 from app.models.user import User
 from app.models.gemeinde import Gemeinde
+from app.models.mobilitaetscheck_ziel_set import MobilitaetscheckZielSet
 from app.schemas.mobilitaetscheck_ziel_set import (
     MobilitaetscheckZielSetCreate as CreateSchema,
     MobilitaetscheckZielSetUpdate as UpdateSchema,
@@ -25,6 +26,25 @@ router = APIRouter()
 async def _get_gemeinde(db: AsyncSession, gemeinde_id: int) -> Gemeinde:
     result = await db.execute(select(Gemeinde).where(Gemeinde.id == gemeinde_id))
     return result.scalars().first()
+
+
+async def _auto_set_standard(db: AsyncSession, gemeinde_id: int) -> None:
+    """If the municipality has exactly one own ZielSet, make it the standard."""
+    result = await db.execute(
+        select(MobilitaetscheckZielSet.id).where(MobilitaetscheckZielSet.gemeinde_id == gemeinde_id)
+    )
+    ids = result.scalars().all()
+    if len(ids) != 1:
+        return
+    gemeinde = await _get_gemeinde(db, gemeinde_id)
+    if gemeinde is None or gemeinde.standard_ziel_set_id == ids[0]:
+        return
+    gemeinde.standard_ziel_set_id = ids[0]
+    try:
+        await db.commit()
+    except SQLAlchemyError as e:
+        await db.rollback()
+        raise DatabaseCommitError(e)
 
 
 @router.get("", response_model=List[ListReadSchema])
@@ -75,7 +95,9 @@ async def create_ziel_set(
     db: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ):
-    return await crud.create_with_ziele(db, obj_in, user)
+    result = await crud.create_with_ziele(db, obj_in, user)
+    await _auto_set_standard(db, user.gemeinde_id)
+    return result
 
 
 @router.post("/aus-leitzielen", status_code=status.HTTP_201_CREATED, response_model=ReadSchema)
@@ -87,7 +109,9 @@ async def create_ziel_set_aus_leitzielen(
     ist_oeffentlich: bool = False,
 ):
     """Create a ZielSet snapshot from the user's current active Leitziele."""
-    return await crud.create_from_aktuelle_leitziele(db, name, beschreibung, ist_oeffentlich, user)
+    result = await crud.create_from_aktuelle_leitziele(db, name, beschreibung, ist_oeffentlich, user)
+    await _auto_set_standard(db, user.gemeinde_id)
+    return result
 
 
 @router.patch("/{id}", response_model=ReadSchema)
@@ -126,6 +150,7 @@ async def delete_ziel_set(
     instance = await crud.get(db, id)
     check_user_authorization(user, instance.gemeinde_id)
     await crud.delete(db, id)
+    await _auto_set_standard(db, instance.gemeinde_id)
 
 
 @router.post("/{id}/kopieren", status_code=status.HTTP_204_NO_CONTENT)
@@ -155,7 +180,9 @@ async def duplizieren(
     if instance.gemeinde_id != user.gemeinde_id and not instance.ist_oeffentlich and not user.is_superuser and not user.is_local_superuser:
         from app.crud.exceptions import AuthorizationError
         raise AuthorizationError("Kein Zugriff auf dieses Set")
-    return await crud.duplizieren(db, id, user)
+    result = await crud.duplizieren(db, id, user)
+    await _auto_set_standard(db, user.gemeinde_id)
+    return result
 
 
 @router.post("/{id}/als-standard-setzen", status_code=status.HTTP_204_NO_CONTENT)

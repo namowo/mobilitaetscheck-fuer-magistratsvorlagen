@@ -2,6 +2,7 @@
   <div class="min-h-screen flex flex-col">
     <div class="max-w-6xl mx-auto p-1 w-full flex-1">
       <TheNavigationsmenuTopbar class="w-full mb-2" />
+      <TheStartWizard />
       <TheLeitzieleFehlenBanner class="mb-2" />
       <TheDokumentationHinweisBanner class="mb-2" />
       <Toast position="bottom-right" />
@@ -19,7 +20,16 @@ import Toast from 'openvue/toast'
 import TheNavigationsmenuTopbar from './components/TheNavigationsmenuTopbar.vue'
 import TheLeitzieleFehlenBanner from './components/TheLeitzieleFehlenBanner.vue'
 import TheDokumentationHinweisBanner from './components/TheDokumentationHinweisBanner.vue'
+import TheStartWizard from './components/TheStartWizard.vue'
 import TheFooter from './components/TheFooter.vue'
+import { onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+
+// Keep cached Kommune settings (e.g. Klimacheck freigeschaltet) in sync after admin changes
+const authStore = useAuthStore()
+onMounted(() => {
+  if (authStore.isLoggedIn) authStore.refreshUser()
+})
 </script>
 
 <style>

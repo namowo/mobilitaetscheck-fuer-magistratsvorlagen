@@ -23,11 +23,17 @@
             >{{ item.zielUnter.name }}</span
           >
         </div>
+        <span
+          v-if="props.readOnly"
+          class="flex-none px-2.5 py-0.5 rounded-full text-xs font-medium"
+          :class="tangiert ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500'"
+          >{{ tangiert ? 'tangiert' : 'nicht tangiert' }}</span
+        >
         <ToggleSwitch
+          v-else
           v-model="tangiert"
           @click.stop
           :invalid="!!errors.tangiert"
-          :disabled="props.readOnly"
           class="flex-none"
         />
       </div>
@@ -63,7 +69,7 @@
           <p class="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-0.5">
             Erläuterung
           </p>
-          <p class="text-gray-800 whitespace-pre-wrap">{{ anmerkung }}</p>
+          <div class="prose prose-sm max-w-none text-gray-800" v-html="anmerkung"></div>
         </div>
         <div v-if="indikatoren.length">
           <p class="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-0.5">
@@ -88,7 +94,7 @@
 
       <!-- Felder wenn tangiert — EDIT MODE: Eingabefelder -->
       <div v-else-if="tangiert" class="mt-4 flex flex-col gap-4 pl-4 border-l-2 border-blue-100">
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-[minmax(0,1fr)_14rem] gap-x-10 gap-y-4">
           <div class="w-full max-w-md pl-6">
             <label for="auswirkung" class="text-sm text-gray-600"
               >Wirkungsrichtung und -stärke</label
@@ -129,7 +135,7 @@
               </div>
             </div>
           </div>
-          <div class="my-auto max-w-md">
+          <div class="my-auto w-56">
             <FloatLabel variant="on">
               <Select
                 id="auswirkungRaeumlichId"

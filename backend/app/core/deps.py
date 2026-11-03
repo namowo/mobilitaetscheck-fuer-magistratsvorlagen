@@ -76,6 +76,16 @@ async def current_gemeinde_admin(user: User = Depends(current_active_user)) -> U
 
 POLITIK_ROLLE_NAME = "Politik"
 
+
+async def require_klimacheck_aktiv(user: User = Depends(current_active_user)) -> User:
+    """Blocks Klimacheck endpoints unless a Systemadmin enabled them for the user's Gemeinde."""
+    if not user.gemeinde.klimacheck_aktiv:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Klimacheck ist für diese Kommune nicht aktiviert.",
+        )
+    return user
+
 # Roles a Platform Admin may demo the read-scoping of. This is a
 # view/authorship-attribution hint only — it never grants any permission
 # beyond what the real account already has, and is ignored for anyone who

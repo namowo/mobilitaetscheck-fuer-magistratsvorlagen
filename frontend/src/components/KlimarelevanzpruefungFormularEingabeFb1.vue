@@ -530,7 +530,7 @@
               <li>
                 <span>
                   Werden bei dem Vorhaben Grünflächen mit CO2-bindender Funktion aufgewertet? (Z.B.
-                  durch die Pflanung von Bäumen und Sträuchern)
+                  durch die Pflanzung von Bäumen und Sträuchern)
                 </span>
                 <SelectButton
                   v-model="a5q1"

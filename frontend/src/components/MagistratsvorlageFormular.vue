@@ -287,11 +287,13 @@ const onSubmit = handleSubmit(async (values) => {
       }
     })
 
+    isLoading.value = false
+    if (!response) return
+
     router.replace({
       name: 'magistratsvorlage-id-daten',
       params: { id: response.id }
     })
-    isLoading.value = false
   }
 })
 

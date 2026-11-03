@@ -32,11 +32,17 @@
             <InputText
               id="email"
               v-model="emailLocal"
-              placeholder="vorname.nachname"
               :invalid="!!errors.email"
               :disabled="!rolleId"
             />
-            <InputGroupAddon>@{{ activeDomain }}</InputGroupAddon>
+            <Select
+              v-if="verwaltungDomains.length > 1"
+              v-model="selectedDomain"
+              :options="verwaltungDomains"
+              :disabled="!rolleId"
+              class="min-w-40"
+            />
+            <InputGroupAddon v-else>@{{ activeDomain }}</InputGroupAddon>
           </InputGroup>
         </template>
         <template v-else>
@@ -108,7 +114,8 @@ const gueltigkeitsOptionen = [
 ]
 
 const rolleOptions = ref([])
-const verwaltungDomain = ref(null)
+const verwaltungDomains = ref([])
+const selectedDomain = ref(null)
 const isSubmitting = ref(false)
 const isVerwaltungAdmin = ref(false)
 const emailLocal = ref('')
@@ -135,7 +142,8 @@ onMounted(async () => {
       apiClient.get('/option/user-rolle'),
     ])
     rolleOptions.value = rRes.data
-    verwaltungDomain.value = user?.gemeinde?.verwaltungEmailDomain ?? null
+    verwaltungDomains.value = user?.gemeinde?.verwaltungEmailDomains ?? []
+    selectedDomain.value = verwaltungDomains.value[0] ?? null
   } catch { /* */ }
 })
 
@@ -156,7 +164,7 @@ const selectedRolle = computed(() =>
 const isVerwaltung = computed(() => selectedRolle.value?.name === VERWALTUNG_ROLLE_NAME)
 
 // Only show domain-split input when role is Verwaltung and domain exists
-const activeDomain = computed(() => (isVerwaltung.value ? verwaltungDomain.value : null))
+const activeDomain = computed(() => (isVerwaltung.value ? selectedDomain.value : null))
 
 watch(rolleId, () => {
   emailLocal.value = ''

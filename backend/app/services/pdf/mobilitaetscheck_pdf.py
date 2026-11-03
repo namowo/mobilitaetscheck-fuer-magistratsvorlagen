@@ -3,7 +3,7 @@ import re
 from io import BytesIO
 
 from app.models.mobilitaetscheck_eingabe import MobilitaetscheckEingabe
-from app.services.pdf.base_pdf import BasePDF, resolve_logo_path
+from app.services.pdf.base_pdf import BasePDF, HEADER_BOTTOM, LOGO_Y
 from app.utils.pdf_util import calculate_average_impact, get_display_impact
 
 # Colour palette – mirrors Tailwind classes used in the Vue UI
@@ -50,28 +50,22 @@ class MobilitaetscheckPDF(BasePDF):
     # ── page chrome ──────────────────────────────────────────────────
 
     def header(self):
-        try:
-            self.image(resolve_logo_path(), 10, 8, 30)
-        except Exception as e:
-            print(e)
+        self.draw_logo()
         self.set_font("free-sans", "", 9)
-        self.set_xy(self.l_margin, 8)
+        self.set_xy(self.l_margin, LOGO_Y)
         if getattr(self, "is_politik_autor", False):
             self.set_text_color(*RED_600)
             self.set_font("free-sans", "B", 9)
             self.cell(0, 8, "Nicht von Verwaltung", align="C")
             self.set_font("free-sans", "", 9)
-            self.set_xy(self.l_margin, 8)
+            self.set_xy(self.l_margin, LOGO_Y)
         self.set_text_color(*GRAY_500)
         self.cell(0, 8, datetime.date.today().strftime("%d.%m.%Y"), align="R")
         self.set_text_color(*GRAY_900)
-        self.ln(12)
+        self.set_y(HEADER_BOTTOM)
 
     def footer(self):
-        self.set_y(-12)
-        self.set_text_color(*GRAY_500)
-        self.set_font("free-sans", "", 8)
-        self.cell(0, 8, f"Seite {self.page_no()}/{{nb}}", align="C")
+        self.draw_page_footer(number_color=GRAY_500)
         self.set_text_color(*GRAY_900)
 
     # ── helpers ───────────────────────────────────────────────────────
@@ -543,7 +537,7 @@ class MobilitaetscheckPDF(BasePDF):
             # simple card border – uncolored, works across page breaks
             end_page = self.page_no()
             end_y = self.get_y()
-            content_top = self.t_margin + 18  # below header on continuation pages
+            content_top = HEADER_BOTTOM  # below header on continuation pages
 
             if end_page == card_start_page:
                 card_h = end_y - card_top

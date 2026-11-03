@@ -100,6 +100,22 @@
             </router-link>
           </nav>
         </div>
+        <div
+          v-if="authStore.canSwitchView"
+          class="mt-8 flex flex-wrap items-center justify-center gap-2"
+        >
+          <label for="view-as-select" class="text-sm">Ansicht wechseln:</label>
+          <Select
+            inputId="view-as-select"
+            :modelValue="authStore.viewAsRolleId ?? VIEW_AS_NONE"
+            @update:modelValue="onChangeViewAs"
+            :options="viewAsOptions"
+            optionLabel="label"
+            optionValue="value"
+            size="small"
+            class="w-56 text-left"
+          />
+        </div>
         <p
           class="mt-8 flex items-center justify-center gap-1.5"
           style="color: rgb(var(--primary-200))"
@@ -113,6 +129,8 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '@/stores/auth'
+import Select from 'openvue/select'
 import { useBrandingStore } from '@/stores/branding'
 import { useEinstellungStore } from '@/stores/einstellung'
 import BrandingLogoLink from './BrandingLogoLink.vue'
@@ -122,7 +140,22 @@ import defaultLogo3 from '../assets/logos/BMFTR.jpg'
 import defaultLogo4 from '../assets/logos/FONA.jpg'
 import { Info, BookOpen, Github, ScrollText, ShieldCheck, FileCheck2, Heart } from 'lucide-vue-next'
 
+const authStore = useAuthStore()
 const brandingStore = useBrandingStore()
+
+const VIEW_AS_NONE = 0
+
+const viewAsOptions = [
+  { label: 'Systemadministration', value: VIEW_AS_NONE },
+  { label: 'Verwaltung', value: 1 },
+  { label: 'Politik', value: 2 }
+]
+
+const onChangeViewAs = (rolleId) => {
+  authStore.setViewAsRolleId(rolleId === VIEW_AS_NONE ? null : rolleId)
+  // Land on a page that exists in the new view, then reload to reset state
+  window.location.assign(rolleId === VIEW_AS_NONE ? '/admin' : '/magistratsvorlage')
+}
 const einstellungStore = useEinstellungStore()
 </script>
 

@@ -52,6 +52,10 @@ class PlattformEinstellungBase(BaseModel):
         None,
         description="Primärfarbe der Plattform als Hex-Code (z. B. '#507C96'). Leer = Standardfarbe.",
     )
+    pdf_fusszeile_text: Optional[str] = Field(
+        None,
+        description="Hinweistext in der Fußzeile exportierter PDFs. Leer = Standardtext.",
+    )
     web_app_title: Optional[str] = Field(
         None,
         description="Titel der Anwendung (Browser-Tab-Titel). Leer = Standardtitel.",

@@ -1,6 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-from app.core.deps import auth_backend, fastapi_users
+from app.core.deps import auth_backend, fastapi_users, require_klimacheck_aktiv
 from app.core.config import settings
 from app.api.routers import (
     bool_erweitert,
@@ -8,6 +8,7 @@ from app.api.routers import (
     dashboard,
     dokumentation_seite,
     gemeinde_gebiet,
+    gemeinde_pdf_logo,
     indikator,
     # klimacheck,
     klimarelevanzpruefung_eingabe,
@@ -85,36 +86,43 @@ router.include_router(
     klimarelevanzpruefung_eingabe.router,
     prefix="/klimarelevanzpruefung/eingabe",
     tags=["Klimacheck", "Eingabe"],
+    dependencies=[Depends(require_klimacheck_aktiv)],
 )
 router.include_router(
     klimarelevanzpruefung_eingabe_fb1.router,
     prefix="/klimarelevanzpruefung/eingabe/fb1",
     tags=["Klimacheck", "Eingabe"],
+    dependencies=[Depends(require_klimacheck_aktiv)],
 )
 router.include_router(
     klimarelevanzpruefung_eingabe_fb2.router,
     prefix="/klimarelevanzpruefung/eingabe/fb2",
     tags=["Klimacheck", "Eingabe"],
+    dependencies=[Depends(require_klimacheck_aktiv)],
 )
 router.include_router(
     klimarelevanzpruefung_eingabe_fb3.router,
     prefix="/klimarelevanzpruefung/eingabe/fb3",
     tags=["Klimacheck", "Eingabe"],
+    dependencies=[Depends(require_klimacheck_aktiv)],
 )
 router.include_router(
     klimarelevanzpruefung_eingabe_fb4.router,
     prefix="/klimarelevanzpruefung/eingabe/fb4",
     tags=["Klimacheck", "Eingabe"],
+    dependencies=[Depends(require_klimacheck_aktiv)],
 )
 router.include_router(
     klimarelevanzpruefung_energiestandard.router,
     prefix="/klimarelevanzpruefung/energiestandard",
     tags=["Klimacheck"],
+    dependencies=[Depends(require_klimacheck_aktiv)],
 )
 router.include_router(
     klimarelevanzpruefung_vorhaben.router,
     prefix="/klimarelevanzpruefung/vorhaben",
     tags=["Klimacheck"],
+    dependencies=[Depends(require_klimacheck_aktiv)],
 )
 router.include_router(
     mobilitaetscheck_eingabe_ziel_ober.router,
@@ -130,6 +138,11 @@ router.include_router(
     gemeinde_gebiet.router,
     prefix="/einstellungen/gebiet",
     tags=["Einstellungen", "Gebiet"],
+)
+router.include_router(
+    gemeinde_pdf_logo.router,
+    prefix="/einstellungen/pdf-logo",
+    tags=["Einstellungen", "PDF-Logo"],
 )
 router.include_router(
     indikator.router,

@@ -48,11 +48,17 @@
             <InputText
               id="email"
               v-model="emailLocal"
-              placeholder="vorname.nachname"
               :invalid="!!errors.email"
               :disabled="!gemeindeId || !rolleId"
             />
-            <InputGroupAddon>@{{ verwaltungDomain }}</InputGroupAddon>
+            <Select
+              v-if="verwaltungDomains.length > 1"
+              v-model="selectedDomain"
+              :options="verwaltungDomains"
+              :disabled="!gemeindeId || !rolleId"
+              class="min-w-40"
+            />
+            <InputGroupAddon v-else>@{{ verwaltungDomain }}</InputGroupAddon>
           </InputGroup>
         </template>
         <template v-else>
@@ -181,10 +187,21 @@ const selectedRolle = computed(() => rolleOptions.value.find((r) => r.id === rol
 
 const isVerwaltung = computed(() => selectedRolle.value?.name === VERWALTUNG_ROLLE_NAME)
 
-const verwaltungDomain = computed(() => {
-  if (!isVerwaltung.value) return null
-  return selectedGemeinde.value?.verwaltungEmailDomain || null
+const verwaltungDomains = computed(() => {
+  if (!isVerwaltung.value) return []
+  return selectedGemeinde.value?.verwaltungEmailDomains || []
 })
+
+const selectedDomain = ref(null)
+watch(
+  verwaltungDomains,
+  (domains) => {
+    if (!domains.includes(selectedDomain.value)) selectedDomain.value = domains[0] ?? null
+  },
+  { immediate: true }
+)
+
+const verwaltungDomain = computed(() => selectedDomain.value)
 
 // Fix Select-close bug: use watch instead of @change
 watch(gemeindeId, () => {

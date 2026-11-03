@@ -119,12 +119,6 @@ const toggleSidebar = () => {
 // Define menu items
 const menuItems = ref([
   {
-    name: 'Startseite',
-    link: '/',
-    icon: 'MaterialSymbolsHouse.svg',
-    onlyWhenLoggedOut: false
-  },
-  {
     name: 'Über das Tool',
     link: '/ueber-das-tool',
     icon: 'MaterialSymbolsBookmarkSharp.svg',
@@ -160,14 +154,21 @@ const authMenuItems = ref([
     requiresUserRolleId: [1, 2]
   },
   {
-    name: 'Einstellungen',
+    name: 'Verwaltung',
     link: '/einstellungen/leitziel-sets',
     icon: 'MaterialSymbolsSettings.svg',
     requiresAuth: true,
     requiresUserRolleId: [1]
   },
   {
-    name: 'Administration',
+    name: 'Einstellungen',
+    link: '/administration/accountverwaltung',
+    icon: 'MaterialSymbolsManageAccounts.svg',
+    requiresAuth: true,
+    requiresUserRolleId: [1]
+  },
+  {
+    name: 'Systemadministration',
     link: '/admin/dashboard',
     icon: 'MaterialSymbolsSettings.svg',
     requiresAuth: true,
@@ -194,14 +195,12 @@ const filteredAuthMenuItems = computed(() => {
   return authMenuItems.value.filter((item) => {
     if (authStore.isLoggedIn) {
       if (!item.requiresAuth) return false
-      // Administration always reflects the real role, unaffected by the
-      // Platform Admin's "view as" switcher, so /admin stays reachable.
       if (item.requiresUserRolleId.includes(3)) {
-        return authStore.canSwitchView
+        return authStore.effectiveRolleId === 3
       }
       return (
         item.requiresUserRolleId.includes(authStore.effectiveRolleId) ||
-        (authStore.isLocalSuperuser && item.requiresUserRolleId.includes(1))
+        (authStore.effectiveIsLocalSuperuser && item.requiresUserRolleId.includes(1))
       )
     } else {
       return !item.requiresAuth

@@ -11,9 +11,7 @@ from app.utils.label_util import (
 
 class KlimacheckPDF(BasePDF):
     def footer(self):
-        self.set_y(-20)
-        self.set_font("free-sans", "", 8)
-        self.cell(0, 10, f"Seite {self.page_no()}/{{nb}}", align="C")
+        self.draw_page_footer()
 
     def export(self, eingabe: KlimacheckEingabe):
         self.alias_nb_pages()

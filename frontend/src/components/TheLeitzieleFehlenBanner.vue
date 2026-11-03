@@ -13,26 +13,30 @@
       </span>
     </template>
     <template v-else>
-      <span>Für Ihre Kommune wurden noch keine Leitziele festgelegt.</span>
+      <span>
+        Für Ihre Kommune wurden noch keine Leitziele festgelegt. Die Verwaltung muss diese hinterlegen.
+      </span>
     </template>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { apiClient } from '@/services/axios'
+import { computed, watch } from 'vue'
+import { useLeitzieleStatus } from '@/composables/leitzieleStatus'
 import { useAuthStore } from '@/stores/auth'
+import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
+const route = useRoute()
 
-const hatEigeneZielSets = ref(true)
+const { hatEigeneZielSets, pruefe } = useLeitzieleStatus()
 
 const istLocalAdmin = computed(
-  () => authStore.userRolleId === 1 || authStore.isLocalSuperuser
+  () => authStore.effectiveRolleId === 1 || authStore.effectiveIsLocalSuperuser
 )
 
 const istPlatformAdminOhneKommune = computed(
-  () => authStore.userRolleId === 3 && !authStore.isLocalSuperuser
+  () => authStore.canSwitchView && authStore.effectiveRolleId === 3
 )
 
 const zeigeBanner = computed(
@@ -41,13 +45,11 @@ const zeigeBanner = computed(
 
 const checkZielSets = async () => {
   if (!authStore.isLoggedIn || istPlatformAdminOhneKommune.value) return
-  try {
-    const res = await apiClient.get('/einstellungen/mobilitaetscheck/ziel-set/hat-eigene')
-    hatEigeneZielSets.value = res.data.hatEigene
-  } catch {
-    hatEigeneZielSets.value = true
-  }
+  await pruefe()
 }
 
-watch(() => authStore.isLoggedIn, checkZielSets, { immediate: true })
+// Re-check on navigation so the notice disappears as soon as the Kommune has set Leitziele
+watch(() => [authStore.isLoggedIn, authStore.effectiveRolleId, route.fullPath], checkZielSets, {
+  immediate: true
+})
 </script>

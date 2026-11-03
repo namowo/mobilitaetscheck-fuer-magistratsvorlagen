@@ -18,7 +18,7 @@
         </Menu>
       </div>
       <div class="container col-span-6">
-        <BaseHeading> Einstellungen </BaseHeading>
+        <BaseHeading> Verwaltung </BaseHeading>
         <Router-View />
       </div>
     </div>
@@ -40,6 +40,10 @@ const allItems = [
       {
         label: 'Gebiete',
         route: '/einstellungen/gemeinde-gebiet'
+      },
+      {
+        label: 'PDF-Logo',
+        route: '/einstellungen/pdf-logo'
       }
     ]
   },
@@ -64,34 +68,6 @@ const allItems = [
         route: '/einstellungen/tag'
       }
     ]
-  },
-  {
-    label: 'Administration',
-    requiresRolleId: [1],
-    items: [
-      {
-        label: 'Accountverwaltung',
-        route: '/einstellungen/accountverwaltung'
-      },
-      {
-        label: 'Einladungen',
-        route: '/einstellungen/einladungen'
-      },
-      {
-        label: 'Gruppen',
-        route: '/einstellungen/gruppen'
-      }
-    ]
-  },
-  {
-    label: 'Einladungen',
-    requiresRolleId: [2],
-    items: [
-      {
-        label: 'Einladungen',
-        route: '/einstellungen/einladungen'
-      }
-    ]
   }
 ]
 
@@ -99,7 +75,7 @@ const items = computed(() =>
   allItems.filter(
     (group) =>
       group.requiresRolleId.includes(authStore.effectiveRolleId) ||
-      (authStore.isLocalSuperuser && group.requiresRolleId.includes(1))
+      (authStore.effectiveIsLocalSuperuser && group.requiresRolleId.includes(1))
   )
 )
 </script>
