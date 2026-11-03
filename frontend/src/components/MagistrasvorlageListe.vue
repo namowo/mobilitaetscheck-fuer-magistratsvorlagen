@@ -52,11 +52,7 @@
                 <label>Mobilitätscheck vorhanden</label>
                 <ToggleSwitch v-model="filterMobilitaetscheckVorhanden" />
               </div>
-              <div class="flex items-center justify-between">
-                <label>Klimacheck vorhanden</label>
-                <ToggleSwitch v-model="filterKlimacheckVorhanden" />
-              </div>
-              <div class="flex items-center justify-between">
+              <div v-if="authStore.klimacheckAktiv" class="flex items-center justify-between">
                 <label>Klimacheck vorhanden</label>
                 <ToggleSwitch v-model="filterKlimarelevanzpruefungVorhanden" />
               </div>
@@ -199,7 +195,7 @@
                           />
                         </router-link>
                         <router-link
-                          v-if="!isPolitik"
+                          v-if="!isPolitik && authStore.klimacheckAktiv"
                           :to="{
                             name: 'magistratsvorlage-id-klimarelevanzpruefung',
                             params: { id: item.id }

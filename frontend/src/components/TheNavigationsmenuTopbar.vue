@@ -22,18 +22,15 @@
     </template>
     <template #center>
       <div class="flex items-center gap-2">
-        <router-link :to="{ name: 'startseite' }">
-          <Button label="Startseite" severity="primary" />
-        </router-link>
         <template v-if="authStore.isLoggedIn">
           <router-link
-            v-if="![3].includes(authStore.effectiveRolleId) || authStore.isLocalSuperuser"
+            v-if="![3].includes(authStore.effectiveRolleId) || authStore.effectiveIsLocalSuperuser"
             :to="{ name: 'magistratsvorlage-liste' }"
           >
             <Button label="Magistratsvorlagen" />
           </router-link>
-          <router-link v-if="authStore.canSwitchView" :to="{ name: 'admin-dashboard' }">
-            <Button label="Administration" />
+          <router-link v-if="authStore.effectiveRolleId === 3" :to="{ name: 'admin-dashboard' }">
+            <Button label="Systemadministration" />
           </router-link>
         </template>
       </div>
@@ -42,26 +39,25 @@
     <template #end>
       <div v-if="authStore.isLoggedIn" class="flex items-center gap-2">
         <router-link
-          v-if="[1].includes(authStore.effectiveRolleId) || authStore.isLocalSuperuser"
+          v-if="[1].includes(authStore.effectiveRolleId) || authStore.effectiveIsLocalSuperuser"
           :to="{ name: 'leitziel-sets' }"
         >
-          <Button v-tooltip.left="'Einstellungen'" icon="pi pi-cog" />
+          <Button
+            v-tooltip.left="'Gebiete, Leitziele, Textblöcke, Indikatoren und Tags Ihrer Kommune verwalten'"
+            label="Verwaltung"
+            icon="pi pi-sliders-h"
+          />
         </router-link>
-        <router-link v-if="[2].includes(authStore.effectiveRolleId)" :to="{ name: 'einladungen' }">
-          <Button v-tooltip.left="'Einladungen'" icon="pi pi-user-plus" />
+        <router-link
+          v-if="[1].includes(authStore.effectiveRolleId) || authStore.effectiveIsLocalSuperuser"
+          :to="{ name: 'accountverwaltung' }"
+        >
+          <Button
+            v-tooltip.left="'Accounts, Einladungen und Gruppen Ihrer Kommune verwalten'"
+            label="Einstellungen"
+            icon="pi pi-users"
+          />
         </router-link>
-
-        <Select
-          v-if="authStore.canSwitchView"
-          :modelValue="authStore.viewAsRolleId ?? VIEW_AS_NONE"
-          @update:modelValue="onChangeViewAs"
-          :options="viewAsOptions"
-          optionLabel="label"
-          optionValue="value"
-          size="small"
-          v-tooltip.left="'Ansicht wechseln (nur für Systemadministratoren)'"
-          class="w-40"
-        />
 
         <Avatar
           v-tooltip.right="'Profil und Abmelden'"
@@ -71,10 +67,19 @@
         />
 
         <Popover ref="op">
-          <div class="flex flex-col gap-4 w-[8rem]">
+          <div class="flex flex-col gap-4 w-[11rem]">
             <router-link :to="{ name: 'profil' }">
               <Button icon="pi pi-user" label="Profil" class="w-full" text plain />
             </router-link>
+            <Button
+              v-if="wizardAvailable && !setupComplete"
+              icon="pi pi-compass"
+              label="Einführung starten"
+              class="w-full"
+              text
+              plain
+              @click="startEinfuehrung"
+            />
             <Button
               icon="pi pi-sign-out"
               label="Abmelden"
@@ -97,33 +102,32 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useBrandingStore } from '@/stores/branding'
+import { useStartWizard } from '@/composables/startWizard'
 import Avatar from 'openvue/avatar'
 import Button from 'openvue/button'
 import Toolbar from 'openvue/toolbar'
 import Popover from 'openvue/popover'
-import Select from 'openvue/select'
 import BrandingLogoLink from './BrandingLogoLink.vue'
 import defaultLogo from '../assets/logos/pimoo-logo-invertiert.png'
 
 const authStore = useAuthStore()
 const brandingStore = useBrandingStore()
 
-const VIEW_AS_NONE = 0
-
-const viewAsOptions = [
-  { label: 'Systemadmin', value: VIEW_AS_NONE },
-  { label: 'Verwaltung', value: 1 },
-  { label: 'Politik', value: 2 }
-]
-
 const op = ref()
 
-const onChangeViewAs = (rolleId) => {
-  authStore.setViewAsRolleId(rolleId === VIEW_AS_NONE ? null : rolleId)
-  window.location.reload()
+const {
+  open: openWizard,
+  available: wizardAvailable,
+  setupComplete,
+  refreshStatus
+} = useStartWizard()
+const startEinfuehrung = () => {
+  op.value.hide()
+  openWizard(0)
 }
 
 const toggle = (event) => {
+  if (wizardAvailable.value) refreshStatus() // keeps the "Einführung starten" entry current
   op.value.toggle(event)
 }
 </script>
@@ -139,20 +143,21 @@ const toggle = (event) => {
 
 .relative-toolbar {
   position: relative;
+  flex-wrap: wrap;
+  row-gap: 0.5rem;
 }
 
 .relative-toolbar :deep(.p-toolbar-center) {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: calc(100% - 2rem);
+  flex-wrap: wrap;
 }
 
-@media (max-width: 767px) {
+/* Only center absolutely when there is enough room for all three areas */
+@media (min-width: 1280px) {
   .relative-toolbar :deep(.p-toolbar-center) {
-    position: static;
-    transform: none;
-    max-width: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100% - 2rem);
   }
 }
 </style>

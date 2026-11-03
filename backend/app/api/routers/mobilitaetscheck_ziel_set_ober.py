@@ -104,7 +104,12 @@ async def delete_ziel_set_ober(
     ober = await _get_ober(db, id)
     ziel_set = await crud_ziel_set.get(db, ober.ziel_set_id)
     check_user_authorization(user, ziel_set.gemeinde_id)
+    ziel_set_id = ober.ziel_set_id
     await db.delete(ober)
+    await db.flush()
+    siblings = await db.execute(select(Model).where(Model.ziel_set_id == ziel_set_id).order_by(Model.nr))
+    for i, sibling in enumerate(siblings.scalars().all()):
+        sibling.nr = i + 1
     try:
         await db.commit()
     except SQLAlchemyError as e:

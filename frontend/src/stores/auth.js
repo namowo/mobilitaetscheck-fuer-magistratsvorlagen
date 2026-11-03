@@ -29,6 +29,9 @@ export const useAuthStore = defineStore(
 
     const isLocalSuperuser = useStorage('isLocalSuperuser', false)
 
+    // Whether a Systemadmin enabled Klimachecks for the user's Kommune (off by default)
+    const klimacheckAktiv = useStorage('klimacheckAktiv', false)
+
     // Platform Admins (rolleId 3) may switch their view to demo the app as
     // another role. This is purely a frontend navigation aid — it does not
     // change any backend permission and is not sent to the API.
@@ -43,6 +46,12 @@ export const useAuthStore = defineStore(
 
     const effectiveRolleId = computed(() =>
       canSwitchView.value && viewAsRolleId.value !== null ? viewAsRolleId.value : userRolleId.value
+    )
+
+    // Local-superuser privileges must not leak into the Platform Admin's
+    // "view as" switcher, otherwise every view shows the full menu.
+    const effectiveIsLocalSuperuser = computed(
+      () => isLocalSuperuser.value && !canSwitchView.value
     )
 
     function setViewAsRolleId(rolleId) {
@@ -83,6 +92,7 @@ export const useAuthStore = defineStore(
         userRolleId.value = user.rolleId
         gemeindeId.value = user.gemeindeId
         isLocalSuperuser.value = user.isLocalSuperuser
+        klimacheckAktiv.value = !!user.gemeinde?.klimacheckAktiv
         userId.value = user.id
         userEmail.value = user.email
         isVerified.value = user.isVerified
@@ -106,6 +116,7 @@ export const useAuthStore = defineStore(
         isVerified.value = false
         userRolleId.value = null
         isLocalSuperuser.value = false
+        klimacheckAktiv.value = false
         viewAsRolleId.value = null
         router.replace({ name: 'startseite' })
       } catch (error) {
@@ -141,6 +152,7 @@ export const useAuthStore = defineStore(
         userRolleId.value = user.rolleId
         gemeindeId.value = user.gemeindeId
         isLocalSuperuser.value = user.isLocalSuperuser
+        klimacheckAktiv.value = !!user.gemeinde?.klimacheckAktiv
         isVerified.value = user.isVerified
         if (user.rolleId !== 3) {
           viewAsRolleId.value = null
@@ -159,7 +171,7 @@ export const useAuthStore = defineStore(
           isLocalSuperuser.value = false
           viewAsRolleId.value = null
         }
-        // return Promise.reject(error) // Continue to reject the error to handle it locally if needed
+        return Promise.reject(error) // Always propagate so callers don't treat failures as success
       }
     )
 
@@ -222,8 +234,10 @@ export const useAuthStore = defineStore(
       userInitialien,
       gemeindeId,
       isLocalSuperuser,
+      klimacheckAktiv,
       viewAsRolleId,
       canSwitchView,
+      effectiveIsLocalSuperuser,
       effectiveRolleId,
       setViewAsRolleId,
       userId,

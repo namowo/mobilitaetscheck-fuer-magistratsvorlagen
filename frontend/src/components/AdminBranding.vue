@@ -24,12 +24,32 @@
             id="web-app-title"
             v-model="webAppTitle"
             placeholder="pimoo - Mobilitätscheck für Magistratsvorlagen"
-            class="w-full max-w-md"
+            class="w-full"
           />
           <Button label="Speichern" @click="saveWebAppTitle" :loading="isSavingTitle" />
         </div>
         <p class="text-xs text-gray-500">
           Wird als Titel im Browser-Tab angezeigt. Leer = Standardtitel.
+        </p>
+      </div>
+      <div class="flex flex-col gap-1 mb-6">
+        <label for="pdf-fusszeile" class="font-semibold text-sm">PDF-Fußzeile</label>
+        <Textarea
+          id="pdf-fusszeile"
+          v-model="pdfFusszeileText"
+          rows="4"
+          maxlength="300"
+          autoResize
+          placeholder="Dieses Tool wird von pimoo zur Verfügung gestellt."
+          class="w-full"
+        />
+        <div class="flex w-full items-center justify-end gap-3">
+          <span class="text-xs text-gray-500">{{ pdfFusszeileText.length }} / 300 Zeichen</span>
+          <Button label="Speichern" @click="savePdfFusszeile" :loading="isSavingFusszeile" />
+        </div>
+        <p class="text-xs text-gray-500">
+          Hinweis unter der Seitenzahl in der Fußzeile jedes exportierten PDFs, z. B. wer das Tool
+          bereitstellt (maximal 3 Zeilen, längere Texte werden gekürzt). Leer = Standardtext.
         </p>
       </div>
       <Divider />
@@ -120,6 +140,7 @@ import { ref, computed, onMounted } from 'vue'
 import Button from 'openvue/button'
 import Divider from 'openvue/divider'
 import InputText from 'openvue/inputtext'
+import Textarea from 'openvue/textarea'
 import FloatLabel from 'openvue/floatlabel'
 import { apiClient } from '@/services/axios'
 import { useToast } from 'openvue/usetoast'
@@ -141,6 +162,8 @@ const einstellungStore = useEinstellungStore()
 
 const webAppTitle = ref('')
 const isSavingTitle = ref(false)
+const pdfFusszeileText = ref('')
+const isSavingFusszeile = ref(false)
 
 const bereiche = computed(() => [...new Set(slotList.value.map((s) => s.bereich))])
 const slotsByBereich = computed(() =>
@@ -163,8 +186,10 @@ const fetchWebAppTitle = async () => {
   try {
     const res = await apiClient.get('/admin/einstellung')
     webAppTitle.value = res.data.webAppTitle || ''
+    pdfFusszeileText.value = res.data.pdfFusszeileText || ''
   } catch {
     webAppTitle.value = ''
+    pdfFusszeileText.value = ''
   }
 }
 
@@ -190,6 +215,25 @@ const saveWebAppTitle = async () => {
     })
   } finally {
     isSavingTitle.value = false
+  }
+}
+
+const savePdfFusszeile = async () => {
+  isSavingFusszeile.value = true
+  try {
+    await apiClient.patch('/admin/einstellung', {
+      pdfFusszeileText: pdfFusszeileText.value.trim() || null
+    })
+    toast.add({ severity: 'success', summary: 'Gespeichert', life: 3000 })
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: 'Fehler',
+      detail: 'PDF-Fußzeile konnte nicht gespeichert werden.',
+      life: 3000
+    })
+  } finally {
+    isSavingFusszeile.value = false
   }
 }
 

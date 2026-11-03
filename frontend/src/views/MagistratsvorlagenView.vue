@@ -3,7 +3,7 @@
     <div class="flex items-center gap-5">
       <BaseHeading>Magistratsvorlagen</BaseHeading>
       <RouterLink
-        v-if="authStore.effectiveRolleId === 1 || authStore.isLocalSuperuser"
+        v-if="authStore.effectiveRolleId === 1 || authStore.effectiveIsLocalSuperuser"
         :to="{ name: 'magistratsvorlage-neu' }"
       >
         <Button

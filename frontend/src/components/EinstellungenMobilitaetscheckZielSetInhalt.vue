@@ -91,7 +91,7 @@
                 </template>
               </draggable>
 
-              <div v-if="editable" class="ml-4 mt-1">
+              <div v-if="editable && !ober._isNew && ober.id" class="ml-4 mt-1">
                 <Button
                   label="Unterziel hinzufügen"
                   icon="pi pi-plus"
@@ -327,6 +327,7 @@ const deleteUnter = async (unter, ober) => {
 }
 
 const addUnter = (ober) => {
+  if (!ober.id) return
   ober._unterList.push({
     id: null,
     nr: ober._unterList.length + 1,

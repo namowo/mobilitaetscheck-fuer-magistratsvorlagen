@@ -39,7 +39,7 @@ export const createItem = async ({ model, values, detail }) => {
   } catch (error) {
     toastService.add({
       severity: 'error',
-      detail: detail.error
+      detail: error.response?.status === 409 ? error.response.data?.message : detail.error
     })
   }
 }

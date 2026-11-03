@@ -14,11 +14,17 @@
           <span class="text-gray-400 text-sm">Keine Kommune gefunden.</span>
         </template>
         <Column field="name" header="Name" />
-        <Column field="verwaltungEmailDomain" header="E-Mail-Domain">
+        <Column field="verwaltungEmailDomains" header="E-Mail-Domains">
           <template #body="{ data }">
-            <span class="text-gray-500 text-sm">{{
-              data.verwaltungEmailDomain ? '@' + data.verwaltungEmailDomain : '–'
-            }}</span>
+            <div v-if="data.verwaltungEmailDomains?.length" class="flex flex-wrap gap-1">
+              <Tag
+                v-for="domain in data.verwaltungEmailDomains"
+                :key="domain"
+                :value="'@' + domain"
+                severity="secondary"
+              />
+            </div>
+            <span v-else class="text-gray-400 text-sm">–</span>
           </template>
         </Column>
         <Column header="" style="width: 100px">
@@ -60,21 +66,29 @@
           }}</small>
         </div>
         <div class="field">
-          <label class="block text-sm text-gray-500 mb-1">E-Mail-Domain</label>
-          <InputGroup>
-            <InputGroupAddon>@</InputGroupAddon>
-            <InputText
-              id="newDomain"
-              v-model="createDomain"
-              :invalid="!!createErrors.verwaltungEmailDomain"
-              placeholder="oberursel.de"
-            />
-          </InputGroup>
-          <small
-            v-if="createErrors.verwaltungEmailDomain"
-            class="text-red-600 text-sm block mt-1"
-            >{{ createErrors.verwaltungEmailDomain }}</small
+          <label for="newDomains" class="block text-sm text-gray-500 mb-1">E-Mail-Domains</label>
+          <InputChips
+            inputId="newDomains"
+            v-model="createDomains"
+            :allowDuplicate="false"
+            separator=","
+            addOnBlur
+            :placeholder="createDomains?.length ? '' : 'beispielstadt.de'"
+            class="w-full"
+            :invalid="!!createErrors.verwaltungEmailDomains"
+          />
+          <small class="text-gray-400 text-xs block mt-1"
+            >Mehrere Domains mit Enter oder Komma trennen.</small
           >
+          <small
+            v-if="createErrors.verwaltungEmailDomains"
+            class="text-red-600 text-sm block mt-1"
+            >{{ createErrors.verwaltungEmailDomains }}</small
+          >
+        </div>
+        <div class="inline-field">
+          <label for="createKlimacheck">Klimacheck aktivieren</label>
+          <ToggleSwitch inputId="createKlimacheck" v-model="createKlimacheck" />
         </div>
       </form>
       <template #footer>
@@ -106,19 +120,29 @@
           }}</small>
         </div>
         <div class="field">
-          <label class="block text-sm text-gray-500 mb-1">E-Mail-Domain</label>
-          <InputGroup>
-            <InputGroupAddon>@</InputGroupAddon>
-            <InputText
-              id="editDomain"
-              v-model="editDomain"
-              :invalid="!!editErrors.verwaltungEmailDomain"
-              placeholder="oberursel.de"
-            />
-          </InputGroup>
-          <small v-if="editErrors.verwaltungEmailDomain" class="text-red-600 text-sm block mt-1">{{
-            editErrors.verwaltungEmailDomain
-          }}</small>
+          <label for="editDomains" class="block text-sm text-gray-500 mb-1">E-Mail-Domains</label>
+          <InputChips
+            inputId="editDomains"
+            v-model="editDomains"
+            :allowDuplicate="false"
+            separator=","
+            addOnBlur
+            :placeholder="editDomains?.length ? '' : 'beispielstadt.de'"
+            class="w-full"
+            :invalid="!!editErrors.verwaltungEmailDomains"
+          />
+          <small class="text-gray-400 text-xs block mt-1"
+            >Mehrere Domains mit Enter oder Komma trennen.</small
+          >
+          <small
+            v-if="editErrors.verwaltungEmailDomains"
+            class="text-red-600 text-sm block mt-1"
+            >{{ editErrors.verwaltungEmailDomains }}</small
+          >
+        </div>
+        <div class="inline-field">
+          <label for="editKlimacheck">Klimacheck aktivieren</label>
+          <ToggleSwitch inputId="editKlimacheck" v-model="editKlimacheck" />
         </div>
       </form>
       <template #footer>
@@ -137,25 +161,28 @@ import * as yup from 'yup'
 import Button from 'openvue/button'
 import InputText from 'openvue/inputtext'
 import FloatLabel from 'openvue/floatlabel'
-import InputGroup from 'openvue/inputgroup'
-import InputGroupAddon from 'openvue/inputgroupaddon'
+import InputChips from 'openvue/inputchips'
+import Tag from 'openvue/tag'
 import DataTable from 'openvue/datatable'
 import Column from 'openvue/column'
 import Dialog from 'openvue/dialog'
+import ToggleSwitch from 'openvue/toggleswitch'
 import { apiClient } from '@/services/axios'
 import { useToast } from 'openvue/usetoast'
 
 const gemeindeSchema = yup.object({
   name: yup.string().required('Name ist erforderlich.').label('Name'),
-  verwaltungEmailDomain: yup
-    .string()
-    .nullable()
-    .transform((value) => (value === '' ? null : value))
-    .matches(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
-      message: 'Ungültige Domain (z.B. oberursel.de).',
-      excludeEmptyString: true
-    })
-    .label('E-Mail-Domain')
+  verwaltungEmailDomains: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .trim()
+        .matches(/^@?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Ungültige Domain (z.B. beispielstadt.de).')
+    )
+    .default([])
+    .label('E-Mail-Domains'),
+  klimacheckAktiv: yup.boolean().default(false)
 })
 
 const gemeinden = ref([])
@@ -174,10 +201,11 @@ const {
 } = useForm({ validationSchema: gemeindeSchema })
 
 const [createName] = defineCreateField('name')
-const [createDomain] = defineCreateField('verwaltungEmailDomain')
+const [createDomains] = defineCreateField('verwaltungEmailDomains')
+const [createKlimacheck] = defineCreateField('klimacheckAktiv')
 
 const openCreate = () => {
-  resetCreate()
+  resetCreate({ values: { name: '', verwaltungEmailDomains: [], klimacheckAktiv: false } })
   createVisible.value = true
 }
 
@@ -194,7 +222,8 @@ const {
 } = useForm({ validationSchema: gemeindeSchema })
 
 const [editName] = defineEditField('name')
-const [editDomain] = defineEditField('verwaltungEmailDomain')
+const [editDomains] = defineEditField('verwaltungEmailDomains')
+const [editKlimacheck] = defineEditField('klimacheckAktiv')
 
 // ---
 
@@ -244,7 +273,8 @@ const submitCreate = handleCreate(async (values) => {
   try {
     await apiClient.post('/admin/gemeinde', {
       name: values.name,
-      verwaltung_email_domain: values.verwaltungEmailDomain || null
+      verwaltung_email_domains: (values.verwaltungEmailDomains || []).map((d) => d.replace(/^@/, '')),
+      klimacheck_aktiv: !!values.klimacheckAktiv
     })
     toast.add({ severity: 'success', summary: 'Kommune angelegt', life: 3000 })
     createVisible.value = false
@@ -265,7 +295,8 @@ const openEdit = (gemeinde) => {
   editId.value = gemeinde.id
   setEditValues({
     name: gemeinde.name,
-    verwaltungEmailDomain: gemeinde.verwaltungEmailDomain || ''
+    verwaltungEmailDomains: [...(gemeinde.verwaltungEmailDomains || [])],
+    klimacheckAktiv: !!gemeinde.klimacheckAktiv
   })
   editVisible.value = true
 }
@@ -275,7 +306,8 @@ const submitEdit = handleEdit(async (values) => {
   try {
     const res = await apiClient.patch(`/admin/gemeinde/${editId.value}`, {
       name: values.name,
-      verwaltung_email_domain: values.verwaltungEmailDomain || null
+      verwaltung_email_domains: (values.verwaltungEmailDomains || []).map((d) => d.replace(/^@/, '')),
+      klimacheck_aktiv: !!values.klimacheckAktiv
     })
     const idx = gemeinden.value.findIndex((g) => g.id === editId.value)
     if (idx !== -1) gemeinden.value[idx] = res.data
@@ -310,6 +342,13 @@ const deleteGemeinde = async (id) => {
 </script>
 
 <style scoped>
+.inline-field {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
 .field {
   display: flex;
   flex-direction: column;

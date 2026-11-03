@@ -212,3 +212,9 @@
     --primary-highlight-hover-opacity: 0.2;
   }
 }
+
+/* PrimeVue Editor (Quill): ganze Fläche klickbar, nicht nur die erste Zeile */
+.p-editor-content .ql-editor {
+  min-height: inherit;
+  cursor: text;
+}

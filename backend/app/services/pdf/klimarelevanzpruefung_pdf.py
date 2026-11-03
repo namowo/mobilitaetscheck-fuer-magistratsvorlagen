@@ -54,7 +54,7 @@ class KlimarelevanzpruefungPDF(BasePDF):
         if new_notes:
             # Calculate space needed
             footnote_height = self._get_footnotes_height(new_notes)
-            footer_y = -(footnote_height + 12)  # Extra space for page number
+            footer_y = -(footnote_height + self.footer_block_height() + 2)  # keep clear of page number + attribution
             self.set_y(footer_y)
 
             # Draw subtle divider line
@@ -85,10 +85,8 @@ class KlimarelevanzpruefungPDF(BasePDF):
                     self.ln(1)
                     self.rendered_footnotes.add(footnote_num)
 
-        # Page number at the very bottom
-        self.set_y(-10)
-        self.set_font("free-sans", "", 8)
-        self.cell(0, 10, f"Seite {self.page_no()}/{{nb}}", align="C")
+        # Page number and attribution at the very bottom
+        self.draw_page_footer()
 
     NUM_COL_WIDTH = 10
     CHECK_COL_WIDTH = 15

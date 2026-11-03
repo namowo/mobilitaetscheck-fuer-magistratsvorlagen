@@ -20,7 +20,7 @@
           <span>{{ datumFormatieren(vorlage.verwaltungsvorgangDatum) }}</span>
           <template v-if="vorlage.beschreibung">
             <span class="font-semibold">Beschreibung</span>
-            <span>{{ vorlage.beschreibung }}</span>
+            <div class="prose prose-sm max-w-none" v-html="vorlage.beschreibung"></div>
           </template>
           <template v-if="vorlage.gemeindeGebiete?.length > 0">
             <span class="font-semibold">Gebiete</span>

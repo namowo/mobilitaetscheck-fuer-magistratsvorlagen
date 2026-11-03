@@ -27,7 +27,13 @@
               :class="props.readOnly && tangiert ? 'text-white' : 'text-gray-800'"
             >{{ props.item.zielOber.name }}</span>
           </div>
-          <ToggleSwitch v-model="tangiert" @click.stop :invalid="!!errors.tangiert" :disabled="props.readOnly" />
+          <span
+            v-if="props.readOnly"
+            class="flex-none px-2.5 py-0.5 rounded-full text-xs font-medium"
+            :class="tangiert ? 'bg-white text-blue-600' : 'bg-gray-200 text-gray-600'"
+            >{{ tangiert ? 'tangiert' : 'nicht tangiert' }}</span
+          >
+          <ToggleSwitch v-else v-model="tangiert" @click.stop :invalid="!!errors.tangiert" />
         </div>
 
         <!-- Unter-Ziele -->

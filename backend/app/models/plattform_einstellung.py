@@ -71,6 +71,10 @@ class PlattformEinstellung(Base):
         nullable=True,
         comment="Primärfarbe der Plattform als Hex-Code (z. B. '#507C96'). Leer = Standardfarbe.",
     )
+    pdf_fusszeile_text: Mapped[Optional[str]] = mapped_column(
+        nullable=True,
+        comment="Hinweistext in der Fußzeile exportierter PDFs. Leer = Standardtext.",
+    )
     web_app_title: Mapped[Optional[str]] = mapped_column(
         nullable=True,
         comment="Titel der Anwendung (Browser-Tab-Titel). Leer = Standardtitel.",

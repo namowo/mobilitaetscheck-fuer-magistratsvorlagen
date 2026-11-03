@@ -134,7 +134,8 @@ const router = createRouter({
         {
           path: 'klimacheck',
           name: 'magistratsvorlage-id-klimacheck',
-          component: () => import('@/views/MagistratsvorlageIdKlimacheckView.vue')
+          component: () => import('@/views/MagistratsvorlageIdKlimacheckView.vue'),
+          meta: { requiresKlimacheck: true }
         },
         {
           path: 'mobilitaetscheck',
@@ -144,17 +145,20 @@ const router = createRouter({
         {
           path: 'klimarelevanzpruefung',
           name: 'magistratsvorlage-id-klimarelevanzpruefung',
-          component: () => import('@/views/MagistratsvorlageIdKlimarelevanzpruefungView.vue')
+          component: () => import('@/views/MagistratsvorlageIdKlimarelevanzpruefungView.vue'),
+          meta: { requiresKlimacheck: true }
         },
         {
           path: 'klimarelevanzpruefung/neu',
           name: 'magistratsvorlage-id-klimarelevanzpruefung-neu',
-          component: () => import('@/views/MagistratsvorlageIdKlimarelevanzpruefungNeuView.vue')
+          component: () => import('@/views/MagistratsvorlageIdKlimarelevanzpruefungNeuView.vue'),
+          meta: { requiresKlimacheck: true }
         },
         {
           path: 'klimarelevanzpruefung/:klimarelevanzpruefungId',
           name: 'magistratsvorlage-id-klimarelevanzpruefung-id',
-          component: () => import('@/views/MagistratsvorlageIdKlimarelevanzpruefungIdView.vue')
+          component: () => import('@/views/MagistratsvorlageIdKlimarelevanzpruefungIdView.vue'),
+          meta: { requiresKlimacheck: true }
         },
         {
           path: 'mobilitaetscheck/neu',
@@ -169,7 +173,8 @@ const router = createRouter({
         {
           path: 'klimacheck/neu',
           name: 'magistratsvorlage-id-klimacheck-neu',
-          component: () => import('@/views/MagistratsvorlageIdKlimacheckNeuView.vue')
+          component: () => import('@/views/MagistratsvorlageIdKlimacheckNeuView.vue'),
+          meta: { requiresKlimacheck: true }
         }
       ]
     },
@@ -188,7 +193,7 @@ const router = createRouter({
       component: () => import('@/views/EinstellungenView.vue'),
       meta: {
         requiresAuth: true,
-        requiredUserRolleId: [1, 2]
+        requiredUserRolleId: [1]
       },
       children: [
         {
@@ -212,19 +217,36 @@ const router = createRouter({
           component: () => import('@/views/EinstellungenTagView.vue')
         },
         {
-          path: 'accountverwaltung',
-          name: 'accountverwaltung',
-          component: () => import('@/views/EinstellungenAccountverwaltungView.vue')
-        },
-        {
           path: 'gemeinde-gebiet',
           name: 'gemeinde-gebiet',
           component: () => import('@/views/EinstellungenGemeindeGebietView.vue')
         },
         {
+          path: 'pdf-logo',
+          name: 'pdf-logo',
+          component: () => import('@/views/EinstellungenPdfLogoView.vue')
+        },
+        {
           path: 'leitziel-sets',
           name: 'leitziel-sets',
           component: () => import('@/views/EinstellungenZielSetView.vue')
+        }
+      ]
+    },
+    {
+      path: '/administration',
+      name: 'administration',
+      component: () => import('@/views/AdministrationView.vue'),
+      redirect: { name: 'accountverwaltung' },
+      meta: {
+        requiresAuth: true,
+        requiredUserRolleId: [1, 2]
+      },
+      children: [
+        {
+          path: 'accountverwaltung',
+          name: 'accountverwaltung',
+          component: () => import('@/views/EinstellungenAccountverwaltungView.vue')
         },
         {
           path: 'einladungen',
@@ -379,10 +401,13 @@ router.beforeEach(async (to) => {
     if (to.meta.requiresPlatformAdmin && authStore.userRolleId !== 3) {
       return { name: 'keine-zugangsberechtigung' }
     }
+    if (to.meta.requiresKlimacheck && !authStore.klimacheckAktiv) {
+      return { name: 'keine-zugangsberechtigung' }
+    }
     if (
       to.meta.requiredUserRolleId &&
       !to.meta.requiredUserRolleId.includes(authStore.effectiveRolleId) &&
-      !authStore.isLocalSuperuser
+      !authStore.effectiveIsLocalSuperuser
     ) {
       return { name: 'keine-zugangsberechtigung' }
     }
