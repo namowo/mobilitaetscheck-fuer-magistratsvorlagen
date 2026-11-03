@@ -7,12 +7,7 @@ from fastapi.responses import FileResponse
 from PIL import Image, UnidentifiedImageError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.deps import (
-    ADMIN_ROLLE_NAME,
-    VERWALTUNG_ROLLE_NAME,
-    current_active_user,
-    get_async_session,
-)
+from app.core.deps import current_active_user, get_async_session
 from app.models.gemeinde import Gemeinde
 from app.models.user import User
 from app.schemas.gemeinde import GemeindeRead
@@ -31,15 +26,10 @@ def _delete_file(dateiname: str | None) -> None:
 
 
 async def current_logo_editor(user: User = Depends(current_active_user)) -> User:
-    """Same audience as the Einstellungen area: any Verwaltung account (not only local
-    superusers), plus Systemadmins who switched their view to Verwaltung. The logo always
-    belongs to the user's own Gemeinde."""
-    if (
-        user.rolle.name in (VERWALTUNG_ROLLE_NAME, ADMIN_ROLLE_NAME)
-        or user.is_local_superuser
-    ):
-        return user
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Keine Berechtigung")
+    """Only kommunale Administrator:innen (local superusers) may change their Gemeinde's logo."""
+    if not user.is_local_superuser:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Keine Berechtigung")
+    return user
 
 
 @router.get("")

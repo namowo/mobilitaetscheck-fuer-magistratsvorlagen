@@ -14,7 +14,7 @@
         </Menu>
       </div>
       <div class="container col-span-6">
-        <BaseHeading> Administration </BaseHeading>
+        <BaseHeading> Einstellungen </BaseHeading>
         <Router-View />
       </div>
     </div>
@@ -39,6 +39,11 @@ const allItems = [
     ]
   },
   {
+    label: 'Kommune',
+    requiresLocalSuperuser: true,
+    items: [{ label: 'PDF-Logo', route: '/administration/pdf-logo' }]
+  },
+  {
     label: 'Einladungen',
     requiresRolleId: [2],
     items: [{ label: 'Einladungen', route: '/administration/einladungen' }]
@@ -46,9 +51,10 @@ const allItems = [
 ]
 
 const items = computed(() =>
-  allItems.filter(
-    (group) =>
-      group.requiresRolleId.includes(authStore.effectiveRolleId) ||
+  allItems.filter((group) =>
+    group.requiresLocalSuperuser
+      ? authStore.istKommunaleAdmin
+      : group.requiresRolleId.includes(authStore.effectiveRolleId) ||
       (authStore.effectiveIsLocalSuperuser && group.requiresRolleId.includes(1))
   )
 )

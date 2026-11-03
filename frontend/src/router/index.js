@@ -222,11 +222,6 @@ const router = createRouter({
           component: () => import('@/views/EinstellungenGemeindeGebietView.vue')
         },
         {
-          path: 'pdf-logo',
-          name: 'pdf-logo',
-          component: () => import('@/views/EinstellungenPdfLogoView.vue')
-        },
-        {
           path: 'leitziel-sets',
           name: 'leitziel-sets',
           component: () => import('@/views/EinstellungenZielSetView.vue')
@@ -257,6 +252,12 @@ const router = createRouter({
           path: 'gruppen',
           name: 'gruppen',
           component: () => import('@/views/EinstellungenGruppenView.vue')
+        },
+        {
+          path: 'pdf-logo',
+          name: 'pdf-logo',
+          component: () => import('@/views/EinstellungenPdfLogoView.vue'),
+          meta: { requiresLocalSuperuser: true }
         }
       ]
     },
@@ -399,6 +400,9 @@ router.beforeEach(async (to) => {
       return { name: 'account-nicht-verifiziert' }
     }
     if (to.meta.requiresPlatformAdmin && authStore.userRolleId !== 3) {
+      return { name: 'keine-zugangsberechtigung' }
+    }
+    if (to.meta.requiresLocalSuperuser && !authStore.istKommunaleAdmin) {
       return { name: 'keine-zugangsberechtigung' }
     }
     if (to.meta.requiresKlimacheck && !authStore.klimacheckAktiv) {

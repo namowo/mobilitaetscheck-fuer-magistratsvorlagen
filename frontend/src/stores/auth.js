@@ -54,6 +54,10 @@ export const useAuthStore = defineStore(
       () => isLocalSuperuser.value && !canSwitchView.value
     )
 
+    // Kommunale Administrator:in (real flag), also when a Systemadmin who has that flag
+    // views the app as Verwaltung. Not in the Systemadministration view itself.
+    const istKommunaleAdmin = computed(() => isLocalSuperuser.value && effectiveRolleId.value !== 3)
+
     function setViewAsRolleId(rolleId) {
       if (!canSwitchView.value) return
       viewAsRolleId.value = rolleId
@@ -238,6 +242,7 @@ export const useAuthStore = defineStore(
       viewAsRolleId,
       canSwitchView,
       effectiveIsLocalSuperuser,
+      istKommunaleAdmin,
       effectiveRolleId,
       setViewAsRolleId,
       userId,
