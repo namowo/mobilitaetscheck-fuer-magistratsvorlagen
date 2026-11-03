@@ -65,9 +65,27 @@ const STEPS = {
       ],
       // Shown individually in the final overview
       checklistItems: [
-        { key: 'textbloecke', title: 'Eigene Textblöcke anlegen', statusKey: 'textbloecke', optional: true, action: { label: 'Textblöcke', to: { name: 'textblock' } } },
-        { key: 'indikatoren', title: 'Eigene Indikatoren anlegen', statusKey: 'indikatoren', optional: true, action: { label: 'Indikatoren', to: { name: 'indikator' } } },
-        { key: 'tags', title: 'Eigene Tags anlegen', statusKey: 'tags', optional: true, action: { label: 'Tags', to: { name: 'tag' } } }
+        {
+          key: 'textbloecke',
+          title: 'Eigene Textblöcke anlegen',
+          statusKey: 'textbloecke',
+          optional: true,
+          action: { label: 'Textblöcke', to: { name: 'textblock' } }
+        },
+        {
+          key: 'indikatoren',
+          title: 'Eigene Indikatoren anlegen',
+          statusKey: 'indikatoren',
+          optional: true,
+          action: { label: 'Indikatoren', to: { name: 'indikator' } }
+        },
+        {
+          key: 'tags',
+          title: 'Eigene Tags anlegen',
+          statusKey: 'tags',
+          optional: true,
+          action: { label: 'Tags', to: { name: 'tag' } }
+        }
       ],
       actions: [
         { label: 'Textblöcke', to: { name: 'textblock' } },
@@ -75,17 +93,21 @@ const STEPS = {
         { label: 'Tags', to: { name: 'tag' } }
       ]
     },
-    {
-      key: 'pdf-logo',
-      icon: 'pi pi-image',
-      title: 'Logo für PDF-Exporte',
-      optional: true,
-      statusKey: 'pdfLogo',
-      paragraphs: [
-        'Laden Sie das Logo Ihrer Kommune hoch (PNG oder JPEG, max. 2 MB). Es erscheint auf allen exportierten PDFs.'
-      ],
-      action: { label: 'Logo hochladen', to: { name: 'pdf-logo' } }
-    },
+    ...(ctx.istKommunaleAdmin
+      ? [
+          {
+            key: 'pdf-logo',
+            icon: 'pi pi-image',
+            title: 'Logo für PDF-Exporte',
+            optional: true,
+            statusKey: 'pdfLogo',
+            paragraphs: [
+              'Laden Sie das Logo Ihrer Kommune hoch (PNG oder JPEG, max. 2 MB). Es erscheint auf allen exportierten PDFs.'
+            ],
+            action: { label: 'Logo hochladen', to: { name: 'pdf-logo' } }
+          }
+        ]
+      : []),
     {
       key: 'team',
       icon: 'pi pi-users',
@@ -180,7 +202,10 @@ export const useStartWizard = () => {
   )
 
   const steps = computed(() =>
-    STEPS[rolle.value]({ klimacheckAktiv: authStore.klimacheckAktiv })
+    STEPS[rolle.value]({
+      klimacheckAktiv: authStore.klimacheckAktiv,
+      istKommunaleAdmin: authStore.istKommunaleAdmin
+    })
   )
 
   const currentStep = computed(() => steps.value[stepIndex.value])
