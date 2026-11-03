@@ -40,10 +40,6 @@ const allItems = [
       {
         label: 'Gebiete',
         route: '/einstellungen/gemeinde-gebiet'
-      },
-      {
-        label: 'PDF-Logo',
-        route: '/einstellungen/pdf-logo'
       }
     ]
   },
