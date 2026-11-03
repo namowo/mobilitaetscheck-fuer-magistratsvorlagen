@@ -5,8 +5,13 @@
 # Fork-only files (deploy / release automation, changelog) are left out of the contribution.
 # Commits upstream already has (same patch, even with a different SHA) are skipped.
 #
-# Env: UPSTREAM_REPO (owner/name), CONTRIB_BRANCH, GH_TOKEN (needed unless DRY_RUN=1),
+# Env: UPSTREAM_REPO (owner/name), CONTRIB_BRANCH, GH_TOKEN (optional, see below),
 #      FORK_REF (default origin/main), DRY_RUN=1 (build the branch locally, don't push/PR)
+#
+# The branch is always pushed to the fork. Opening the pull request upstream needs a token
+# with rights on the upstream repo (your own `gh auth login` works locally). Without one
+# (e.g. GITHUB_TOKEN in Actions) the script prints a ready-made "open pull request" link;
+# once the PR exists, every later run only force-pushes the branch and the PR updates itself.
 set -euo pipefail
 
 UPSTREAM_REPO="${UPSTREAM_REPO:?}"
@@ -76,8 +81,23 @@ if [ -n "$existing" ]; then
   exit 0
 fi
 
+compare_url="https://github.com/${UPSTREAM_REPO}/compare/main...${FORK_OWNER}:${CONTRIB_BRANCH}?expand=1"
 body="$(printf 'Automatisch aus dem Fork `%s/%s` erstellt. Enthält:\n\n' "$FORK_OWNER" "${UPSTREAM_REPO#*/}"
         printf -- '- %s\n' "${applied[@]}"
         printf '\nOhne Workflows, Deployment- und Release-Automatisierung des Forks.\n')"
-gh pr create --repo "$UPSTREAM_REPO" --base main --head "${FORK_OWNER}:${CONTRIB_BRANCH}" \
-  --title "Beiträge aus ${FORK_OWNER}" --body "$body"
+if gh pr create --repo "$UPSTREAM_REPO" --base main --head "${FORK_OWNER}:${CONTRIB_BRANCH}" \
+     --title "Beiträge aus ${FORK_OWNER}" --body "$body"; then
+  exit 0
+fi
+
+echo "Could not open the pull request automatically (token has no rights upstream)."
+echo "Open it with one click: $compare_url"
+if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+  {
+    echo "### Beitrag für ${UPSTREAM_REPO} bereit"
+    echo
+    echo "Branch \`${CONTRIB_BRANCH}\` wurde aktualisiert (${#applied[@]} Commit(s))."
+    echo
+    echo "[Pull Request öffnen](${compare_url})"
+  } >> "$GITHUB_STEP_SUMMARY"
+fi
