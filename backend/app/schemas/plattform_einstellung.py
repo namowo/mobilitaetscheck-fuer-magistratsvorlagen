@@ -1,5 +1,6 @@
 import re
 from typing import Literal, Optional
+from app.core.config import DEFAULT_PDF_FOOTER_TEXT
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 RechtstextModus = Literal["inhalt", "url"]
@@ -54,7 +55,7 @@ class PlattformEinstellungBase(BaseModel):
     )
     pdf_fusszeile_text: Optional[str] = Field(
         None,
-        description="Hinweistext in der Fußzeile exportierter PDFs. Leer = Standardtext.",
+        description="Hinweistext in der Fußzeile exportierter PDFs. Leer = keine Fußzeile; nie gesetzt = Standardtext.",
     )
     web_app_title: Optional[str] = Field(
         None,
@@ -81,3 +82,9 @@ class PlattformEinstellungRead(PlattformEinstellungBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(..., description="Unique identifier for the Plattform-Einstellung.")
+
+    @field_validator("pdf_fusszeile_text")
+    @classmethod
+    def default_footer_text(cls, value: Optional[str]) -> str:
+        # Never saved yet -> show (and print) the default text
+        return DEFAULT_PDF_FOOTER_TEXT if value is None else value

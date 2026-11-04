@@ -136,6 +136,10 @@ class CRUDEingabe(CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]):
             unit="mm",
             format="A4",
             logo_path=logo_path,
-            footer_text=(einstellung.pdf_fusszeile_text or "").strip() or None,
+            footer_text=(
+                None
+                if einstellung.pdf_fusszeile_text is None
+                else einstellung.pdf_fusszeile_text.strip()
+            ),
         )
         return pdf.export(instance)

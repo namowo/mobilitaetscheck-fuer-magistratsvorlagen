@@ -7,7 +7,6 @@ from pydantic import (
     BeforeValidator,
     PostgresDsn,
     computed_field,
-    model_validator,
 )
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -20,6 +19,10 @@ def parse_list(v: Any) -> list[str] | str:
     elif isinstance(v, list | str):
         return v
     raise ValueError(v)
+
+
+# Footer text used until a Systemadmin saves one (NULL in the DB). An empty saved text = no footer.
+DEFAULT_PDF_FOOTER_TEXT = "Dieses Tool wird von pimoo zur Verfügung gestellt."
 
 
 class Settings(BaseSettings):
@@ -65,25 +68,19 @@ class Settings(BaseSettings):
     # Root directory for all uploads (mount ONE persistent volume here). Branding images
     # (publicly served) and Gemeinde PDF logos (not public) live in subfolders of it.
     UPLOAD_DIR: str = "./uploads"
-    # Optional overrides; default to subfolders of UPLOAD_DIR (see below)
-    BRANDING_UPLOAD_DIR: str = ""
-    GEMEINDE_LOGO_UPLOAD_DIR: str = ""
-    # Attribution line printed in every PDF footer ("" disables it)
-    PDF_FOOTER_TEXT: str = "Dieses Tool wird von pimoo zur Verfügung gestellt."
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_list)] = (
         []
     )
 
-    @model_validator(mode="after")
-    def _derive_upload_dirs(self) -> "Settings":
-        root = self.UPLOAD_DIR.rstrip("/") or "."
-        if not self.BRANDING_UPLOAD_DIR:
-            self.BRANDING_UPLOAD_DIR = f"{root}/branding"
-        if not self.GEMEINDE_LOGO_UPLOAD_DIR:
-            self.GEMEINDE_LOGO_UPLOAD_DIR = f"{root}/gemeinde-logos"
-        return self
+    @property
+    def BRANDING_UPLOAD_DIR(self) -> str:
+        return f"{self.UPLOAD_DIR.rstrip('/') or '.'}/branding"
+
+    @property
+    def GEMEINDE_LOGO_UPLOAD_DIR(self) -> str:
+        return f"{self.UPLOAD_DIR.rstrip('/') or '.'}/gemeinde-logos"
 
     @computed_field  # type: ignore[prop-decorator]
     @property
