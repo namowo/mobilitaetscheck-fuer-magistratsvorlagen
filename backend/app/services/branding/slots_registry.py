@@ -7,7 +7,7 @@ BRANDING_SLOTS = {
     },
     "pdf-logo": {
         "label": "PDF-Logo",
-        "beschreibung": "Wird oben links in exportierten PDFs angezeigt.",
+        "beschreibung": "Standard-Logo oben links in exportierten PDFs. Eine Kommune kann es mit einem eigenen Logo überschreiben (Einstellungen).",
         "bereich": "PDF-Export",
         "erlaubte_typen": ["image/png", "image/webp", "image/jpeg"],
     },

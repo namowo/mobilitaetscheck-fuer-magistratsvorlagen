@@ -55,10 +55,11 @@ Setze `HOST_URL` auf die öffentlich erreichbare URL des Backends (z.B.
 hochgeladener Branding-Bilder (Logos, Favicon) verwendet – bleibt sie auf dem Standardwert
 `http://localhost:8000`, funktionieren diese Links außerhalb des Servers nicht.
 
-Über `BRANDING_UPLOAD_DIR` lässt sich der Speicherort für hochgeladene Branding-Bilder (Logos,
-Favicon) konfigurieren. Standardmäßig liegt er innerhalb des Backend-Verzeichnisses; bei Bedarf
-kann ein anderer (auch absoluter) Pfad gesetzt werden. Das Verzeichnis wird beim Start automatisch
-angelegt, muss aber für den Benutzer beschreibbar sein, unter dem der Backend-Dienst läuft.
+Über `UPLOAD_DIR` lässt sich der Speicherort für alle Uploads konfigurieren (Branding-Bilder wie
+Logo und Favicon sowie die PDF-Logos der Kommunen). Standardmäßig liegt er innerhalb des
+Backend-Verzeichnisses; bei Bedarf kann ein anderer (auch absoluter) Pfad gesetzt werden. Das
+Verzeichnis muss für den Benutzer beschreibbar und persistent sein (Backups einplanen), unter dem
+der Backend-Dienst läuft.
 
 ---
 

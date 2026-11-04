@@ -4,6 +4,7 @@ from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase
+from app.crud.branding_bild import crud_branding_slot_zuweisung
 from app.crud.plattform_einstellung import crud_plattform_einstellung
 from app.services.pdf.base_pdf import BasePDF, resolve_gemeinde_logo_path
 
@@ -127,15 +128,20 @@ class CRUDEingabe(CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def export(self, db: AsyncSession, id: int, PDF: BasePDF) -> bytes:
         instance = await self.get(db, id)
         gemeinde = getattr(instance, "gemeinde", None)
+        # The Gemeinde's own logo wins; otherwise the Systemadmin's default PDF logo (if any)
         logo_path = resolve_gemeinde_logo_path(
             getattr(gemeinde, "pdf_logo_dateiname", None)
-        )
+        ) or await crud_branding_slot_zuweisung.get_pdf_logo_path(db)
         einstellung = await crud_plattform_einstellung.get(db)
         pdf = PDF(
             orientation="P",
             unit="mm",
             format="A4",
             logo_path=logo_path,
-            footer_text=(einstellung.pdf_fusszeile_text or "").strip() or None,
+            footer_text=(
+                None
+                if einstellung.pdf_fusszeile_text is None
+                else einstellung.pdf_fusszeile_text.strip()
+            ),
         )
         return pdf.export(instance)

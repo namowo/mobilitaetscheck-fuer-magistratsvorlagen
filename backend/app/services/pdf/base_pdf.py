@@ -1,48 +1,9 @@
 import datetime
-import os
-import shutil
 from fpdf import FPDF
 from PIL import Image
 from os import path
 
-from app.core.config import settings
-
-
-ACTIVE_LOGO_BASENAME = "active"
-
-
-def _active_logo_dir() -> str:
-    return path.abspath(settings.PDF_LOGO_UPLOAD_DIR)
-
-
-def sync_active_pdf_logo(source_path: str | None) -> None:
-    """Mirror the branding asset assigned to the 'pdf-logo' slot into a local cache file
-    that resolve_logo_path() can read synchronously (PDF rendering can't await a DB call).
-    Pass None to clear it (falls back to the bundled default logo)."""
-    active_dir = _active_logo_dir()
-    if os.path.isdir(active_dir):
-        for f in os.listdir(active_dir):
-            if path.splitext(f)[0] == ACTIVE_LOGO_BASENAME:
-                os.remove(path.join(active_dir, f))
-
-    if source_path is None:
-        return
-
-    os.makedirs(active_dir, exist_ok=True)
-    extension = path.splitext(source_path)[1]
-    shutil.copyfile(source_path, path.join(active_dir, f"{ACTIVE_LOGO_BASENAME}{extension}"))
-
-
-def resolve_logo_path() -> str:
-    """Path to the active PDF logo: the admin-selected branding asset if present, else the bundled default."""
-    active_dir = _active_logo_dir()
-    if os.path.isdir(active_dir):
-        for f in os.listdir(active_dir):
-            if path.splitext(f)[0] == ACTIVE_LOGO_BASENAME:
-                return path.join(active_dir, f)
-
-    script_dir = path.dirname(path.abspath(__file__))
-    return path.normpath(path.join(script_dir, "./assests/pimoo-logo.png"))
+from app.core.config import DEFAULT_PDF_FOOTER_TEXT, settings
 
 
 def gemeinde_logo_dir() -> str:
@@ -62,9 +23,9 @@ def resolve_gemeinde_logo_path(pdf_logo_dateiname: str | None) -> str | None:
 # (aspect ratio preserved), so it can never grow into the page content.
 LOGO_X = 10
 LOGO_Y = 8
-LOGO_MAX_W = 45
-LOGO_MAX_H = 14
-HEADER_BOTTOM = LOGO_Y + LOGO_MAX_H + 6  # content always starts below this
+LOGO_MAX_W = 40
+LOGO_MAX_H = 10
+HEADER_BOTTOM = LOGO_Y + LOGO_MAX_H + 4  # content always starts below this
 
 
 class BasePDF(FPDF):
@@ -76,7 +37,7 @@ class BasePDF(FPDF):
         super().__init__(orientation, unit, format)
         # Gemeinde logo if it has one; otherwise no logo is drawn
         self.logo_path = logo_path
-        # Platform-configured footer attribution; None = built-in default
+        # Platform-configured footer attribution; None = built-in default, "" = no footer
         self.footer_text = footer_text
         font_path = path.dirname(path.abspath(__file__))
         self.add_font(
@@ -121,7 +82,8 @@ class BasePDF(FPDF):
 
     def _footer_lines(self) -> list[str]:
         """Attribution wrapped to the full content width, at most FOOTER_MAX_LINES lines."""
-        text = self.footer_text or settings.PDF_FOOTER_TEXT
+        # None = use the default; "" = Systemadmin turned the footer off
+        text = DEFAULT_PDF_FOOTER_TEXT if self.footer_text is None else self.footer_text
         if not text:
             return []
         self.set_font("free-sans", "", 7)

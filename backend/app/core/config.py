@@ -21,6 +21,10 @@ def parse_list(v: Any) -> list[str] | str:
     raise ValueError(v)
 
 
+# Footer text used until a Systemadmin saves one (NULL in the DB). An empty saved text = no footer.
+DEFAULT_PDF_FOOTER_TEXT = "Dieses Tool wird von pimoo zur Verfügung gestellt."
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(
@@ -61,19 +65,22 @@ class Settings(BaseSettings):
     # FastAPI Settings
     HOST_URL: str = "http://localhost:8000"
     FRONTEND_DIR: str = "../frontend/dist"
-    BRANDING_UPLOAD_DIR: str = "./uploads/branding"
-    # Local (non-public) cache of the active PDF-export logo, mirrored from BRANDING_UPLOAD_DIR
-    # so PDF rendering can read it synchronously without an async DB call.
-    PDF_LOGO_UPLOAD_DIR: str = "./uploads/pdf-logo"
-    # Per-Gemeinde PDF logos uploaded by the Verwaltung (Einstellungen > Kommune). Not publicly served.
-    GEMEINDE_LOGO_UPLOAD_DIR: str = "./uploads/gemeinde-logos"
-    # Attribution line printed in every PDF footer ("" disables it)
-    PDF_FOOTER_TEXT: str = "Dieses Tool wird von pimoo zur Verfügung gestellt."
+    # Root directory for all uploads (mount ONE persistent volume here). Branding images
+    # (publicly served) and Gemeinde PDF logos (not public) live in subfolders of it.
+    UPLOAD_DIR: str = "./uploads"
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_list)] = (
         []
     )
+
+    @property
+    def BRANDING_UPLOAD_DIR(self) -> str:
+        return f"{self.UPLOAD_DIR.rstrip('/') or '.'}/branding"
+
+    @property
+    def GEMEINDE_LOGO_UPLOAD_DIR(self) -> str:
+        return f"{self.UPLOAD_DIR.rstrip('/') or '.'}/gemeinde-logos"
 
     @computed_field  # type: ignore[prop-decorator]
     @property
