@@ -74,7 +74,7 @@ class BasePDF(FPDF):
     ):
         # Pass the parameters to FPDF's __init__ method
         super().__init__(orientation, unit, format)
-        # Gemeinde logo if given, else the platform/default logo
+        # Gemeinde logo if it has one; otherwise no logo is drawn
         self.logo_path = logo_path
         # Platform-configured footer attribution; None = built-in default
         self.footer_text = footer_text
@@ -101,9 +101,12 @@ class BasePDF(FPDF):
         )
 
     def draw_logo(self):
-        """Draw the logo scaled to fit LOGO_MAX_W x LOGO_MAX_H, top-left aligned."""
+        """Draw the Gemeinde logo scaled to fit LOGO_MAX_W x LOGO_MAX_H, top-left aligned.
+        Draws nothing if the Gemeinde has not uploaded a logo."""
+        if not self.logo_path:
+            return
         try:
-            logo = self.logo_path or resolve_logo_path()
+            logo = self.logo_path
             with Image.open(logo) as img:
                 px_w, px_h = img.size
             scale = min(LOGO_MAX_W / px_w, LOGO_MAX_H / px_h)
