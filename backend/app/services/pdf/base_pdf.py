@@ -3,7 +3,7 @@ from fpdf import FPDF
 from PIL import Image
 from os import path
 
-from app.core.config import settings
+from app.core.config import DEFAULT_PDF_FOOTER_TEXT, settings
 
 
 def gemeinde_logo_dir() -> str:
@@ -37,7 +37,7 @@ class BasePDF(FPDF):
         super().__init__(orientation, unit, format)
         # Gemeinde logo if it has one; otherwise no logo is drawn
         self.logo_path = logo_path
-        # Platform-configured footer attribution; None = built-in default
+        # Platform-configured footer attribution; None = built-in default, "" = no footer
         self.footer_text = footer_text
         font_path = path.dirname(path.abspath(__file__))
         self.add_font(
@@ -82,7 +82,8 @@ class BasePDF(FPDF):
 
     def _footer_lines(self) -> list[str]:
         """Attribution wrapped to the full content width, at most FOOTER_MAX_LINES lines."""
-        text = self.footer_text or settings.PDF_FOOTER_TEXT
+        # None = use the default; "" = Systemadmin turned the footer off
+        text = DEFAULT_PDF_FOOTER_TEXT if self.footer_text is None else self.footer_text
         if not text:
             return []
         self.set_font("free-sans", "", 7)

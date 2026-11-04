@@ -21,8 +21,6 @@ Sie können in einer `.env` Datei oder über das Deployment-System gesetzt werde
 | Variable              | Beschreibung                                                                                   | Standard/Beispiel      |
 | ---------------------- | ----------------------------------------------------------------------------------------------- | ----------------------- |
 | `UPLOAD_DIR`           | Wurzelverzeichnis für alle Uploads. Darin liegen `branding/` (Logos, Favicon; öffentlich ausgeliefert) und `gemeinde-logos/` (PDF-Logos der Kommunen; nicht öffentlich). Relativ zum Backend-Arbeitsverzeichnis oder absolut. Muss persistent sein. | `"./uploads"` |
-| `BRANDING_UPLOAD_DIR`  | Optional: eigener Pfad nur für Branding-Bilder. Standard: `UPLOAD_DIR/branding`. | – |
-| `GEMEINDE_LOGO_UPLOAD_DIR` | Optional: eigener Pfad nur für Kommunen-PDF-Logos. Standard: `UPLOAD_DIR/gemeinde-logos`. | – |
 
 ---
 
