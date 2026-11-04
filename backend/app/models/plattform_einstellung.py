@@ -73,7 +73,7 @@ class PlattformEinstellung(Base):
     )
     pdf_fusszeile_text: Mapped[Optional[str]] = mapped_column(
         nullable=True,
-        comment="Hinweistext in der Fußzeile exportierter PDFs. Leer = Standardtext.",
+        comment="Hinweistext in der Fußzeile exportierter PDFs. NULL = Standardtext, leer = keine Fußzeile.",
     )
     web_app_title: Mapped[Optional[str]] = mapped_column(
         nullable=True,

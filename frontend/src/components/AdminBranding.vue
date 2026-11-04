@@ -49,7 +49,7 @@
         </div>
         <p class="text-xs text-gray-500">
           Hinweis unter der Seitenzahl in der Fußzeile jedes exportierten PDFs, z. B. wer das Tool
-          bereitstellt (maximal 3 Zeilen, längere Texte werden gekürzt). Leer = Standardtext.
+          bereitstellt (maximal 3 Zeilen, längere Texte werden gekürzt). Leer = keine Fußzeile.
         </p>
       </div>
       <Divider />
@@ -222,7 +222,7 @@ const savePdfFusszeile = async () => {
   isSavingFusszeile.value = true
   try {
     await apiClient.patch('/admin/einstellung', {
-      pdfFusszeileText: pdfFusszeileText.value.trim() || null
+      pdfFusszeileText: pdfFusszeileText.value.trim()
     })
     toast.add({ severity: 'success', summary: 'Gespeichert', life: 3000 })
   } catch {
