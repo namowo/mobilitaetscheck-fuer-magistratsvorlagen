@@ -91,19 +91,25 @@
                           </div>
                         </div>
                       </div>
-                      <div class="col-span-5 flex items-center justify-center gap-4">
-                        <div class="flex flex-col items-center gap-1">
+                      <div class="col-span-5 flex items-center justify-center">
+                        <div
+                          class="flex items-center gap-2"
+                          v-tooltip.top="
+                            item.mobilitaetschecks?.length > 0
+                              ? `${item.mobilitaetschecks.length} Mobilitätscheck${item.mobilitaetschecks.length !== 1 ? 's' : ''} hinterlegt`
+                              : 'Kein Mobilitätscheck hinterlegt'
+                          "
+                        >
                           <i
                             :class="[
-                              'pi text-xl',
+                              'pi',
                               item.mobilitaetschecks?.length > 0
                                 ? 'pi-check-circle text-green-500'
-                                : 'pi-times-circle text-gray-300'
+                                : 'pi-times-circle text-red-400'
                             ]"
                           />
-                          <span class="text-xs text-gray-500">Mobilitätschecks</span>
+                          <span>Mobilitätscheck</span>
                         </div>
-                        <i class="pi pi-chevron-right text-gray-400" />
                       </div>
                     </div>
                   </BaseCard>
