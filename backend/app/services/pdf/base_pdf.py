@@ -62,10 +62,9 @@ def resolve_gemeinde_logo_path(pdf_logo_dateiname: str | None) -> str | None:
 # (aspect ratio preserved), so it can never grow into the page content.
 LOGO_X = 10
 LOGO_Y = 8
-LOGO_MAX_W = 45
-LOGO_MAX_H = 14
-HEADER_BOTTOM = LOGO_Y + LOGO_MAX_H + 6  # content starts below this when a logo is drawn
-HEADER_BOTTOM_NO_LOGO = LOGO_Y + 8 + 4  # compact header: just the date row
+LOGO_MAX_W = 40
+LOGO_MAX_H = 10
+HEADER_BOTTOM = LOGO_Y + LOGO_MAX_H + 4  # content always starts below this
 
 
 class BasePDF(FPDF):
@@ -100,11 +99,6 @@ class BasePDF(FPDF):
             style="bi",
             fname=path.join(font_path, "./assests/FreeSans/FreeSansBoldOblique.ttf"),
         )
-
-    @property
-    def header_bottom(self) -> int:
-        """Y where page content starts; the header is compact without a logo."""
-        return HEADER_BOTTOM if self.logo_path else HEADER_BOTTOM_NO_LOGO
 
     def draw_logo(self):
         """Draw the Gemeinde logo scaled to fit LOGO_MAX_W x LOGO_MAX_H, top-left aligned.
@@ -190,4 +184,4 @@ class BasePDF(FPDF):
         self.set_font("free-sans", "", 10)
         self.set_xy(self.l_margin, LOGO_Y)
         self.cell(0, 8, f"{datetime.date.today().strftime('%d.%m.%Y')}", align="R")
-        self.set_y(self.header_bottom)
+        self.set_y(HEADER_BOTTOM)
