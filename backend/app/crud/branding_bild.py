@@ -24,6 +24,7 @@ from app.services.branding.slots_registry import (
 )
 
 UPLOAD_DIR = Path(settings.BRANDING_UPLOAD_DIR)
+PDF_LOGO_SLOT = "pdf-logo"
 
 
 class CRUDBrandingAsset:
@@ -87,6 +88,18 @@ class CRUDBrandingSlotZuweisung:
             or BrandingSlotZuweisung(slot=slot, link=BRANDING_SLOTS[slot]["standard_link"])
             for slot in BRANDING_SLOTS
         ]
+
+    async def get_pdf_logo_path(self, db: AsyncSession) -> str | None:
+        """File path of the platform-wide default PDF logo (slot 'pdf-logo'), if one is assigned
+        and the file still exists."""
+        result = await db.execute(
+            select(BrandingSlotZuweisung).where(BrandingSlotZuweisung.slot == PDF_LOGO_SLOT)
+        )
+        zuweisung = result.scalar_one_or_none()
+        if zuweisung is None or zuweisung.asset is None:
+            return None
+        candidate = UPLOAD_DIR / Path(zuweisung.asset.dateiname).name
+        return str(candidate) if candidate.is_file() else None
 
     async def _get_or_create(self, db: AsyncSession, slot: str) -> BrandingSlotZuweisung:
         if slot not in BRANDING_SLOTS:
