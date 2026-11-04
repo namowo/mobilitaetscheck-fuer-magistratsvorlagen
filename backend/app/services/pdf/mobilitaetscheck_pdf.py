@@ -3,7 +3,7 @@ import re
 from io import BytesIO
 
 from app.models.mobilitaetscheck_eingabe import MobilitaetscheckEingabe
-from app.services.pdf.base_pdf import BasePDF, LOGO_Y
+from app.services.pdf.base_pdf import BasePDF, HEADER_BOTTOM, LOGO_Y
 from app.utils.pdf_util import calculate_average_impact, get_display_impact
 
 # Colour palette – mirrors Tailwind classes used in the Vue UI
@@ -62,7 +62,7 @@ class MobilitaetscheckPDF(BasePDF):
         self.set_text_color(*GRAY_500)
         self.cell(0, 8, datetime.date.today().strftime("%d.%m.%Y"), align="R")
         self.set_text_color(*GRAY_900)
-        self.set_y(self.header_bottom)
+        self.set_y(HEADER_BOTTOM)
 
     def footer(self):
         self.draw_page_footer(number_color=GRAY_500)
@@ -537,7 +537,7 @@ class MobilitaetscheckPDF(BasePDF):
             # simple card border – uncolored, works across page breaks
             end_page = self.page_no()
             end_y = self.get_y()
-            content_top = self.header_bottom  # below header on continuation pages
+            content_top = HEADER_BOTTOM  # below header on continuation pages
 
             if end_page == card_start_page:
                 card_h = end_y - card_top
