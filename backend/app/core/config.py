@@ -7,6 +7,7 @@ from pydantic import (
     BeforeValidator,
     PostgresDsn,
     computed_field,
+    model_validator,
 )
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -61,12 +62,12 @@ class Settings(BaseSettings):
     # FastAPI Settings
     HOST_URL: str = "http://localhost:8000"
     FRONTEND_DIR: str = "../frontend/dist"
-    BRANDING_UPLOAD_DIR: str = "./uploads/branding"
-    # Local (non-public) cache of the active PDF-export logo, mirrored from BRANDING_UPLOAD_DIR
-    # so PDF rendering can read it synchronously without an async DB call.
-    PDF_LOGO_UPLOAD_DIR: str = "./uploads/pdf-logo"
-    # Per-Gemeinde PDF logos uploaded by the Verwaltung (Einstellungen > Kommune). Not publicly served.
-    GEMEINDE_LOGO_UPLOAD_DIR: str = "./uploads/gemeinde-logos"
+    # Root directory for all uploads (mount ONE persistent volume here). Branding images
+    # (publicly served) and Gemeinde PDF logos (not public) live in subfolders of it.
+    UPLOAD_DIR: str = "./uploads"
+    # Optional overrides; default to subfolders of UPLOAD_DIR (see below)
+    BRANDING_UPLOAD_DIR: str = ""
+    GEMEINDE_LOGO_UPLOAD_DIR: str = ""
     # Attribution line printed in every PDF footer ("" disables it)
     PDF_FOOTER_TEXT: str = "Dieses Tool wird von pimoo zur Verfügung gestellt."
     API_V1_STR: str = "/api/v1"
@@ -74,6 +75,15 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_list)] = (
         []
     )
+
+    @model_validator(mode="after")
+    def _derive_upload_dirs(self) -> "Settings":
+        root = self.UPLOAD_DIR.rstrip("/") or "."
+        if not self.BRANDING_UPLOAD_DIR:
+            self.BRANDING_UPLOAD_DIR = f"{root}/branding"
+        if not self.GEMEINDE_LOGO_UPLOAD_DIR:
+            self.GEMEINDE_LOGO_UPLOAD_DIR = f"{root}/gemeinde-logos"
+        return self
 
     @computed_field  # type: ignore[prop-decorator]
     @property
