@@ -231,7 +231,6 @@ import ToggleSwitch from 'openvue/toggleswitch'
 import FloatLabel from 'openvue/floatlabel'
 import Select from 'openvue/select'
 import MultiSelect from 'openvue/multiselect'
-import Textarea from 'openvue/textarea'
 import Slider from 'openvue/slider'
 import ButtonTextblockHinzufuegen from '@/components/ButtonTextblockHinzufuegen.vue'
 
