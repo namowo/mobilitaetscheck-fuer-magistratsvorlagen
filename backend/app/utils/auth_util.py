@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from app.crud.exceptions import AuthorizationError
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 def check_user_authorization(user: User, gemeinde_id: int):
