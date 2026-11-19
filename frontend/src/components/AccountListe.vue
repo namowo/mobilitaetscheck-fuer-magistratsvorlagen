@@ -1,79 +1,75 @@
 <template>
   <div>
-    <BaseCard>
-      <div class="flex items-center justify-between mb-3">
-        <h5 class="text-lg font-semibold">Benutzer</h5>
-        <InputText
-          v-model="filters['global'].value"
-          placeholder="Suchen…"
-          size="small"
-          class="w-56"
-        />
-      </div>
-      <div class="flex gap-2 mb-3">
-        <Select
-          v-model="filterRolle"
-          :options="rolleFilterOptions"
-          optionLabel="name"
-          optionValue="name"
-          placeholder="Rolle"
-          showClear
-          size="small"
-          class="w-36"
-        />
-        <Select
-          v-model="filterGruppe"
-          :options="gruppeFilterOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Gruppe"
-          showClear
-          size="small"
-          class="w-40"
-        />
-      </div>
-
-      <BaseSkeleton v-if="isLoading" variant="table" :columns="5" :rows="5" />
-      <DataTable
-        v-else
-        :value="filteredUsers"
-        :paginator="filteredUsers.length > 20"
-        :rows="20"
+    <div class="flex flex-wrap gap-2 mb-3">
+      <InputText
+        v-model="filters['global'].value"
+        placeholder="Suchen…"
         size="small"
-        sortMode="single"
-        v-model:filters="filters"
-        :globalFilterFields="['vorname', 'nachname', 'email', 'rolle.name', 'gruppe.name']"
-        class="w-full"
-      >
-        <template #empty>
-          <span class="text-gray-400 text-sm">Keine Benutzer gefunden.</span>
+        class="w-56"
+      />
+      <Select
+        v-model="filterRolle"
+        :options="rolleFilterOptions"
+        optionLabel="name"
+        optionValue="name"
+        placeholder="Rolle"
+        showClear
+        size="small"
+        class="w-36"
+      />
+      <Select
+        v-model="filterGruppe"
+        :options="gruppeFilterOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Gruppe"
+        showClear
+        size="small"
+        class="w-40"
+      />
+    </div>
+
+    <BaseSkeleton v-if="isLoading" variant="table" :columns="5" :rows="5" />
+    <DataTable
+      v-else
+      :value="filteredUsers"
+      size="small"
+      sortMode="single"
+      v-model:filters="filters"
+      :globalFilterFields="['vorname', 'nachname', 'email', 'rolle.name', 'gruppe.name']"
+      class="w-full"
+      paginator
+      :rows="20"
+      :rowsPerPageOptions="[10, 20, 50]"
+    >
+      <template #empty>
+        <span class="text-gray-400 text-sm">Keine Benutzer gefunden.</span>
+      </template>
+      <Column field="vorname" header="Vorname" sortable />
+      <Column field="nachname" header="Nachname" sortable />
+      <Column field="email" header="E-Mail" sortable />
+      <Column field="rolle.name" header="Rolle" sortable>
+        <template #body="{ data }">{{ data.rolle?.name }}</template>
+      </Column>
+      <Column field="gruppe.name" header="Gruppe" sortable>
+        <template #body="{ data }">
+          <span :class="data.gruppe ? '' : 'text-gray-400'">{{ data.gruppe?.name ?? '–' }}</span>
         </template>
-        <Column field="vorname" header="Vorname" sortable />
-        <Column field="nachname" header="Nachname" sortable />
-        <Column field="email" header="E-Mail" sortable />
-        <Column field="rolle.name" header="Rolle" sortable>
-          <template #body="{ data }">{{ data.rolle?.name }}</template>
-        </Column>
-        <Column field="gruppe.name" header="Gruppe" sortable>
-          <template #body="{ data }">
-            <span :class="data.gruppe ? '' : 'text-gray-400'">{{ data.gruppe?.name ?? '–' }}</span>
-          </template>
-        </Column>
-        <Column header="Kommunaler Admin" style="width: 100px">
-          <template #body="{ data }">
-            <i v-if="data.isLocalSuperuser" class="pi pi-check text-green-600" />
-          </template>
-        </Column>
-        <Column header="" style="width: 80px">
-          <template #body="{ data }">
-            <div class="flex gap-1">
-              <Button icon="pi pi-pencil" text size="small" @click="openEdit(data)" />
-              <Button icon="pi pi-trash" text size="small" severity="danger" :disabled="data.id === authStore.userId" @click="confirmDelete(data)" />
-            </div>
-          </template>
-        </Column>
-      </DataTable>
-    </BaseCard>
+      </Column>
+      <Column header="Kommunaler Admin" style="width: 100px">
+        <template #body="{ data }">
+          <i v-if="data.isLocalSuperuser" class="pi pi-check text-green-600" />
+        </template>
+      </Column>
+      <Column header="" style="width: 80px">
+        <template #body="{ data }">
+          <div class="flex gap-1">
+            <Button icon="pi pi-pencil" text size="small" @click="openEdit(data)" />
+            <Button icon="pi pi-trash" text size="small" severity="danger" :disabled="data.id === authStore.userId" @click="confirmDelete(data)" />
+          </div>
+        </template>
+      </Column>
+    </DataTable>
 
     <Dialog v-model:visible="editVisible" header="Benutzer bearbeiten" :modal="true" class="w-full max-w-md">
       <div class="grid grid-cols-1 gap-y-4 mt-2">

@@ -1,9 +1,9 @@
 <template>
-  <BaseCard>
-    <div class="flex items-center justify-between mb-4">
-      <h5 class="text-lg font-semibold">Über das Tool</h5>
+  <div>
+    <div class="flex items-center justify-between gap-4 mb-2">
+      <BaseSubheading>Über das Tool</BaseSubheading>
     </div>
-    <p class="text-sm text-gray-500 mb-4">
+    <p class="text-sm text-gray-600 mb-5">
       Dieser Inhalt wird auf der öffentlichen Seite "Über das Tool" angezeigt.
     </p>
 
@@ -20,7 +20,7 @@
         <Button label="Speichern" @click="submit" :loading="isSaving" />
       </div>
     </template>
-  </BaseCard>
+  </div>
 </template>
 
 <script setup>

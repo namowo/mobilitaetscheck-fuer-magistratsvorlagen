@@ -11,7 +11,6 @@ import Aura from '@openvue/themes/aura'
 import BaseAlert from './components/BaseAlert.vue'
 import BaseCard from './components/BaseCard.vue'
 import BaseButton from './components/BaseButton.vue'
-import BaseModal from './components/BaseModal.vue'
 import BaseSkeleton from './components/BaseSkeleton.vue'
 import BaseHeading from './components/BaseHeading.vue'
 import BaseSubheading from './components/BaseSubheading.vue'
@@ -24,6 +23,15 @@ import { useBrandingStore } from '@/stores/branding'
 import { useEinstellungStore } from '@/stores/einstellung'
 
 const MyPreset = definePreset(Aura, {
+  components: {
+    dialog: {
+      content: {
+        // Aura uses 0 top padding; with overflow-y:auto this clips the floated
+        // label (variant="on") of the first input field in a dialog.
+        padding: '0.75rem {overlay.modal.padding} {overlay.modal.padding} {overlay.modal.padding}'
+      }
+    }
+  },
   semantic: {
     primary: {
       50: '#E9F2F9', // Optional, or choose a calculated value
@@ -77,7 +85,6 @@ app.directive('tooltip', Tooltip)
 app.component('BaseAlert', BaseAlert)
 app.component('BaseCard', BaseCard)
 app.component('BaseButton', BaseButton)
-app.component('BaseModal', BaseModal)
 app.component('BaseSkeleton', BaseSkeleton)
 app.component('BaseHeading', BaseHeading)
 app.component('BaseSubheading', BaseSubheading)

@@ -1,9 +1,28 @@
 <template>
   <div>
-    <BaseCard class="">
-      <!-- block my-7 mx-auto max-w-md -->
-      <h4 class="text-xl font-bold dark:text-white mb-4">{{ label }}</h4>
-      <form @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4">
+    <component
+      :is="changePassword ? 'section' : BaseCard"
+      :class="changePassword ? 'rounded-xl border border-gray-200 bg-white p-5' : ''"
+    >
+      <div v-if="changePassword" class="mb-5 flex items-start gap-3">
+        <span
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700"
+        >
+          <i class="pi pi-lock" />
+        </span>
+        <div>
+          <h4 class="font-semibold text-gray-900">Passwort ändern</h4>
+          <p class="text-sm text-gray-600">
+            Nach dem Ändern melden Sie sich beim nächsten Mal mit dem neuen Passwort an.
+          </p>
+        </div>
+      </div>
+      <h4 v-else class="text-xl font-bold dark:text-white mb-4">{{ label }}</h4>
+      <form
+        @submit.prevent="onSubmit"
+        class="grid grid-cols-1 gap-4"
+        :class="{ 'sm:grid-cols-2': changePassword }"
+      >
         <div class="field">
           <FloatLabel variant="on">
             <Password
@@ -53,11 +72,17 @@
             errors.confirmPassword
           }}</small>
         </div>
-        <div class="flex gap-4">
-          <ButtonSave type="submit" class="w-full" :loading="isLoading">{{ label }}</ButtonSave>
+        <div class="flex" :class="changePassword ? 'justify-end sm:col-span-2' : ''">
+          <Button
+            type="submit"
+            :label="label"
+            :icon="changePassword ? 'pi pi-lock' : undefined"
+            :class="{ 'w-full': !changePassword }"
+            :loading="isLoading"
+          />
         </div>
       </form>
-    </BaseCard>
+    </component>
   </div>
 </template>
 
@@ -68,7 +93,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useForm } from 'vee-validate'
 import { schema } from '@/utils/schemas/authPasswortZuruecksetzen.js'
 
-import ButtonSave from '@/components/ButtonSpeichern.vue'
+import BaseCard from '@/components/BaseCard.vue'
+import Button from 'openvue/button'
 import FloatLabel from 'openvue/floatlabel'
 import Password from 'openvue/password'
 import Divider from 'openvue/divider'
@@ -106,6 +132,7 @@ const onSubmit = handleSubmit(async (values) => {
       await updateUser(values)
       resetForm()
       isLoading.value = false
+      toast.add({ severity: 'success', summary: 'Passwort geändert', life: 3000 })
     } else {
       const token = route.query.token
       const password = values.password
@@ -119,6 +146,7 @@ const onSubmit = handleSubmit(async (values) => {
       })
     }
   } catch (error) {
+    isLoading.value = false
     toast.add({
       severity: 'error',
       summary: 'Fehler beim Ändern des Passworts',

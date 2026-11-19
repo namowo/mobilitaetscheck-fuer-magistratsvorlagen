@@ -1,8 +1,8 @@
 <template>
   <div>
-    <BaseModal v-model="editMode">
+    <Dialog v-model:visible="editMode" modal dismissableMask class="w-full max-w-6xl">
       <template #header>
-        <h2>{{ props.item.name }} bearbeiten</h2>
+        <h2 class="text-lg font-semibold">{{ props.item.name }} bearbeiten</h2>
       </template>
       <KlimacheckFormular
         :editMode="true"
@@ -10,7 +10,7 @@
         @update-item="onUpdate"
         @reload-item="emit('reload-item', props.item.id)"
       />
-    </BaseModal>
+    </Dialog>
     <BaseCard>
       <div class="col-span-10 grid grid-cols-1 gap-x-4 gap-y-1">
         <h3 class="font-bold text-lg">{{ props.item.name || 'Kein Name' }}</h3>
@@ -60,6 +60,7 @@
 </template>
 
 <script setup>
+import Dialog from 'openvue/dialog'
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import KlimacheckFormular from '@/components/KlimacheckFormular.vue'

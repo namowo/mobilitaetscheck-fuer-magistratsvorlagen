@@ -5,6 +5,7 @@
     :closable="false"
     :draggable="false"
     :style="{ width: '40rem', maxWidth: '95vw' }"
+    :pt="{ footer: { class: 'border-t border-gray-200 pt-4' } }"
     @hide="close"
   >
     <template #header>
@@ -112,6 +113,9 @@
         {{ p }}
       </p>
 
+      <!-- Einstellungen direkt im Schritt ändern -->
+      <EinstellungenFremdeEintraege v-if="currentStep.einstellungen === 'inhalteTeilen'" kompakt />
+
       <div v-if="currentStep.action || currentStep.actions" class="flex flex-col gap-2">
         <div class="flex flex-wrap gap-2">
           <Button
@@ -135,12 +139,27 @@
     </div>
 
     <template #footer>
-      <div class="flex w-full items-center justify-between gap-2">
+      <!-- Small screens: navigation on top (full width), dismiss link below -->
+      <div class="flex w-full flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
         <Button label="Nicht mehr anzeigen" text severity="secondary" size="small" @click="beenden" />
         <div class="flex gap-2">
-          <Button v-if="!isFirst" label="Zurück" severity="secondary" outlined @click="prev" />
-          <Button v-if="!isLast" label="Weiter" icon="pi pi-arrow-right" iconPos="right" @click="next" />
-          <Button v-else label="Fertig" icon="pi pi-check" @click="beenden" />
+          <Button
+            v-if="!isFirst"
+            label="Zurück"
+            severity="secondary"
+            outlined
+            class="flex-1 sm:flex-none"
+            @click="prev"
+          />
+          <Button
+            v-if="!isLast"
+            label="Weiter"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            class="flex-1 sm:flex-none"
+            @click="next"
+          />
+          <Button v-else label="Fertig" icon="pi pi-check" class="flex-1 sm:flex-none" @click="beenden" />
         </div>
       </div>
     </template>
@@ -261,6 +280,7 @@ import Button from 'openvue/button'
 import { useAuthStore } from '@/stores/auth'
 import { useStartWizard } from '@/composables/startWizard'
 import { useWizardSpotlight } from '@/composables/wizardSpotlight'
+import EinstellungenFremdeEintraege from '@/components/EinstellungenFremdeEintraege.vue'
 
 const router = useRouter()
 const route = useRoute()

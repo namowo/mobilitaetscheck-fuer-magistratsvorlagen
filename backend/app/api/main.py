@@ -7,6 +7,7 @@ from app.api.routers import (
     branding,
     dashboard,
     dokumentation_seite,
+    gemeinde_fremde_eintraege,
     gemeinde_gebiet,
     gemeinde_pdf_logo,
     indikator,
@@ -138,6 +139,11 @@ router.include_router(
     gemeinde_gebiet.router,
     prefix="/einstellungen/gebiet",
     tags=["Einstellungen", "Gebiet"],
+)
+router.include_router(
+    gemeinde_fremde_eintraege.router,
+    prefix="/einstellungen/fremde-eintraege",
+    tags=["Einstellungen", "Kommune"],
 )
 router.include_router(
     gemeinde_pdf_logo.router,

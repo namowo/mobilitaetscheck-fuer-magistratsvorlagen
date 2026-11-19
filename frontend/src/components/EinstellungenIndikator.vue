@@ -2,16 +2,19 @@
   <div>
     <!-- Display list of submissions -->
 
-    <BaseModal v-model="isModalOpen" @close="toggleModal">
-      <template #header>
-        <h2>Indikator hinzufügen</h2>
-      </template>
+    <Dialog
+      v-model:visible="isModalOpen"
+      header="Indikator hinzufügen"
+      modal
+      dismissableMask
+      class="w-full max-w-[50rem]"
+    >
       <EinstellungenIndikatorFormular :editMode="false" :tags="tags" @add-item="onSubmit" />
-    </BaseModal>
-    <div class="flex gap-4 items-center mb-5">
+    </Dialog>
+    <div class="flex gap-4 items-center mb-2">
       <BaseSubheading>Indikatoren</BaseSubheading>
       <Button
-        v-tooltip="'Neuen Indiaktor hinzufügen'"
+        v-tooltip="'Neuen Indikator hinzufügen'"
         icon="pi pi-plus"
         rounded
         aria-label="Neuen Indikator hinzufügen"
@@ -19,34 +22,70 @@
         @click="toggleModal"
       />
     </div>
-    <FloatLabel variant="on">
-      <InputText id="searchQuery" v-model="searchQuery" class="w-full" />
-      <label for="searchQuery">Nach Indikator suchen</label>
-    </FloatLabel>
+    <p class="text-sm text-gray-600 mb-5">
+      Indikatoren sind Regelwerke, Kennwerte oder Quellen, auf die sich eine Bewertung stützt. Beim
+      Ausfüllen eines Mobilitätschecks können sie jedem Unterziel zugeordnet werden, um die
+      Einschätzung nachvollziehbar zu begründen. Optional lässt sich eine Quellen-URL hinterlegen.
+    </p>
+    <EinstellungenSucheSortierung
+      v-model:suche="suche"
+      v-model:sortierung="sortierung"
+      v-model:sichtbarkeit="sichtbarkeit"
+      v-model:tagIds="tagIds"
+      :tagOptionen="tags"
+      v-model:zusatz="zusatz"
+      :zusatzOptionen="zusatzOptionen"
+      :anzahlFilter="anzahlFilter"
+      :anzahl="isLoading ? null : filteredIndikatoren.length"
+      :gesamt="indikatoren.length"
+      :einheit="['Indikator', 'Indikatoren']"
+      suchLabel="Nach Indikator suchen"
+      @zuruecksetzen="zuruecksetzen"
+    />
     <BaseSkeleton v-if="isLoading" :rows="5" />
-    <div v-else-if="indikatoren.length === 0">
-      <p class="font-lg font-bold m-5">Keine Indikatoren vorhanden.</p>
-    </div>
-    <div v-else>
-      <div v-for="indikator in filteredIndikatoren" :key="indikator.id">
-        <EinstellungenIndikatorItem
-          :item="indikator"
-          :tags="tags"
-          @delete-item="onDelete"
-          @update-item="onUpdate"
-          @publish-item="onPublish"
-        />
-      </div>
-    </div>
+    <DataView
+      v-else
+      :value="filteredIndikatoren"
+      dataKey="id"
+      :first="first"
+      class="mt-4"
+      @page="first = $event.first"
+      paginator
+      :rows="20"
+      :rowsPerPageOptions="[10, 20, 50]"
+    >
+      <template #list="{ items }">
+        <div
+          class="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white"
+        >
+          <EinstellungenIndikatorItem
+            v-for="item in items"
+            :key="item.id"
+            :item="item"
+            :tags="tags"
+            @delete-item="onDelete"
+            @update-item="onUpdate"
+          />
+        </div>
+      </template>
+      <template #empty>
+        <div class="flex flex-col items-center gap-2 py-10 text-gray-500">
+          <i class="pi pi-chart-bar text-2xl" />
+          <span>Keine Indikatoren gefunden.</span>
+        </div>
+      </template>
+    </DataView>
   </div>
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import Dialog from 'openvue/dialog'
+import DataView from 'openvue/dataview'
+import { computed, ref, onMounted, watch } from 'vue'
 import { createItem, deleteItem, fetchItems, updateItem } from '@/composables/crud'
 import Button from 'openvue/button'
-import InputText from 'openvue/inputtext'
-import FloatLabel from 'openvue/floatlabel'
+import EinstellungenSucheSortierung from '@/components/EinstellungenSucheSortierung.vue'
+import { useSortierung } from '@/composables/sortierung'
 import EinstellungenIndikatorFormular from '@/components/EinstellungenIndikatorFormular.vue'
 import EinstellungenIndikatorItem from '@/components/EinstellungenIndikatorItem.vue'
 
@@ -54,7 +93,6 @@ const isLoading = ref(false)
 const isModalOpen = ref(false)
 const indikatoren = ref([])
 const tags = ref([])
-const searchQuery = ref('')
 
 onMounted(async () => {
   await fetchIndikatoren()
@@ -75,33 +113,35 @@ const fetchTags = async () => {
   tags.value = await fetchItems('/einstellungen/tag')
 }
 
-// Computed property to filter submissions by multiple fields
-const filteredIndikatoren = computed(() => {
-  return indikatoren.value.filter((indikator) => {
-    const query = searchQuery.value.toLowerCase()
-    isLoading.value = true
-    let results = indikator.name.toLowerCase().includes(query)
-
-    isLoading.value = false
-    return results
-  })
+const {
+  suche,
+  sortierung,
+  sichtbarkeit,
+  tagIds,
+  zusatz,
+  zusatzOptionen,
+  anzahlFilter,
+  anwenden,
+  zuruecksetzen
+} = useSortierung({
+  zusatzFilter: {
+    mitQuelle: { label: 'Nur mit Quellen-URL', test: (item) => !!item.quelleUrl },
+    ohneQuelle: { label: 'Nur ohne Quellen-URL', test: (item) => !item.quelleUrl },
+    ohneTags: { label: 'Nur ohne Tags', test: (item) => !item.tags?.length }
+  }
 })
 
-const onPublish = async ({ modelId, values }) => {
-  const response = await updateItem({
-    model: 'einstellungen/indikator',
-    modelId,
-    values,
-    detail: {
-      success: values.gemeindespezifisch
-        ? 'Indiaktor veröffentlicht'
-        : 'Veröffentlichung zurückgezogen',
-      error: 'Fehler beim Veröffentlichen des Indikators'
-    }
-  })
-  const index = indikatoren.value.findIndex((eingabe) => eingabe.id === modelId)
-  indikatoren.value[index].gemeindespezifisch = response.gemeindespezifisch
-}
+const filteredIndikatoren = computed(() => anwenden(indikatoren.value))
+
+// Bei geänderter Suche, Filterung oder Sortierung zur ersten Seite springen
+const first = ref(0)
+watch(
+  [suche, sortierung, sichtbarkeit, tagIds, zusatz],
+  () => {
+    first.value = 0
+  },
+  { deep: true }
+)
 
 const onDelete = async (modelId) => {
   await deleteItem({

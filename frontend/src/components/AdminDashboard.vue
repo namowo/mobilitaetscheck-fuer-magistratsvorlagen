@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="flex items-center justify-between mb-4">
-      <h5 class="text-lg font-semibold">Dashboard</h5>
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-2">
+      <BaseSubheading>Dashboard</BaseSubheading>
       <SelectButton
         v-model="selectedRange"
         :options="rangeOptions"
@@ -11,6 +11,10 @@
         size="small"
       />
     </div>
+    <p class="text-sm text-gray-600 mb-5">
+      Kennzahlen zur Nutzung der Plattform sowie deren Entwicklung pro Monat im gewählten
+      Zeitraum.
+    </p>
 
     <BaseSkeleton v-if="isLoading" variant="cards" :rows="6" row-height="5rem" />
     <div v-else-if="stats">

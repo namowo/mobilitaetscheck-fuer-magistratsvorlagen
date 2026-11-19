@@ -6,12 +6,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.tag import crud_tag as crud
 from app.core.deps import current_active_user, get_async_session
 from app.models.user import User
+from app.models.tag import Tag
 from app.schemas.tag import (
     TagCreate as CreateSchema,
     TagUpdate as UpdateSchema,
     TagRead as ReadSchema,
 )
 from app.utils.auth_util import check_user_authorization
+from app.utils.geteilte_eintraege import get_eigene_und_geteilte
 
 router = APIRouter()
 
@@ -21,11 +23,9 @@ async def get_tags(
     db: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ):
-    sort_params = [("name", "asc")]
-    return await crud.get_by_or_keys(
-        db,
-        or_keys=[{"gemeinde_id": user.gemeinde_id}, {"gemeindespezifisch": False}],
-        sort_params=sort_params,
+    # Eigene Einträge plus geteilte Einträge anderer Kommunen (falls aktiviert)
+    return await get_eigene_und_geteilte(
+        db, Tag, user, user.gemeinde.fremde_tags_anzeigen
     )
 
 

@@ -1,89 +1,86 @@
 <template>
-  <BaseCard>
-    <h5 class="text-lg font-semibold mb-4">Einladung senden</h5>
-    <form @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4 max-w-md" data-tour="einladung-formular">
+  <form @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4 max-w-md" data-tour="einladung-formular">
 
-      <div class="field">
-        <FloatLabel variant="on">
-          <Select
-            id="rolleId"
-            v-model="rolleId"
-            :options="availableRollen"
-            optionLabel="name"
-            optionValue="id"
-            class="w-full"
-            :invalid="!!errors.rolleId"
+    <div class="field">
+      <FloatLabel variant="on">
+        <Select
+          id="rolleId"
+          v-model="rolleId"
+          :options="availableRollen"
+          optionLabel="name"
+          optionValue="id"
+          class="w-full"
+          :invalid="!!errors.rolleId"
+        />
+        <label for="rolleId">Benutzerrolle</label>
+      </FloatLabel>
+      <small v-if="errors.rolleId" class="p-error block">{{ errors.rolleId }}</small>
+    </div>
+
+    <!-- Verwaltung admin toggle -->
+    <div v-if="isVerwaltung" class="flex items-center gap-x-3">
+      <ToggleSwitch v-model="isVerwaltungAdmin" inputId="verwaltungAdmin" />
+      <label for="verwaltungAdmin" class="text-sm">Als kommunaler Administrator einladen</label>
+    </div>
+
+    <div class="field">
+      <template v-if="activeDomain">
+        <label class="block text-sm text-gray-500 mb-1">E-Mail-Adresse</label>
+        <InputGroup>
+          <InputText
+            id="email"
+            v-model="emailLocal"
+            :invalid="!!errors.email"
+            :disabled="!rolleId"
           />
-          <label for="rolleId">Benutzerrolle</label>
-        </FloatLabel>
-        <small v-if="errors.rolleId" class="p-error block">{{ errors.rolleId }}</small>
-      </div>
-
-      <!-- Verwaltung admin toggle -->
-      <div v-if="isVerwaltung" class="flex items-center gap-x-3">
-        <ToggleSwitch v-model="isVerwaltungAdmin" inputId="verwaltungAdmin" />
-        <label for="verwaltungAdmin" class="text-sm">Als kommunaler Administrator einladen</label>
-      </div>
-
-      <div class="field">
-        <template v-if="activeDomain">
-          <label class="block text-sm text-gray-500 mb-1">E-Mail-Adresse</label>
-          <InputGroup>
-            <InputText
-              id="email"
-              v-model="emailLocal"
-              :invalid="!!errors.email"
-              :disabled="!rolleId"
-            />
-            <Select
-              v-if="verwaltungDomains.length > 1"
-              v-model="selectedDomain"
-              :options="verwaltungDomains"
-              :disabled="!rolleId"
-              class="min-w-40"
-            />
-            <InputGroupAddon v-else>@{{ activeDomain }}</InputGroupAddon>
-          </InputGroup>
-        </template>
-        <template v-else>
-          <FloatLabel variant="on">
-            <InputText
-              id="email"
-              v-model="email"
-              class="w-full"
-              :invalid="!!errors.email"
-              :disabled="!rolleId"
-            />
-            <label for="email">E-Mail-Adresse</label>
-          </FloatLabel>
-        </template>
-        <small v-if="errors.email" class="p-error block">{{ errors.email }}</small>
-      </div>
-
-      <div class="field">
-        <FloatLabel variant="on">
           <Select
-            id="gueltigStunden"
-            v-model="gueltigStunden"
-            :options="gueltigkeitsOptionen"
-            optionLabel="label"
-            optionValue="value"
-            class="w-full"
-            :invalid="!!errors.gueltigStunden"
+            v-if="verwaltungDomains.length > 1"
+            v-model="selectedDomain"
+            :options="verwaltungDomains"
+            :disabled="!rolleId"
+            class="min-w-40"
           />
-          <label for="gueltigStunden">Gültigkeitsdauer</label>
+          <InputGroupAddon v-else>@{{ activeDomain }}</InputGroupAddon>
+        </InputGroup>
+      </template>
+      <template v-else>
+        <FloatLabel variant="on">
+          <InputText
+            id="email"
+            v-model="email"
+            class="w-full"
+            :invalid="!!errors.email"
+            :disabled="!rolleId"
+          />
+          <label for="email">E-Mail-Adresse</label>
         </FloatLabel>
-        <small v-if="errors.gueltigStunden" class="p-error block">{{ errors.gueltigStunden }}</small>
-      </div>
+      </template>
+      <small v-if="errors.email" class="p-error block">{{ errors.email }}</small>
+    </div>
 
-      <div v-if="isVerwaltung && isVerwaltungAdmin" class="flex items-center gap-2 text-sm text-gray-500">
-        <i class="pi pi-info-circle" />
-        Einladung als kommunaler Administrator (Verwaltung mit Admin-Rechten).
-      </div>
+    <div class="field">
+      <FloatLabel variant="on">
+        <Select
+          id="gueltigStunden"
+          v-model="gueltigStunden"
+          :options="gueltigkeitsOptionen"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+          :invalid="!!errors.gueltigStunden"
+        />
+        <label for="gueltigStunden">Gültigkeitsdauer</label>
+      </FloatLabel>
+      <small v-if="errors.gueltigStunden" class="p-error block">{{ errors.gueltigStunden }}</small>
+    </div>
 
-      <Button label="Einladung senden" type="submit" :loading="isSubmitting" class="w-fit" />
-    </form>
-  </BaseCard>
+    <div v-if="isVerwaltung && isVerwaltungAdmin" class="flex items-center gap-2 text-sm text-gray-500">
+      <i class="pi pi-info-circle" />
+      Einladung als kommunaler Administrator (Verwaltung mit Admin-Rechten).
+    </div>
+
+    <Button label="Einladung senden" type="submit" :loading="isSubmitting" class="w-fit" />
+  </form>
 </template>
 
 <script setup>

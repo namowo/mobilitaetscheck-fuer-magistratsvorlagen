@@ -1,59 +1,97 @@
 <template>
   <div>
-    <BaseModal v-model="isModalOpen" @close="toggleModal">
-      <template #header>
-        <h2>Textblock hinzufügen</h2>
-      </template>
+    <Dialog
+      v-model:visible="isModalOpen"
+      header="Textbaustein hinzufügen"
+      modal
+      dismissableMask
+      class="w-full max-w-[50rem]"
+    >
       <EinstellungenTextblockFormular :editMode="false" :tags="tags" @add-item="onSubmit" />
-    </BaseModal>
-    <div class="flex gap-4 items-center mb-5">
-      <BaseSubheading>Textblöcke</BaseSubheading>
+    </Dialog>
+    <div class="flex gap-4 items-center mb-2">
+      <BaseSubheading>Textbausteine</BaseSubheading>
       <Button
-        v-tooltip="'Neuen Textblock hinzufügen'"
+        v-tooltip="'Neuen Textbaustein hinzufügen'"
         icon="pi pi-plus"
         rounded
-        aria-label="Neuen Textblock hinzufügen"
+        aria-label="Neuen Textbaustein hinzufügen"
         data-tour="textblock-neu"
         @click="toggleModal"
       />
     </div>
-    <FloatLabel variant="on">
-      <InputText id="searchQuery" v-model="searchQuery" class="w-full" />
-      <label for="searchQuery">Nach Textblock suchen</label>
-    </FloatLabel>
+    <p class="text-sm text-gray-600 mb-5">
+      Textbausteine sind wiederkehrende Formulierungen, die beim Ausfüllen eines Mobilitätschecks
+      mit einem Klick in die Erläuterung eines Unterziels übernommen werden können. Über Tags lassen
+      sie sich thematisch ordnen und schneller wiederfinden.
+    </p>
+    <EinstellungenSucheSortierung
+      v-model:suche="suche"
+      v-model:sortierung="sortierung"
+      v-model:sichtbarkeit="sichtbarkeit"
+      v-model:tagIds="tagIds"
+      :tagOptionen="tags"
+      v-model:zusatz="zusatz"
+      :zusatzOptionen="zusatzOptionen"
+      :anzahlFilter="anzahlFilter"
+      :anzahl="isLoading ? null : filteredTextblocks.length"
+      :gesamt="textblocks.length"
+      :einheit="['Textbaustein', 'Textbausteine']"
+      suchLabel="Nach Textbaustein suchen"
+      @zuruecksetzen="zuruecksetzen"
+    />
     <BaseSkeleton v-if="isLoading" :rows="5" />
-    <div v-else-if="textblocks.length === 0">
-      <p class="font-lg font-bold m-5">Keine Textblöcke vorhanden.</p>
-    </div>
-    <div v-else>
-      <div v-for="textblock in filteredTextblocks" :key="textblock.id">
-        <EinstellungenTextblockItem
-          :item="textblock"
-          :tags="tags"
-          @delete-item="onDelete"
-          @update-item="onUpdate"
-          @publish-item="onPublish"
-        />
-      </div>
-    </div>
+    <DataView
+      v-else
+      :value="filteredTextblocks"
+      dataKey="id"
+      :first="first"
+      class="mt-4"
+      @page="first = $event.first"
+      paginator
+      :rows="20"
+      :rowsPerPageOptions="[10, 20, 50]"
+    >
+      <template #list="{ items }">
+        <div
+          class="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white"
+        >
+          <EinstellungenTextblockItem
+            v-for="item in items"
+            :key="item.id"
+            :item="item"
+            :tags="tags"
+            @delete-item="onDelete"
+            @update-item="onUpdate"
+          />
+        </div>
+      </template>
+      <template #empty>
+        <div class="flex flex-col items-center gap-2 py-10 text-gray-500">
+          <i class="pi pi-align-left text-2xl" />
+          <span>Keine Textbausteine gefunden.</span>
+        </div>
+      </template>
+    </DataView>
   </div>
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import Dialog from 'openvue/dialog'
+import DataView from 'openvue/dataview'
+import { computed, ref, onMounted, watch } from 'vue'
 import { fetchItems, deleteItem, createItem, updateItem } from '@/composables/crud'
 import EinstellungenTextblockFormular from '@/components/EinstellungenTextblockFormular.vue'
 import EinstellungenTextblockItem from '@/components/EinstellungenTextblockItem.vue'
 import Button from 'openvue/button'
-import InputText from 'openvue/inputtext'
-import FloatLabel from 'openvue/floatlabel'
+import EinstellungenSucheSortierung from '@/components/EinstellungenSucheSortierung.vue'
+import { useSortierung } from '@/composables/sortierung'
+import { htmlZuText } from '@/utils/html'
 
 const isLoading = ref(false)
 const isModalOpen = ref(false)
 const textblocks = ref([])
 const tags = ref([])
-
-const searchQuery = ref('')
 
 onMounted(async () => {
   await fetchTextblocks()
@@ -74,41 +112,42 @@ const fetchTags = async () => {
   tags.value = await fetchItems('/einstellungen/tag')
 }
 
-// Computed property to filter submissions by multiple fields
-const filteredTextblocks = computed(() => {
-  return textblocks.value.filter((textblock) => {
-    const query = searchQuery.value.toLowerCase()
-    isLoading.value = true
-    let results = textblock.name.toLowerCase().includes(query)
-
-    isLoading.value = false
-    return results
-  })
+const {
+  suche,
+  sortierung,
+  sichtbarkeit,
+  tagIds,
+  zusatz,
+  zusatzOptionen,
+  anzahlFilter,
+  anwenden,
+  zuruecksetzen
+} = useSortierung({
+  anzeigename: (item) => htmlZuText(item.name),
+  zusatzFilter: {
+    ohneTags: { label: 'Nur ohne Tags', test: (item) => !item.tags?.length }
+  }
 })
 
-const onPublish = async ({ modelId, values }) => {
-  const response = await updateItem({
-    model: 'einstellungen/textblock',
-    modelId,
-    values,
-    detail: {
-      success: values.gemeindespezifisch
-        ? 'Textblock veröffentlicht'
-        : 'Veröffentlichung zurückgezogen',
-      error: 'Fehler beim Veröffentlichen des Textblocks'
-    }
-  })
-  const index = textblocks.value.findIndex((eingabe) => eingabe.id === modelId)
-  textblocks.value[index].gemeindespezifisch = response.gemeindespezifisch
-}
+const filteredTextblocks = computed(() => anwenden(textblocks.value))
+
+// Bei geänderter Suche, Filterung oder Sortierung zur ersten Seite springen
+const first = ref(0)
+watch(
+  [suche, sortierung, sichtbarkeit, tagIds, zusatz],
+  () => {
+    first.value = 0
+  },
+  { deep: true }
+)
 
 const onDelete = async (modelId) => {
   await deleteItem({
     model: 'einstellungen/textblock',
     modelId,
     detail: {
-      success: 'Textblock erfolgreich gelöscht',
-      error: 'Fehler beim Löschen des Textblocks'
+      success: 'Textbaustein erfolgreich gelöscht',
+      error: 'Fehler beim Löschen des Textbausteins'
     }
   })
   const ix = textblocks.value.findIndex((item) => item.id === modelId)
@@ -123,8 +162,8 @@ const onUpdate = async ({ modelId, values }) => {
     modelId,
     values,
     detail: {
-      success: 'Textblock erfolgreich aktualisiert',
-      error: 'Fehler beim Aktualisieren des Textblock'
+      success: 'Textbaustein erfolgreich aktualisiert',
+      error: 'Fehler beim Aktualisieren des Textbausteins'
     }
   })
   const ix = textblocks.value.findIndex((item) => item.id === response.id)
@@ -138,8 +177,8 @@ const onSubmit = async (values) => {
     model: 'einstellungen/textblock',
     values,
     detail: {
-      success: 'Textblock erfolgreich hinzugefügt',
-      error: 'Fehler beim Hinzufügen des Textblock'
+      success: 'Textbaustein erfolgreich hinzugefügt',
+      error: 'Fehler beim Hinzufügen des Textbausteins'
     }
   })
   textblocks.value.unshift(response)

@@ -43,7 +43,7 @@
           :to="{ name: 'leitziel-sets' }"
         >
           <Button
-            v-tooltip.left="'Gebiete, Leitziele, Textblöcke, Indikatoren und Tags Ihrer Kommune verwalten'"
+            v-tooltip.left="'Gebiete, Leitziele, Textbausteine, Indikatoren und Tags Ihrer Kommune verwalten'"
             label="Verwaltung"
             icon="pi pi-sliders-h"
             data-tour="nav-verwaltung"

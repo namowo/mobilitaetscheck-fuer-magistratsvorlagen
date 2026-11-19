@@ -1,15 +1,18 @@
 <template>
   <div>
-    <BaseModal v-model="isModalOpen" @close="toggleModal">
-      <template #header>
-        <h2>Leitziel hinzufügen</h2>
-      </template>
+    <Dialog
+      v-model:visible="isModalOpen"
+      header="Leitziel hinzufügen"
+      modal
+      dismissableMask
+      class="w-full max-w-6xl"
+    >
       <EinstellungenMobilitaetscheckFormularZielOber
         :editMode="false"
         :naechsteNr="naechsteNr"
         @add-item="onSubmit"
       />
-    </BaseModal>
+    </Dialog>
     <div class="flex gap-4 items-center mb-5">
       <BaseSubheading>Leitziele</BaseSubheading>
       <Button
@@ -39,6 +42,7 @@
 </template>
 
 <script setup>
+import Dialog from 'openvue/dialog'
 import { computed, ref, onMounted } from 'vue'
 import {
   createItem,

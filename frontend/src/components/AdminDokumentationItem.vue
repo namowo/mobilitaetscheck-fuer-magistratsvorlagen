@@ -1,11 +1,14 @@
 <template>
   <div>
-    <BaseModal v-model="editMode">
-      <template #header>
-        <h2>Seite bearbeiten</h2>
-      </template>
+    <Dialog
+      v-model:visible="editMode"
+      header="Seite bearbeiten"
+      modal
+      dismissableMask
+      class="w-full max-w-6xl"
+    >
       <AdminDokumentationFormular :editMode="true" :item="props.item" @update-item="onUpdate" />
-    </BaseModal>
+    </Dialog>
 
     <div class="flex items-center gap-3 border border-gray-200 rounded-md p-3">
       <i class="pi pi-bars drag-handle cursor-move text-gray-400" />
@@ -20,8 +23,8 @@
 </template>
 
 <script setup>
+import Dialog from 'openvue/dialog'
 import { ref } from 'vue'
-import BaseModal from '@/components/BaseModal.vue'
 import AdminDokumentationFormular from '@/components/AdminDokumentationFormular.vue'
 import ButtonLoeschen from '@/components/ButtonLoeschen.vue'
 import ButtonBearbeiten from '@/components/ButtonBearbeiten.vue'

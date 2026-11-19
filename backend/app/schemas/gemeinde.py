@@ -59,9 +59,37 @@ class GemeindeRead(GemeindeBase):
     id: int = Field(..., description="Unique identifier for the Gemeinde.")
     standard_ziel_set_id: Optional[int] = Field(None, description="ID des Standard-Leitziele-Sets.")
     klimacheck_aktiv: bool = Field(False, description="Ob der Klimacheck für die Gemeinde aktiviert ist.")
+    fremde_tags_anzeigen: bool = Field(True, description="Tags anderer Kommunen anzeigen.")
+    fremde_indikatoren_anzeigen: bool = Field(True, description="Indikatoren anderer Kommunen anzeigen.")
+    fremde_textbausteine_anzeigen: bool = Field(True, description="Textbausteine anderer Kommunen anzeigen.")
+    inhalte_teilen: bool = Field(True, description="Teilen eigener Inhalte mit anderen Kommunen erlaubt.")
     pdf_logo_dateiname: Optional[str] = Field(None, exclude=True)
 
     @computed_field
     @property
     def hat_pdf_logo(self) -> bool:
         return bool(self.pdf_logo_dateiname)
+
+
+class GemeindeFremdeEintraegeRead(BaseModel):
+    """
+    Kommunale Einstellungen: ob für andere Kommunen sichtbare Einträge angezeigt werden.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    fremde_tags_anzeigen: bool
+    fremde_indikatoren_anzeigen: bool
+    fremde_textbausteine_anzeigen: bool
+    inhalte_teilen: bool
+
+
+class GemeindeFremdeEintraegeUpdate(BaseModel):
+    """
+    Partial update der kommunalen Einstellungen zu Einträgen anderer Kommunen.
+    """
+
+    fremde_tags_anzeigen: Optional[bool] = None
+    fremde_indikatoren_anzeigen: Optional[bool] = None
+    fremde_textbausteine_anzeigen: Optional[bool] = None
+    inhalte_teilen: Optional[bool] = None

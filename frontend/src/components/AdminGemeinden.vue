@@ -1,15 +1,26 @@
 <template>
   <div>
-    <BaseCard>
-      <div class="flex items-center justify-between mb-4">
-        <h5 class="text-lg font-semibold">Kommunen</h5>
+    <div>
+      <div class="flex items-center justify-between gap-4 mb-2">
+        <BaseSubheading>Kommunen</BaseSubheading>
         <Button icon="pi pi-plus" label="Neue Kommune" @click="openCreate" />
       </div>
+      <p class="text-sm text-gray-600 mb-5">
+        Alle Kommunen, die den Mobilitätscheck nutzen. Hier legen Sie neue Kommunen an und pflegen
+        deren Stammdaten.
+      </p>
 
       <InputText v-model="searchQuery" placeholder="Kommune suchen…" class="w-full mb-4" />
 
       <BaseSkeleton v-if="isLoading" variant="table" :columns="4" :rows="5" />
-      <DataTable v-else :value="filteredGemeinden" class="w-full">
+      <DataTable
+        v-else
+        :value="filteredGemeinden"
+        class="w-full"
+        paginator
+        :rows="20"
+        :rowsPerPageOptions="[10, 20, 50]"
+      >
         <template #empty>
           <span class="text-gray-400 text-sm">Keine Kommune gefunden.</span>
         </template>
@@ -41,7 +52,7 @@
           </template>
         </Column>
       </DataTable>
-    </BaseCard>
+    </div>
 
     <!-- Create Dialog -->
     <Dialog

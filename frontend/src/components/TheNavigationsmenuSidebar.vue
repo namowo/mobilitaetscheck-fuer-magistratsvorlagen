@@ -61,7 +61,8 @@
                 <RouterLink
                   :to="item.link"
                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                  active-class="bg-gray-200 dark:bg-gray-700"
+                  active-class=""
+                  :class="{ 'bg-gray-200 dark:bg-gray-700': isItemActive(item) }"
                 >
                   <img
                     v-if="item.icon"
@@ -99,11 +100,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRouter, RouterLink } from 'vue-router'
+import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { onClickOutside } from '@vueuse/core'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const isSidebarOpen = ref(false)
@@ -156,6 +158,7 @@ const authMenuItems = ref([
   {
     name: 'Verwaltung',
     link: '/einstellungen/leitziel-sets',
+    activePrefix: '/einstellungen',
     icon: 'MaterialSymbolsSettings.svg',
     requiresAuth: true,
     requiresUserRolleId: [1]
@@ -163,6 +166,7 @@ const authMenuItems = ref([
   {
     name: 'Einstellungen',
     link: '/administration/accountverwaltung',
+    activePrefix: '/administration',
     icon: 'MaterialSymbolsManageAccounts.svg',
     requiresAuth: true,
     requiresUserRolleId: [1]
@@ -170,6 +174,7 @@ const authMenuItems = ref([
   {
     name: 'Systemadministration',
     link: '/admin/dashboard',
+    activePrefix: '/admin',
     icon: 'MaterialSymbolsSettings.svg',
     requiresAuth: true,
     requiresUserRolleId: [3]
@@ -207,6 +212,15 @@ const filteredAuthMenuItems = computed(() => {
     }
   })
 })
+
+// Highlight a menu item for every page in its section, not only the linked sub-page
+const excludedFromSection = ['/einstellungen/profil']
+
+const isItemActive = (item) => {
+  const prefix = item.activePrefix ?? item.link
+  if (excludedFromSection.includes(route.path)) return route.path === item.link
+  return route.path === prefix || route.path.startsWith(`${prefix}/`)
+}
 
 const getIconPath = (icon) => {
   return new URL(`/src/assets/icons/${icon}`, import.meta.url).href

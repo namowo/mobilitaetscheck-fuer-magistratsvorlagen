@@ -1,10 +1,13 @@
 <template>
-  <BaseModal v-model="editMode" @close="toggleEditMode">
-    <template #header>
-      <h2>Indikator hinzufügen</h2>
-    </template>
+  <Dialog
+    v-model:visible="editMode"
+    header="Indikator hinzufügen"
+    modal
+    dismissableMask
+    class="w-full max-w-[50rem]"
+  >
     <IndicatorForm :editMode="true" :item="props.item" :tags="tags" @update-item="onUpdate" />
-  </BaseModal>
+  </Dialog>
   <BaseCard>
     <div class="grid grid-cols-12 gap-x-2">
       <div class="col-span-10 grid grid-cols-1 gap-2">
@@ -45,6 +48,7 @@
 </template>
 
 <script setup>
+import Dialog from 'openvue/dialog'
 import { ref } from 'vue'
 import IndicatorForm from '@/components/EinstellungenIndikatorFormular.vue'
 import ButtonLoeschen from '@/components/ButtonLoeschen.vue'

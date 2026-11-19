@@ -1,10 +1,10 @@
 <template>
-  <BaseCard>
+  <div>
     <div class="flex flex-wrap items-center gap-2 mb-2">
-      <h5 class="text-lg font-semibold">Startseite</h5>
+      <BaseSubheading>Startseite</BaseSubheading>
       <Tag v-if="hatAenderungen" severity="warn" value="Ungespeicherte Änderungen" />
     </div>
-    <p class="text-sm text-gray-500 mb-4">
+    <p class="text-sm text-gray-600 mb-5">
       Die Startseite besteht aus Abschnitten, die Sie hinzufügen, anordnen, ausblenden und bearbeiten
       können. Abschnitte ohne Inhalt (z. B. ein Video ohne gültigen Link) werden öffentlich nicht
       angezeigt.
@@ -175,7 +175,7 @@
       </p>
       <StartseiteAbschnitte :bloecke="bloecke" vorschau />
     </Dialog>
-  </BaseCard>
+  </div>
 </template>
 
 <script setup>

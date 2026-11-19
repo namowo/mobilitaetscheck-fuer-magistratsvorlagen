@@ -1,9 +1,9 @@
 <template>
-  <BaseCard>
-    <div class="flex items-center justify-between mb-4">
-      <h5 class="text-lg font-semibold">E-Mail-Vorlagen</h5>
+  <div>
+    <div class="flex items-center justify-between gap-4 mb-2">
+      <BaseSubheading>E-Mail-Vorlagen</BaseSubheading>
     </div>
-    <p class="text-sm text-gray-500 mb-4">
+    <p class="text-sm text-gray-600 mb-5">
       Passen Sie Betreff und Inhalt der automatisch versendeten E-Mails an. Platzhalter in
       geschweiften Klammern (siehe Liste je Vorlage) werden beim Versand durch die tatsächlichen
       Werte ersetzt und müssen erhalten bleiben.
@@ -52,7 +52,7 @@
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
-  </BaseCard>
+  </div>
 </template>
 
 <script setup>
