@@ -38,7 +38,7 @@ export default {
           900: '#180704'
         }
       },
-      typography: (theme) => ({
+      typography: () => ({
         DEFAULT: {
           css: {
             ul: {
