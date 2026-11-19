@@ -7,7 +7,7 @@
       <Button label="Logo hinzufügen" icon="pi pi-plus" size="small" @click="pickerVisible = true" />
     </div>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" :rows="2" row-height="4rem" />
     <div v-else-if="logos.length === 0" class="text-sm text-gray-400 text-center py-4">
       Noch keine Logos konfiguriert. Es werden die Standardgrafiken angezeigt.
     </div>

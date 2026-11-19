@@ -50,7 +50,7 @@
             </StepPanel>
 
             <StepPanel v-slot="{ activateCallback }" value="2">
-              <BaseSpinner v-if="isLoadingGemeinden" />
+              <BaseSkeleton v-if="isLoadingGemeinden" :rows="1" row-height="2.75rem" class="mt-4" />
               <template v-else>
                 <p class="text-sm text-gray-500 mt-4">
                   Wählen Sie Ihre Kommune aus. Ist Ihre Kommune nicht gelistet, dann wählen Sie "Meine Kommune ist nicht dabei".

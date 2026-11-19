@@ -6,7 +6,7 @@
       <Button icon="pi pi-chevron-left" label="zur Übersicht" class="mb-5" severity="secondary" />
     </router-link>
 
-    <BaseSpinner v-if="isLoading" class="m-10" />
+    <BaseSkeleton v-if="isLoading" :rows="1" row-height="10rem" />
     <template v-else-if="vorlage">
       <!-- Magistratsvorlage info card -->
       <BaseCard class="mb-6">
@@ -43,12 +43,15 @@
       </BaseCard>
 
       <!-- Tabs: Verwaltung / Politik -->
-      <BaseSpinner v-if="isLoadingChecks" class="m-10" />
-      <Tabs v-else value="verwaltung">
+      <Tabs value="verwaltung">
         <TabList>
           <Tab value="verwaltung">
             Verwaltung
-            <Badge v-if="verwaltungChecks.length > 0" :value="verwaltungChecks.length" class="ml-2" />
+            <Badge
+              v-if="verwaltungChecks.length > 0"
+              :value="verwaltungChecks.length"
+              class="ml-2"
+            />
           </Tab>
           <Tab value="politik">
             Politik
@@ -57,74 +60,90 @@
         </TabList>
         <TabPanels>
           <TabPanel value="verwaltung">
-            <p v-if="verwaltungChecks.length === 0" class="text-gray-500 py-4">
-              Keine veröffentlichten Mobilitätschecks der Verwaltung vorhanden.
-            </p>
-            <div v-else class="flex flex-col gap-3 mt-3">
-              <BaseCard v-for="check in verwaltungChecks" :key="check.id">
-                <div class="col-span-10 grid grid-cols-1 gap-y-1">
-                  <h3 class="font-bold text-lg">{{ check.name || 'Kein Name' }}</h3>
-                  <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm">
-                    <div class="flex items-center gap-2">
-                      <span class="font-semibold">Gruppe</span>
-                      <span>{{ check.autor?.gruppe?.name || '–' }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <span class="font-semibold">Erstellt am</span>
-                      <span>{{ new Date(check.erstelltAm).toLocaleDateString('de-DE') }}</span>
+            <BaseSkeleton v-if="isLoadingChecks" :rows="1" row-height="4rem" class="mt-3" />
+            <template v-else>
+              <p v-if="verwaltungChecks.length === 0" class="text-gray-500 py-4">
+                Keine veröffentlichten Mobilitätschecks der Verwaltung vorhanden.
+              </p>
+              <div v-else class="flex flex-col gap-3 mt-3">
+                <BaseCard v-for="check in verwaltungChecks" :key="check.id">
+                  <div class="col-span-10 grid grid-cols-1 gap-y-1">
+                    <h3 class="font-bold text-lg">{{ check.name || 'Kein Name' }}</h3>
+                    <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold">Gruppe</span>
+                        <span>{{ check.autor?.gruppe?.name || '–' }}</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold">Erstellt am</span>
+                        <span>{{ new Date(check.erstelltAm).toLocaleDateString('de-DE') }}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-span-2 flex items-center justify-end gap-2">
-                  <Button icon="pi pi-eye" label="Anzeigen" size="small" @click="openModal(check)" />
-                  <Button
-                    icon="pi pi-download"
-                    label="PDF-Export"
-                    size="small"
-                    :disabled="exportDisabled(check)"
-                    @click="exportCheck(check.id)"
-                  />
-                </div>
-              </BaseCard>
-            </div>
+                  <div class="col-span-2 flex items-center justify-end gap-2">
+                    <Button
+                      icon="pi pi-eye"
+                      label="Anzeigen"
+                      size="small"
+                      @click="openModal(check)"
+                    />
+                    <Button
+                      icon="pi pi-download"
+                      label="PDF-Export"
+                      size="small"
+                      :disabled="exportDisabled(check)"
+                      @click="exportCheck(check.id)"
+                    />
+                  </div>
+                </BaseCard>
+              </div>
+            </template>
           </TabPanel>
 
           <TabPanel value="politik">
-            <p v-if="politikChecks.length === 0" class="text-gray-500 py-4">
-              Keine veröffentlichten Mobilitätschecks der Politik vorhanden.
-            </p>
-            <div v-else class="flex flex-col gap-3 mt-3">
-              <BaseCard v-for="check in politikChecks" :key="check.id">
-                <div class="col-span-10 grid grid-cols-1 gap-y-1">
-                  <h3 class="font-bold text-lg">{{ check.name || 'Kein Name' }}</h3>
-                  <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm">
-                    <div class="flex items-center gap-2">
-                      <span class="font-semibold">Erstellt von</span>
-                      <span>
-                        {{ check.autor?.vorname }} {{ check.autor?.nachname }}
-                        <span v-if="check.autor?.gruppe?.name" class="text-gray-500 ml-1">
-                          ({{ check.autor.gruppe.name }})
+            <BaseSkeleton v-if="isLoadingChecks" :rows="1" row-height="4rem" class="mt-3" />
+            <template v-else>
+              <p v-if="politikChecks.length === 0" class="text-gray-500 py-4">
+                Keine veröffentlichten Mobilitätschecks der Politik vorhanden.
+              </p>
+              <div v-else class="flex flex-col gap-3 mt-3">
+                <BaseCard v-for="check in politikChecks" :key="check.id">
+                  <div class="col-span-10 grid grid-cols-1 gap-y-1">
+                    <h3 class="font-bold text-lg">{{ check.name || 'Kein Name' }}</h3>
+                    <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold">Erstellt von</span>
+                        <span>
+                          {{ check.autor?.vorname }} {{ check.autor?.nachname }}
+                          <span v-if="check.autor?.gruppe?.name" class="text-gray-500 ml-1">
+                            ({{ check.autor.gruppe.name }})
+                          </span>
                         </span>
-                      </span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <span class="font-semibold">Erstellt am</span>
-                      <span>{{ new Date(check.erstelltAm).toLocaleDateString('de-DE') }}</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <span class="font-semibold">Erstellt am</span>
+                        <span>{{ new Date(check.erstelltAm).toLocaleDateString('de-DE') }}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-span-2 flex items-center justify-end gap-2">
-                  <Button icon="pi pi-eye" label="Anzeigen" size="small" @click="openModal(check)" />
-                  <Button
-                    icon="pi pi-download"
-                    label="PDF-Export"
-                    size="small"
-                    :disabled="exportDisabled(check)"
-                    @click="exportCheck(check.id)"
-                  />
-                </div>
-              </BaseCard>
-            </div>
+                  <div class="col-span-2 flex items-center justify-end gap-2">
+                    <Button
+                      icon="pi pi-eye"
+                      label="Anzeigen"
+                      size="small"
+                      @click="openModal(check)"
+                    />
+                    <Button
+                      icon="pi pi-download"
+                      label="PDF-Export"
+                      size="small"
+                      :disabled="exportDisabled(check)"
+                      @click="exportCheck(check.id)"
+                    />
+                  </div>
+                </BaseCard>
+              </div>
+            </template>
           </TabPanel>
         </TabPanels>
       </Tabs>
@@ -152,7 +171,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiClient } from '@/services/axios'
 import { toastService } from '@/services/toast'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import MobilitaetscheckFormularEingabeZielOber from '@/components/MobilitaetscheckFormularEingabeZielOber.vue'
 import Badge from 'openvue/badge'
 import Button from 'openvue/button'

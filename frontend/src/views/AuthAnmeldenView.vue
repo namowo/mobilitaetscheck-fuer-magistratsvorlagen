@@ -26,8 +26,7 @@
           class="mb-4"
         />
 
-        <BaseSpinner v-if="isLoading" />
-        <form v-else @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4">
+        <form @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4">
           <div class="field">
             <FloatLabel variant="on">
               <InputText id="email" v-model="email" class="w-full" autocomplete="email" />

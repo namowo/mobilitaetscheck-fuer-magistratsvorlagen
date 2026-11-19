@@ -1,39 +1,113 @@
 <template>
   <div>
-    <BaseSpinner v-if="isLoading" />
+    <!-- Bestehende Vorlage: Überschrift mit Bearbeiten/Abbrechen -->
+    <div v-if="editMode" class="flex items-center justify-between gap-4">
+      <BaseSubheading>Allgemeine Daten</BaseSubheading>
+      <Skeleton v-if="!istGeladen && !isPolitik" width="7rem" height="2rem" />
+      <template v-else-if="!isPolitik">
+        <ButtonBearbeiten v-if="!isEditing" @click="isEditing = true" />
+        <Button
+          v-else
+          icon="pi pi-times"
+          label="abbrechen"
+          size="small"
+          severity="secondary"
+          outlined
+          @click="cancelEdit"
+        />
+      </template>
+    </div>
 
-    <!-- Read-only view for Politik -->
-    <div v-else-if="isPolitik" class="grid grid-cols-1 gap-y-4 my-7">
-      <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-        <div>
-          <p class="font-semibold text-gray-500 mb-1">Magistratsvorlagennummer</p>
-          <p>{{ vorlage?.verwaltungsvorgangNr || '—' }}</p>
-        </div>
-        <div>
-          <p class="font-semibold text-gray-500 mb-1">Datum der Magistratssitzung</p>
-          <p>{{ vorlage?.verwaltungsvorgangDatum ? new Date(vorlage.verwaltungsvorgangDatum).toLocaleDateString('de-DE') : '—' }}</p>
-        </div>
-        <div class="col-span-2">
-          <p class="font-semibold text-gray-500 mb-1">Titel der Magistratsvorlage</p>
-          <p>{{ vorlage?.name || '—' }}</p>
-        </div>
-        <div v-if="vorlage?.gemeindeGebiete?.length">
-          <p class="font-semibold text-gray-500 mb-1">Gebiete</p>
-          <div class="flex flex-wrap gap-1">
-            <Tag v-for="gebiet in vorlage.gemeindeGebiete" :key="gebiet.id" :value="gebiet.name" severity="secondary" />
+    <!-- Platzhalter in der Form des Inhalts, damit beim Laden nichts springt -->
+    <template v-if="!istGeladen">
+      <div
+        v-if="editMode"
+        class="my-4 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden"
+      >
+        <dl class="divide-y divide-gray-100 text-sm">
+          <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+            <dt class="text-gray-500">Magistratsvorlagennummer</dt>
+            <dd><Skeleton width="8rem" height="1.25rem" /></dd>
           </div>
-        </div>
-        <div v-if="vorlage?.tags?.length">
-          <p class="font-semibold text-gray-500 mb-1">Tags</p>
-          <div class="flex flex-wrap gap-1">
-            <Tag v-for="tag in vorlage.tags" :key="tag.id" :value="'#' + tag.name" severity="info" />
+          <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+            <dt class="text-gray-500">Datum der Magistratssitzung</dt>
+            <dd><Skeleton width="6rem" height="1.25rem" /></dd>
           </div>
-        </div>
-        <div v-if="vorlage?.beschreibung" class="col-span-2">
-          <p class="font-semibold text-gray-500 mb-1">Beschreibung der Maßnahme</p>
-          <div class="prose prose-sm max-w-none" v-html="vorlage.beschreibung"></div>
-        </div>
+          <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+            <dt class="text-gray-500">Gebiete</dt>
+            <dd><Skeleton width="12rem" height="1.25rem" /></dd>
+          </div>
+          <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+            <dt class="text-gray-500">Tags</dt>
+            <dd><Skeleton width="10rem" height="1.25rem" /></dd>
+          </div>
+          <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+            <dt class="text-gray-500">Beschreibung der Maßnahme</dt>
+            <dd><Skeleton width="70%" height="1.25rem" /></dd>
+          </div>
+        </dl>
       </div>
+      <div v-else class="grid grid-cols-1 gap-y-4 my-7">
+        <Skeleton v-for="i in 5" :key="i" height="3rem" class="w-full" />
+        <Skeleton height="12rem" class="w-full" />
+      </div>
+    </template>
+
+    <!-- Read-only view (Politik immer, Verwaltung bis "bearbeiten") -->
+    <div
+      v-else-if="showReadOnly"
+      class="my-4 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden"
+    >
+      <dl class="divide-y divide-gray-100 text-sm">
+        <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+          <dt class="text-gray-500">Magistratsvorlagennummer</dt>
+          <dd class="text-gray-900">{{ vorlage?.verwaltungsvorgangNr || '—' }}</dd>
+        </div>
+        <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+          <dt class="text-gray-500">Datum der Magistratssitzung</dt>
+          <dd class="text-gray-900">
+            {{
+              vorlage?.verwaltungsvorgangDatum
+                ? new Date(vorlage.verwaltungsvorgangDatum).toLocaleDateString('de-DE')
+                : '—'
+            }}
+          </dd>
+        </div>
+        <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+          <dt class="text-gray-500">Gebiete</dt>
+          <dd>
+            <div v-if="vorlage?.gemeindeGebiete?.length" class="flex flex-wrap gap-1">
+              <Tag
+                v-for="gebiet in vorlage.gemeindeGebiete"
+                :key="gebiet.id"
+                :value="gebiet.name"
+                severity="secondary"
+              />
+            </div>
+            <span v-else class="text-gray-900">—</span>
+          </dd>
+        </div>
+        <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+          <dt class="text-gray-500">Tags</dt>
+          <dd>
+            <div v-if="vorlage?.tags?.length" class="flex flex-wrap gap-1">
+              <Tag v-for="tag in vorlage.tags" :key="tag.id" :value="'#' + tag.name" severity="info" />
+            </div>
+            <span v-else class="text-gray-900">—</span>
+          </dd>
+        </div>
+        <div class="grid gap-1 px-5 py-3 sm:grid-cols-[14rem_1fr] sm:gap-4">
+          <dt class="text-gray-500">Beschreibung der Maßnahme</dt>
+          <dd>
+            <div
+              v-if="vorlage?.beschreibung"
+              class="prose prose-sm max-w-none text-gray-900"
+              v-html="vorlage.beschreibung"
+            ></div>
+            <span v-else class="text-gray-900">—</span>
+          </dd>
+        </div>
+      </dl>
     </div>
 
     <!-- Editable form for Verwaltung -->
@@ -66,8 +140,10 @@
             showIcon
             iconDisplay="input"
             :invalid="!!errors.verwaltungsvorgangDatum"
+            class="w-full sm:w-80"
+            inputClass="w-full"
           />
-          <label for="verwaltungsvorgangDatum"> Datum der Magistratssitzung </label>
+          <label for="verwaltungsvorgangDatum">Datum der Magistratssitzung <LabelOptional /></label>
         </FloatLabel>
         <small
           v-if="errors.verwaltungsvorgangDatum"
@@ -103,10 +179,17 @@
             display="chip"
             class="w-full"
             filter
+            :disabled="keineGebiete"
             :invalid="!!errors.gemeindeGebietIds"
           />
-          <label for="gemeindeGebietIds">Gebiete auswählen</label>
+          <label for="gemeindeGebietIds">Gebiete auswählen <LabelOptional /></label>
         </FloatLabel>
+        <small v-if="keineGebiete" class="block mt-1 text-xs text-gray-500">
+          Für Ihre Kommune sind noch keine Gebiete angelegt.
+          <RouterLink :to="{ name: 'gemeinde-gebiet' }" class="underline hover:text-gray-700"
+            >Gebiete anlegen</RouterLink
+          >
+        </small>
         <small v-if="errors.gemeindeGebietIds" id="gemeindeGebietIds-help" class="p-error block">{{
           errors.gemeindeGebietIds
         }}</small>
@@ -124,14 +207,14 @@
             filter
             :invalid="!!errors.tagIds"
           />
-          <label for="tagIds">Tags auswählen</label>
+          <label for="tagIds">Tags auswählen <LabelOptional /></label>
         </FloatLabel>
         <small v-if="errors.gemeindeGebietIds" id="tagIds-help" class="p-error block">{{
           errors.tagIds
         }}</small>
       </div>
       <div class="form-group field">
-        <label class="text-sm text-gray-500 mb-1 block">Beschreibung der Maßnahme</label>
+        <label class="text-sm text-gray-500 mb-1 block">Beschreibung der Maßnahme <LabelOptional /></label>
         <Editor
           id="beschreibung"
           v-model="beschreibung"
@@ -187,7 +270,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, inject, onActivated, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useForm } from 'vee-validate'
@@ -203,6 +286,8 @@ import Editor from 'openvue/editor'
 import FloatLabel from 'openvue/floatlabel'
 import MultiSelect from 'openvue/multiselect'
 import Tag from 'openvue/tag'
+import ButtonBearbeiten from '@/components/ButtonBearbeiten.vue'
+import Skeleton from 'openvue/skeleton'
 
 const confirm = useConfirm()
 const authStore = useAuthStore()
@@ -218,9 +303,16 @@ const props = defineProps({
 const router = useRouter()
 const route = useRoute()
 const isLoading = ref(false)
+const istGeladen = ref(false)
 const gebiete = ref([])
 const tagOptions = ref([])
+const gebieteGeladen = ref(false)
+const keineGebiete = computed(() => gebieteGeladen.value && gebiete.value.length === 0)
 const vorlage = ref(null)
+const ladeVorlageKopf = inject('ladeVorlage', null)
+// Neue Vorlagen starten direkt im Formular, bestehende zuerst in der Leseansicht.
+const isEditing = ref(!props.editMode)
+const showReadOnly = computed(() => isPolitik.value || !isEditing.value)
 
 const { defineField, handleSubmit, errors, setValues } = useForm({
   validationSchema: toTypedSchema(schema)
@@ -234,25 +326,39 @@ const [gemeindeGebietIds] = defineField('gemeindeGebietIds')
 const [tagIds] = defineField('tagIds')
 
 onMounted(async () => {
-  if (props.editMode) {
-    await fetchMagistratsvorlage()
-  }
-  if (!isPolitik.value) {
-    await fetchOptions()
-  }
+  await Promise.all([
+    props.editMode ? fetchMagistratsvorlage() : null,
+    !isPolitik.value ? fetchOptions() : null
+  ])
+  istGeladen.value = true
+})
+
+// Beim Zurückkehren in den Reiter still aktualisieren – aber nie laufende Bearbeitungen überschreiben.
+let ersteAktivierung = true
+onActivated(() => {
+  if (ersteAktivierung) return (ersteAktivierung = false)
+  if (props.editMode && !isEditing.value) fetchMagistratsvorlage()
 })
 
 const fetchOptions = async () => {
-  isLoading.value = true
-  gebiete.value = await fetchItems('einstellungen/gebiet')
-  tagOptions.value = await fetchItems('/einstellungen/tag')
-  isLoading.value = false
+  const [gebieteResponse, tagsResponse] = await Promise.all([
+    fetchItems('einstellungen/gebiet'),
+    fetchItems('/einstellungen/tag')
+  ])
+  gebiete.value = gebieteResponse ?? []
+  gebieteGeladen.value = true
+  tagOptions.value = tagsResponse
 }
 
+// Kein Lade-Flag hier: nach dem Speichern wird still neu geladen, ohne Platzhalter.
 const fetchMagistratsvorlage = async () => {
-  isLoading.value = true
   const response = await fetchItems(`/magistratsvorlage/${route.params.id}`)
   vorlage.value = response
+  setValuesFromVorlage(response)
+}
+
+const setValuesFromVorlage = (response) => {
+  if (!response) return
   setValues({
     verwaltungsvorgangNr: response.verwaltungsvorgangNr,
     verwaltungsvorgangDatum: response.verwaltungsvorgangDatum ? new Date(response.verwaltungsvorgangDatum) : null,
@@ -262,12 +368,16 @@ const fetchMagistratsvorlage = async () => {
     gemeindeGebietIds: response.gemeindeGebietIds,
     tagIds: response.tagIds
   })
-  isLoading.value = false
+}
+
+const cancelEdit = () => {
+  setValuesFromVorlage(vorlage.value)
+  isEditing.value = false
 }
 
 const onSubmit = handleSubmit(async (values) => {
   if (props.editMode) {
-    await updateItem({
+    const response = await updateItem({
       model: 'magistratsvorlage',
       modelId: route.params.id,
       values: values,
@@ -276,6 +386,9 @@ const onSubmit = handleSubmit(async (values) => {
         error: 'Fehler beim Aktualisieren der Magistratsvorlage'
       }
     })
+    if (!response) return
+    await Promise.all([fetchMagistratsvorlage(), ladeVorlageKopf?.()])
+    isEditing.value = false
   } else {
     isLoading.value = true
     const response = await createItem({

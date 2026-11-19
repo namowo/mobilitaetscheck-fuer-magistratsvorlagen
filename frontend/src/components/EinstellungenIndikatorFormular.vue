@@ -17,7 +17,7 @@
               class="w-full"
               :invalid="!!errors.quelleUrl"
             />
-            <label for="quelleUrl">Quellen-URL</label>
+            <label for="quelleUrl">Quellen-URL <LabelOptional /></label>
           </FloatLabel>
           <small v-if="errors.quelleUrl" id="quelleUrl-help" class="p-error block">{{
             errors.quelleUrl
@@ -33,7 +33,7 @@
             display="chip"
             class="w-full"
           />
-          <label for="tags">Tags auswählen</label>
+          <label for="tags">Tags auswählen <LabelOptional /></label>
         </FloatLabel>
       </div>
       <div class="flex justify-end items-center">

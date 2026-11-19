@@ -3,8 +3,7 @@
     <BaseCard class="">
       <!-- block my-7 mx-auto max-w-md -->
       <h4 class="text-xl font-bold dark:text-white mb-4">{{ label }}</h4>
-      <BaseSpinner v-if="isLoading"></BaseSpinner>
-      <form v-else @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4">
+      <form @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4">
         <div class="field">
           <FloatLabel variant="on">
             <Password
@@ -55,7 +54,7 @@
           }}</small>
         </div>
         <div class="flex gap-4">
-          <ButtonSave type="submit" class="w-full">{{ label }}</ButtonSave>
+          <ButtonSave type="submit" class="w-full" :loading="isLoading">{{ label }}</ButtonSave>
         </div>
       </form>
     </BaseCard>

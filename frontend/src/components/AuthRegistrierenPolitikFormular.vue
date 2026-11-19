@@ -1,6 +1,5 @@
 <template>
-  <BaseSpinner v-if="isLoading" />
-  <div v-else>
+  <div>
     <template v-if="kommuneNichtDabei && kontaktEmail">
       <Message severity="info" class="text-left">
         Ihre Kommune ist noch nicht Teil von {{ einstellungStore.appName }}. Bitte senden Sie uns eine Anfrage,
@@ -24,7 +23,7 @@
             class="w-full"
             showClear
           />
-          <label for="gruppeId">Gruppe (optional)</label>
+          <label for="gruppeId">Gruppe <LabelOptional /></label>
         </FloatLabel>
       </div>
 
@@ -138,7 +137,7 @@
 
       <div class="flex justify-between">
         <Button label="Zurück" severity="secondary" icon="pi pi-arrow-left" @click="$emit('zurueck')" />
-        <Button label="Registrieren" type="submit" />
+        <Button label="Registrieren" type="submit" :loading="isLoading" />
       </div>
     </form>
   </div>

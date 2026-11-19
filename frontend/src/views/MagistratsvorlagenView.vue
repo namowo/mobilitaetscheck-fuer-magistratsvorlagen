@@ -1,10 +1,11 @@
 <template>
   <div class="mx-auto p-6">
-    <div class="flex items-center gap-5">
-      <BaseHeading>Magistratsvorlagen</BaseHeading>
+    <div class="flex items-center gap-5 mb-4">
+      <BaseHeading class="mb-0">Magistratsvorlagen</BaseHeading>
       <RouterLink
         v-if="authStore.effectiveRolleId === 1 || authStore.effectiveIsLocalSuperuser"
         :to="{ name: 'magistratsvorlage-neu' }"
+        class="flex"
       >
         <Button
           v-tooltip="'Neue Magistratsvorlage anlegen'"

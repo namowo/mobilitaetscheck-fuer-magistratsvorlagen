@@ -20,7 +20,7 @@
         @click="toggleModal"
       />
     </div>
-    <BaseSpinner v-if="isLoading" class="m-10" />
+    <BaseSkeleton v-if="isLoading" :rows="4" row-height="4rem" />
     <div v-else-if="zielOberListe.length === 0">
       <p class="font-lg font-bold m-5">Keine Leitziele vorhanden.</p>
     </div>
@@ -49,7 +49,6 @@ import {
 } from '@/composables/crud'
 import Button from 'openvue/button'
 import Draggable from 'vuedraggable'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import EinstellungenMobilitaetscheckFormularZielOber from './EinstellungenMobilitaetscheckFormularZielOber.vue'
 import EinstellungenMobilitaetscheckZielOberItem from './EinstellungenMobilitaetscheckZielOberItem.vue'
 

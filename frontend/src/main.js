@@ -12,9 +12,10 @@ import BaseAlert from './components/BaseAlert.vue'
 import BaseCard from './components/BaseCard.vue'
 import BaseButton from './components/BaseButton.vue'
 import BaseModal from './components/BaseModal.vue'
-import BaseSpinner from './components/BaseSpinner.vue'
+import BaseSkeleton from './components/BaseSkeleton.vue'
 import BaseHeading from './components/BaseHeading.vue'
 import BaseSubheading from './components/BaseSubheading.vue'
+import LabelOptional from './components/LabelOptional.vue'
 import ToastService from 'openvue/toastservice'
 import { setupToast } from '@/services/toast'
 import ConfirmationService from 'openvue/confirmationservice'
@@ -77,9 +78,10 @@ app.component('BaseAlert', BaseAlert)
 app.component('BaseCard', BaseCard)
 app.component('BaseButton', BaseButton)
 app.component('BaseModal', BaseModal)
-app.component('BaseSpinner', BaseSpinner)
+app.component('BaseSkeleton', BaseSkeleton)
 app.component('BaseHeading', BaseHeading)
 app.component('BaseSubheading', BaseSubheading)
+app.component('LabelOptional', LabelOptional)
 
 app.use(createPinia())
 app.use(ToastService)

@@ -31,7 +31,7 @@
         </span>
       </div>
 
-      <BaseSpinner v-if="isLoadingVorlagen" class="m-10" />
+      <BaseSkeleton v-if="isLoadingVorlagen" :rows="4" row-height="5rem" />
       <template v-else>
         <p v-if="magistratsvorlagen.length === 0" class="text-gray-500 text-center py-8">
           Keine veröffentlichten Magistratsvorlagen für diese Kommune vorhanden.
@@ -127,7 +127,6 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { apiClient } from '@/services/axios'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import DataView from 'openvue/dataview'
 import InputText from 'openvue/inputtext'
 import Select from 'openvue/select'

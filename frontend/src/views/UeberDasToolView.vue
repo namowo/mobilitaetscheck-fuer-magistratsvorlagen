@@ -2,7 +2,7 @@
   <div>
     <BaseHeading>Über das Tool</BaseHeading>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" variant="text" :rows="3" />
     <div v-else class="rich-content" v-html="inhalt || UEBER_DAS_TOOL_STANDARD_INHALT" />
 
     <div class="mt-8 border-t pt-6">

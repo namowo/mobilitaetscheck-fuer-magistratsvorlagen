@@ -1,8 +1,7 @@
 <template>
   <BaseCard class="block mx-auto my-7 max-w-md">
     <h4 class="text-xl font-bold dark:text-white mb-5">Passwort vergessen?</h4>
-    <BaseSpinner v-if="isLoading" />
-    <div v-else>
+    <div>
       <form v-if="!submit" @submit.prevent="onSubmit">
         <div class="field">
           <FloatLabel variant="on">
@@ -18,7 +17,7 @@
           <small v-if="errors.email" class="p-error">{{ errors.email }}</small>
         </div>
         <div class="flex justify-end mt-2">
-          <Button label="Passwort zurücksetzen" type="submit" class="w-full" />
+          <Button label="Passwort zurücksetzen" type="submit" class="w-full" :loading="isLoading" />
         </div>
       </form>
       <div v-else>

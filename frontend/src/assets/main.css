@@ -218,3 +218,14 @@
   min-height: inherit;
   cursor: text;
 }
+
+/* Tooltips: Breite am Inhalt ausrichten statt auf den Restplatz zu schrumpfen
+   (sonst steht nahe am Rand nur ein Wort pro Zeile); lange Texte umbrechen erst bei 20rem. */
+body .p-tooltip {
+  width: max-content;
+  max-width: min(20rem, calc(100vw - 2rem));
+}
+
+body .p-tooltip-text {
+  line-height: 1.4;
+}

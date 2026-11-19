@@ -1,7 +1,6 @@
 <template>
   <div class="my-5">
-    <BaseSpinner v-if="isLoading" class="m-10" />
-    <Tabs v-else :value="activeTab" @update:value="activeTab = $event">
+    <Tabs :value="activeTab" @update:value="activeTab = $event">
       <TabList>
         <Tab v-if="isPolitik" value="meine">Meine</Tab>
         <Tab value="verwaltung">Verwaltung</Tab>
@@ -12,11 +11,12 @@
         <TabPanel v-if="isPolitik" value="meine">
           <Message severity="info" :closable="false" class="mt-3 mb-3">
             Sie können einen eigenen Mobilitätscheck erstellen, indem Sie auf
-            <i class="pi pi-plus mx-1" style="font-size: 0.75rem" /> klicken, oder einen
-            bestehenden Mobilitätscheck aus dem Tab <strong>Verwaltung</strong> oder
+            <i class="pi pi-plus mx-1" style="font-size: 0.75rem" /> klicken, oder einen bestehenden
+            Mobilitätscheck aus dem Tab <strong>Verwaltung</strong> oder
             <strong>Politik</strong> duplizieren.
           </Message>
-          <DataView :value="meineListe" dataKey="id">
+          <BaseSkeleton v-if="isLoading" :rows="1" row-height="6rem" class="mt-3" />
+          <DataView v-else :value="meineListe" dataKey="id">
             <template #list="slotProps">
               <MobilitaetscheckListeItem
                 v-for="eingabe in slotProps.items"
@@ -38,7 +38,8 @@
 
         <!-- Verwaltung — editable for Verwaltung, read-only for Politik -->
         <TabPanel value="verwaltung">
-          <DataView :value="verwaltungListe" dataKey="id">
+          <BaseSkeleton v-if="isLoading" :rows="1" row-height="6rem" class="mt-3" />
+          <DataView v-else :value="verwaltungListe" dataKey="id">
             <template #list="slotProps">
               <MobilitaetscheckListeItem
                 v-for="eingabe in slotProps.items"
@@ -60,7 +61,8 @@
 
         <!-- Politik — read-only for everyone -->
         <TabPanel value="politik">
-          <DataView :value="politikListe" dataKey="id">
+          <BaseSkeleton v-if="isLoading" :rows="1" row-height="6rem" class="mt-3" />
+          <DataView v-else :value="politikListe" dataKey="id">
             <template #list="slotProps">
               <MobilitaetscheckListeItem
                 v-for="eingabe in slotProps.items"
@@ -85,12 +87,11 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, onActivated } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { copyItem, deleteItem, exportItem, fetchItems, updateItem } from '@/composables/crud'
 import MobilitaetscheckListeItem from '@/components/MobilitaetscheckListeItem.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import DataView from 'openvue/dataview'
 import Message from 'openvue/message'
 import Tabs from 'openvue/tabs'
@@ -107,8 +108,8 @@ const eingaben = ref([])
 const isPolitik = computed(() => authStore.effectiveRolleId === 2)
 const activeTab = ref(authStore.effectiveRolleId === 2 ? 'meine' : 'verwaltung')
 
-const fetchEingaben = async () => {
-  isLoading.value = true
+const fetchEingaben = async ({ still = false } = {}) => {
+  if (!still) isLoading.value = true
   eingaben.value = await fetchItems(`mobilitaetscheck/eingabe/magistratsvorlage/${route.params.id}`)
   isLoading.value = false
 }
@@ -120,7 +121,14 @@ const refetchEingabe = async (id) => {
   }
 }
 
-onMounted(fetchEingaben)
+onMounted(() => fetchEingaben())
+
+// Beim Zurückkehren in den (zwischengespeicherten) Reiter still aktualisieren.
+let ersteAktivierung = true
+onActivated(() => {
+  if (ersteAktivierung) return (ersteAktivierung = false)
+  fetchEingaben({ still: true })
+})
 
 // Meine: own items (Politik only)
 const meineListe = computed(() =>
@@ -140,9 +148,7 @@ const verwaltungListe = computed(() =>
 const politikListe = computed(() =>
   eingaben.value.filter(
     (e) =>
-      e.autor?.rolle?.name === 'Politik' &&
-      e.veroeffentlicht &&
-      e.autor?.id !== authStore.userId
+      e.autor?.rolle?.name === 'Politik' && e.veroeffentlicht && e.autor?.id !== authStore.userId
   )
 )
 
@@ -152,7 +158,9 @@ const onPublish = async ({ modelId, values }) => {
     modelId,
     values,
     detail: {
-      success: values.veroeffentlicht ? 'Mobilitätscheck veröffentlicht' : 'Veröffentlichung zurückgezogen',
+      success: values.veroeffentlicht
+        ? 'Mobilitätscheck veröffentlicht'
+        : 'Veröffentlichung zurückgezogen',
       error: 'Fehler beim Veröffentlichen des Mobilitätschecks'
     }
   })

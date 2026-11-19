@@ -1,5 +1,5 @@
 <template>
-  <BaseSpinner v-if="isLoadingInvite" />
+  <BaseSkeleton v-if="isLoadingInvite" variant="form" :rows="5" />
   <div v-else-if="inviteError" class="text-center py-4">
     <div class="flex justify-center mb-4">
       <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
@@ -68,7 +68,7 @@
           class="w-full"
           showClear
         />
-        <label for="gruppeId">Gruppe (optional)</label>
+        <label for="gruppeId">Gruppe <LabelOptional /></label>
       </FloatLabel>
     </div>
 

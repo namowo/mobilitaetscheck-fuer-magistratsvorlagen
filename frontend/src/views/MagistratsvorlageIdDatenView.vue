@@ -1,6 +1,5 @@
 <template>
   <div>
-    <BaseSubheading>Daten</BaseSubheading>
     <MagistratsvorlageFormular />
   </div>
 </template>

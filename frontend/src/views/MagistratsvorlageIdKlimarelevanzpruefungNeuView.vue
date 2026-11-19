@@ -1,5 +1,5 @@
 <template>
-  <BaseHeading>Neue Klimacheck</BaseHeading>
+  <BaseSubheading>Neuer Klimacheck</BaseSubheading>
   <KlimarelevanzpruefungFormularFbFilter />
 </template>
 

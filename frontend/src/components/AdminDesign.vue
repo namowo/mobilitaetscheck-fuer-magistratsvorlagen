@@ -15,7 +15,7 @@
       automatisch daraus abgeleitete Farbtöne.
     </p>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" variant="form" :rows="1" />
     <template v-else>
       <div class="flex flex-col gap-1">
         <label for="theme-color" class="font-semibold text-sm">Primärfarbe</label>
