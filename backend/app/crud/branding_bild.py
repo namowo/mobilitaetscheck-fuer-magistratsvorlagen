@@ -1,3 +1,4 @@
+import json
 import uuid
 from pathlib import Path
 
@@ -10,6 +11,7 @@ from app.core.config import settings
 from app.models.branding_asset import BrandingAsset
 from app.models.branding_slot_zuweisung import BrandingSlotZuweisung
 from app.models.logo_liste_eintrag import LogoListeEintrag
+from app.models.plattform_einstellung import PlattformEinstellung
 from app.schemas.branding_bild import (
     LogoListeEintragCreate,
     LogoListeEintragUpdate,
@@ -24,6 +26,15 @@ from app.services.branding.slots_registry import (
 )
 
 UPLOAD_DIR = Path(settings.BRANDING_UPLOAD_DIR)
+
+
+async def is_asset_used_on_startseite(db: AsyncSession, dateiname: str) -> bool:
+    """Startseiten-Abschnitte reference images by URL inside a JSON list."""
+    result = await db.execute(select(PlattformEinstellung.startseite_bloecke))
+    for bloecke in result.scalars().all():
+        if bloecke and dateiname in json.dumps(bloecke):
+            return True
+    return False
 PDF_LOGO_SLOT = "pdf-logo"
 
 
@@ -68,7 +79,11 @@ class CRUDBrandingAsset:
         listen_result = await db.execute(
             select(LogoListeEintrag).where(LogoListeEintrag.asset_id == asset_id)
         )
-        if zuweisung_result.scalars().first() is not None or listen_result.scalars().first() is not None:
+        if (
+            zuweisung_result.scalars().first() is not None
+            or listen_result.scalars().first() is not None
+            or await is_asset_used_on_startseite(db, instance.dateiname)
+        ):
             raise HTTPException(
                 status_code=400,
                 detail="Dieses Bild wird noch verwendet und kann nicht gelöscht werden.",

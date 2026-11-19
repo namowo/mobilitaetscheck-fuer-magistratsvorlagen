@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Any, Optional
 
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
@@ -62,6 +63,11 @@ class PlattformEinstellung(Base):
     )
     startseite_inhalt: Mapped[Optional[str]] = mapped_column(
         nullable=True, comment="Textkörper (HTML) der Startseite, ersetzt den Standard-Hero-Text"
+    )
+    startseite_bloecke: Mapped[Optional[list[dict[str, Any]]]] = mapped_column(
+        JSONB,
+        nullable=True,
+        comment="Abschnitte der Startseite (Liste von Blöcken). NULL = Standardaufbau.",
     )
     kontakt_email: Mapped[Optional[str]] = mapped_column(
         nullable=True,
