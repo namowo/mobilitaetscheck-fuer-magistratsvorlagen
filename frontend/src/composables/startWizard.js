@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { apiClient } from '@/services/axios'
 import { useAuthStore } from '@/stores/auth'
+import { useEinstellungStore } from '@/stores/einstellung'
 
 // Shared state so the wizard can be opened from anywhere (e.g. the profile menu)
 const visible = ref(false)
@@ -9,27 +10,41 @@ const status = ref({}) // key -> true (erledigt) | false (offen)
 const statusLoaded = ref(false)
 // True while the wizard was left (not finished) and can be continued via the floating button
 const resumable = ref(false)
+// True while the user works on a step's task with the wizard docked as a small panel
+const angedockt = ref(false)
 
 const ROLLE_VERWALTUNG = 'verwaltung'
 const ROLLE_POLITIK = 'politik'
 
 // ---- Step definitions ------------------------------------------------------
 // statusKey: optional key into `status`; steps with a statusKey show "erledigt"/"offen".
-// action:    optional router target offered as a button inside the step.
+// action:    optional router target offered as a button inside the step. `spotlight` points
+//            at the element to use on the target page once the user got there.
+// zeigt:     optional element (data-tour name) that is ringed while the step is shown, e.g.
+//            the menu entry where the task can be found later on.
+//
+// Wording: the tool is called by its Anwendungstitel (ctx.appName); "Mobilitätscheck" is
+// the result/PDF that the tool produces.
 
-const willkommen = (rolleText) => ({
+const willkommen = (ctx, rolleText) => ({
   key: 'willkommen',
   icon: 'pi pi-compass',
-  title: 'Willkommen beim Mobilitätscheck',
+  title: `Willkommen bei ${ctx.appName}`,
   paragraphs: [
-    'Mit dem Mobilitätscheck bewerten Sie Magistratsvorlagen systematisch nach den Mobilitäts-Leitzielen Ihrer Kommune – nachvollziehbar, vergleichbar und als PDF exportierbar.',
+    `Mit ${ctx.appName} bewerten Sie Magistratsvorlagen systematisch nach den Mobilitäts-Leitzielen Ihrer Kommune. Das Ergebnis ist der Mobilitätscheck – nachvollziehbar, vergleichbar und als PDF exportierbar.`,
     rolleText
-  ]
+  ],
+  zeigt: { ziel: 'profil-menue', label: 'Einführung später hier im Profil-Menü' }
 })
+
+const NAV_VERWALTUNG = { ziel: 'nav-verwaltung', label: 'Zu finden unter „Verwaltung“' }
+const NAV_EINSTELLUNGEN = { ziel: 'nav-einstellungen', label: 'Zu finden unter „Einstellungen“' }
+const NAV_VORLAGEN = { ziel: 'nav-magistratsvorlagen', label: 'Zu finden unter „Magistratsvorlagen“' }
 
 const STEPS = {
   [ROLLE_VERWALTUNG]: (ctx) => [
     willkommen(
+      ctx,
       'Sie haben Verwaltungsrechte. Diese kurze Einführung zeigt Ihnen, wie Sie das Tool für Ihre Kommune einrichten und anschließend nutzen. Sie können sie jederzeit über das Profil-Menü erneut öffnen.'
     ),
     {
@@ -41,7 +56,16 @@ const STEPS = {
         'Leitziele sind die Grundlage jedes Mobilitätschecks. Ohne eigene Leitziel-Sets kann Ihre Kommune keine Checks durchführen.',
         'Legen Sie ein Leitziel-Set mit Oberzielen und Unterzielen an. Sie können dabei von bestehenden Sets ausgehen.'
       ],
-      action: { label: 'Leitziele einrichten', to: { name: 'leitziel-sets' } }
+      zeigt: NAV_VERWALTUNG,
+      action: {
+        label: 'Leitziele einrichten',
+        to: { name: 'leitziel-sets' },
+        spotlight: {
+          ziel: 'leitziele-neu',
+          title: 'Leitziel-Set anlegen',
+          text: 'Klicken Sie hier, um ein eigenes Leitziel-Set zu erstellen. Anschließend fügen Sie Oberziele und Unterziele hinzu. Alternativ können Sie ein bestehendes Set duplizieren.'
+        }
+      }
     },
     {
       key: 'gebiete',
@@ -52,7 +76,16 @@ const STEPS = {
       paragraphs: [
         'Mit Gebieten (Stadtteile, Ortsteile) ordnen Sie ein Vorhaben räumlich ein. Die Liste wird einmal gepflegt und steht dann bei jeder Magistratsvorlage zur Auswahl.'
       ],
-      action: { label: 'Gebiete verwalten', to: { name: 'gemeinde-gebiet' } }
+      zeigt: NAV_VERWALTUNG,
+      action: {
+        label: 'Gebiete verwalten',
+        to: { name: 'gemeinde-gebiet' },
+        spotlight: {
+          ziel: 'gebiet-neu',
+          title: 'Gebiet hinzufügen',
+          text: 'Über dieses Plus legen Sie ein neues Gebiet (z. B. einen Stadtteil) an.'
+        }
+      }
     },
     {
       key: 'bausteine',
@@ -63,6 +96,7 @@ const STEPS = {
         'Textblöcke sind wiederverwendbare Formulierungen, Indikatoren Regelwerke oder Kennwerte zur Begründung einer Bewertung, Tags Schlagwörter zum Filtern.',
         'Das ist optional – Sie können diese Bausteine auch später beim Arbeiten nach und nach ergänzen.'
       ],
+      zeigt: NAV_VERWALTUNG,
       // Shown individually in the final overview
       checklistItems: [
         {
@@ -88,9 +122,33 @@ const STEPS = {
         }
       ],
       actions: [
-        { label: 'Textblöcke', to: { name: 'textblock' } },
-        { label: 'Indikatoren', to: { name: 'indikator' } },
-        { label: 'Tags', to: { name: 'tag' } }
+        {
+          label: 'Textblöcke',
+          to: { name: 'textblock' },
+          spotlight: {
+            ziel: 'textblock-neu',
+            title: 'Textblock hinzufügen',
+            text: 'Über dieses Plus legen Sie einen neuen Textblock an.'
+          }
+        },
+        {
+          label: 'Indikatoren',
+          to: { name: 'indikator' },
+          spotlight: {
+            ziel: 'indikator-neu',
+            title: 'Indikator hinzufügen',
+            text: 'Über dieses Plus legen Sie einen neuen Indikator an.'
+          }
+        },
+        {
+          label: 'Tags',
+          to: { name: 'tag' },
+          spotlight: {
+            ziel: 'tag-neu',
+            title: 'Tag hinzufügen',
+            text: 'Über dieses Plus legen Sie einen neuen Tag an.'
+          }
+        }
       ]
     },
     ...(ctx.istKommunaleAdmin
@@ -104,7 +162,16 @@ const STEPS = {
             paragraphs: [
               'Laden Sie das Logo Ihrer Kommune hoch (PNG oder JPEG, max. 2 MB). Es erscheint auf allen exportierten PDFs.'
             ],
-            action: { label: 'Logo hochladen', to: { name: 'pdf-logo' } }
+            zeigt: NAV_EINSTELLUNGEN,
+            action: {
+              label: 'Logo hochladen',
+              to: { name: 'pdf-logo' },
+              spotlight: {
+                ziel: 'pdf-logo-hochladen',
+                title: 'Logo hochladen',
+                text: 'Klicken Sie hier und wählen Sie eine PNG- oder JPEG-Datei aus.'
+              }
+            }
           }
         ]
       : []),
@@ -116,7 +183,16 @@ const STEPS = {
       paragraphs: [
         'Unter „Einstellungen“ erstellen Sie Einladungslinks für Verwaltung und Politik, organisieren Gruppen (z. B. Fachbereiche oder Fraktionen) und verwalten Accounts.'
       ],
-      action: { label: 'Einladungen verwalten', to: { name: 'einladungen' } }
+      zeigt: NAV_EINSTELLUNGEN,
+      action: {
+        label: 'Einladungen verwalten',
+        to: { name: 'einladungen' },
+        spotlight: {
+          ziel: 'einladung-formular',
+          title: 'Einladung erstellen',
+          text: 'Wählen Sie die Benutzerrolle, geben Sie die E-Mail-Adresse ein und klicken Sie auf „Einladung senden“.'
+        }
+      }
     },
     {
       key: 'ablauf',
@@ -124,7 +200,7 @@ const STEPS = {
       title: 'So läuft ein Check ab',
       paragraphs: [
         '1. Magistratsvorlage anlegen und Gebiet zuordnen.',
-        '2. Mobilitätscheck erstellen: Jedes Unterziel bewerten und die Auswirkung begründen.',
+        '2. Mobilitätscheck erstellen: Ziele bewerten und die Auswirkung begründen.',
         ctx.klimacheckAktiv
           ? '3. Optional: Klimacheck bzw. Klimarelevanzprüfung ergänzen (für Ihre Kommune freigeschaltet).'
           : '3. Ergebnis ansehen und als PDF exportieren.',
@@ -133,7 +209,16 @@ const STEPS = {
           : 'Weitere Hilfe finden Sie jederzeit in der Dokumentation.'
       ].filter(Boolean),
       statusKey: 'eigeneChecks',
-      action: { label: 'Erste Magistratsvorlage anlegen', to: { name: 'magistratsvorlage-neu' } }
+      zeigt: NAV_VORLAGEN,
+      action: {
+        label: 'Erste Magistratsvorlage anlegen',
+        to: { name: 'magistratsvorlage-neu' },
+        spotlight: {
+          ziel: 'vorlage-formular-start',
+          title: 'Magistratsvorlage anlegen',
+          text: 'Füllen Sie die Angaben zur Vorlage aus und speichern Sie am Ende des Formulars. Danach erstellen Sie in der Vorlage den Mobilitätscheck.'
+        }
+      }
     },
     {
       key: 'uebersicht',
@@ -144,8 +229,9 @@ const STEPS = {
     }
   ],
 
-  [ROLLE_POLITIK]: () => [
+  [ROLLE_POLITIK]: (ctx) => [
     willkommen(
+      ctx,
       'Sie haben Zugriff als Politik. Hier erfahren Sie, was Sie im Tool sehen und tun können.'
     ),
     {
@@ -156,7 +242,16 @@ const STEPS = {
         'Unter „Magistratsvorlagen“ finden Sie die Vorlagen Ihrer Kommune samt veröffentlichtem Mobilitätscheck.',
         'Sie sehen auf einen Blick, wie sich ein Vorhaben auf jedes Leitziel auswirkt, und können die Begründung nachlesen.'
       ],
-      action: { label: 'Zu den Magistratsvorlagen', to: { name: 'magistratsvorlage-liste' } }
+      zeigt: NAV_VORLAGEN,
+      action: {
+        label: 'Zu den Magistratsvorlagen',
+        to: { name: 'magistratsvorlage-liste' },
+        spotlight: {
+          ziel: 'vorlagen-suche',
+          title: 'Vorlagen finden',
+          text: 'Suchen Sie hier nach einer Magistratsvorlage oder nutzen Sie die Filter. Öffnen Sie eine Vorlage, um ihren Mobilitätscheck zu sehen.'
+        }
+      }
     },
     {
       key: 'auswertung',
@@ -166,21 +261,13 @@ const STEPS = {
         'Jedes Unterziel wird mit einer Auswirkung bewertet und begründet. Indikatoren verweisen auf Regelwerke oder Kennwerte, die die Einschätzung stützen.',
         'Die Ergebnisse lassen sich als PDF herunterladen und in Sitzungsunterlagen verwenden.'
       ]
-    },
-    {
-      key: 'profil',
-      icon: 'pi pi-user',
-      title: 'Ihr Profil und Ihre Gruppe',
-      paragraphs: [
-        'Im Profil pflegen Sie Ihre Daten und wählen Ihre Gruppe (z. B. Fraktion oder Partei).'
-      ],
-      action: { label: 'Profil öffnen', to: { name: 'profil' } }
     }
   ]
 }
 
 export const useStartWizard = () => {
   const authStore = useAuthStore()
+  const einstellungStore = useEinstellungStore()
 
   // No wizard in the Systemadministration view; when a Systemadmin switches the view to
   // Verwaltung or Politik, the wizard for that role is available (e.g. to demo it).
@@ -201,10 +288,17 @@ export const useStartWizard = () => {
       !!status.value.eigeneChecks
   )
 
+  // Whether the profile menu offers "Einführung starten". Hidden once setup is complete,
+  // except for Systemadmins viewing the app as Verwaltung or Politik (to demo the wizard).
+  const manuellStartbar = computed(
+    () => available.value && (authStore.canSwitchView || !setupComplete.value)
+  )
+
   const steps = computed(() =>
     STEPS[rolle.value]({
       klimacheckAktiv: authStore.klimacheckAktiv,
-      istKommunaleAdmin: authStore.istKommunaleAdmin
+      istKommunaleAdmin: authStore.istKommunaleAdmin,
+      appName: einstellungStore.appName
     })
   )
 
@@ -269,19 +363,48 @@ export const useStartWizard = () => {
     // A deliberate (re)start counts as "not done" again, so leaving it midway shows the
     // continue message even if the wizard was finished or dismissed before.
     write('done', 'false')
+    setAngedockt(false)
     resumable.value = false
     visible.value = true
+  }
+
+  const setAngedockt = (wert) => {
+    angedockt.value = wert
+    write('angedockt', String(wert))
   }
 
   const close = () => {
     write('step', String(stepIndex.value))
     visible.value = false
-    // finish() marks the wizard done before the dialog's @hide calls close() again
+    // finish() marks the wizard done before the dialog's @hide calls close() again;
+    // while docked, the panel replaces the "Fortsetzen" banner.
+    resumable.value = read('done') !== 'true' && !angedockt.value
+  }
+
+  // Leave the dialog to work on the current step; the wizard stays open as a docked panel
+  const andocken = () => {
+    setAngedockt(true)
+    resumable.value = false
+    close()
+  }
+
+  // Back from the docked panel to the full dialog, at the current step
+  const aufklappen = () => {
+    setAngedockt(false)
+    resumable.value = false
+    visible.value = true
+  }
+
+  // Hide the docked panel; the wizard can still be continued via the banner
+  const minimieren = () => {
+    setAngedockt(false)
+    write('step', String(stepIndex.value))
     resumable.value = read('done') !== 'true'
   }
 
   const finish = () => {
     write('done', 'true')
+    setAngedockt(false)
     resumable.value = false
     stepIndex.value = 0 // so the @hide handler persists step 0
     visible.value = false
@@ -303,24 +426,32 @@ export const useStartWizard = () => {
   const autoOpenIfNeeded = async () => {
     if (!available.value) return
     if (!authStore.isLoggedIn || !authStore.isVerified || !authStore.userId) return
-    if (visible.value || read('done') === 'true') return
+    if (visible.value) return
+    if (read('done') === 'true') {
+      angedockt.value = false
+      return
+    }
     await loadStatus()
     // Resume where the user left off (e.g. after following a step's action link or a page reload)
     const saved = Number(read('step'))
     stepIndex.value = Number.isInteger(saved) && saved > 0 && saved < steps.value.length ? saved : 0
     resumable.value = false
-    visible.value = true
+    // After a reload while working on a step, keep the docked panel instead of the dialog
+    angedockt.value = read('angedockt') === 'true'
+    if (!angedockt.value) visible.value = true
   }
 
   return {
     available,
     setupComplete,
+    manuellStartbar,
     refreshStatus: loadStatus,
     visible,
     stepIndex,
     status,
     statusLoaded,
     resumable,
+    angedockt,
     rolle,
     steps,
     currentStep,
@@ -328,6 +459,9 @@ export const useStartWizard = () => {
     isLast,
     open,
     close,
+    andocken,
+    aufklappen,
+    minimieren,
     resume,
     finish,
     skip,

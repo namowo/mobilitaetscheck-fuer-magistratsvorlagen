@@ -13,6 +13,7 @@
         icon="pi pi-plus"
         rounded
         aria-label="Neuen Textblock hinzufügen"
+        data-tour="textblock-neu"
         @click="toggleModal"
       />
     </div>

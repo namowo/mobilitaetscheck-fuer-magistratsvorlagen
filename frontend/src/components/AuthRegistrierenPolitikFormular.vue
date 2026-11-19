@@ -3,7 +3,7 @@
   <div v-else>
     <template v-if="kommuneNichtDabei && kontaktEmail">
       <Message severity="info" class="text-left">
-        Ihre Kommune ist noch nicht Teil des Mobilitätschecks. Bitte senden Sie uns eine Anfrage,
+        Ihre Kommune ist noch nicht Teil von {{ einstellungStore.appName }}. Bitte senden Sie uns eine Anfrage,
         damit wir Ihre Kommune für die Politik freischalten können.
       </Message>
       <div class="flex justify-between mt-4">
@@ -147,6 +147,7 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useEinstellungStore } from '@/stores/einstellung'
 import { useRouter } from 'vue-router'
 import { useForm } from 'vee-validate'
 import { schema } from '@/utils/schemas/authRegistrieren'
@@ -170,6 +171,7 @@ const props = defineProps({
 })
 defineEmits(['zurueck'])
 
+const einstellungStore = useEinstellungStore()
 const { kontaktEmail, mailtoHref, fetchVorlage } = useKommuneAnfrageMailto('politik')
 
 const isLoading = ref(false)

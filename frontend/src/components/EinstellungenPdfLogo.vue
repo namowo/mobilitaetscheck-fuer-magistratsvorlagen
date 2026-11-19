@@ -32,6 +32,7 @@
           <Button
             :label="previewUrl ? 'Logo ersetzen' : 'Logo hochladen'"
             icon="pi pi-upload"
+            data-tour="pdf-logo-hochladen"
             :loading="isUploading"
             @click="fileInput.click()"
           />

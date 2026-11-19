@@ -28,9 +28,21 @@
           />
           <Button label="Speichern" @click="saveWebAppTitle" :loading="isSavingTitle" />
         </div>
-        <p class="text-xs text-gray-500">
-          Wird als Titel im Browser-Tab angezeigt. Leer = Standardtitel.
-        </p>
+        <div class="text-xs text-gray-500">
+          <p class="m-0">Der Anwendungstitel wird als Name des Tools verwendet:</p>
+          <ul class="list-disc pl-5 my-1">
+            <li>als Titel im Browser-Tab,</li>
+            <li>im Einführungswizard (z. B. „Willkommen bei …“),</li>
+            <li>
+              bei der Registrierung im Hinweis, wenn eine Kommune noch nicht teilnimmt
+              („Ihre Kommune ist noch nicht Teil von …“).
+            </li>
+          </ul>
+          <p class="m-0">
+            Leer = Standardtitel im Browser-Tab bzw. „{{ STANDARD_APP_NAME }}“ in Wizard und
+            Registrierung. Das PDF-Ergebnis heißt unabhängig davon „Mobilitätscheck“.
+          </p>
+        </div>
       </div>
       <div class="flex flex-col gap-1 mb-6">
         <label for="pdf-fusszeile" class="font-semibold text-sm">PDF-Fußzeile</label>
@@ -146,7 +158,7 @@ import { apiClient } from '@/services/axios'
 import { useToast } from 'openvue/usetoast'
 import { useConfirm } from 'openvue/useconfirm'
 import { useBrandingStore } from '@/stores/branding'
-import { useEinstellungStore } from '@/stores/einstellung'
+import { useEinstellungStore, STANDARD_APP_NAME } from '@/stores/einstellung'
 import BrandingAssetPicker from './BrandingAssetPicker.vue'
 import AdminLogoListe from './AdminLogoListe.vue'
 
