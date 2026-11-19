@@ -1,9 +1,9 @@
 <template>
-  <BaseCard>
-    <div class="flex items-center justify-between mb-4">
-      <h5 class="text-lg font-semibold">Kontakt</h5>
+  <div>
+    <div class="flex items-center justify-between gap-4 mb-2">
+      <BaseSubheading>Kontakt</BaseSubheading>
     </div>
-    <p class="text-sm text-gray-500 mb-4">
+    <p class="text-sm text-gray-600 mb-5">
       Diese E-Mail-Adresse wird bei der Registrierung vorgeschlagen, wenn Nutzende eine Kommune
       anfragen möchten, die noch nicht Teil des Mobilitätschecks ist.
     </p>
@@ -20,7 +20,7 @@
         <Button label="Speichern" @click="submit" :loading="isSaving" />
       </div>
     </template>
-  </BaseCard>
+  </div>
 </template>
 
 <script setup>

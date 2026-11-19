@@ -1,14 +1,9 @@
 <template>
   <div>
-    <div class="flex items-center gap-5">
+    <div class="flex items-center justify-between gap-4">
       <BaseSubheading>Mobilitätschecks</BaseSubheading>
       <RouterLink :to="`${route.fullPath}/neu`" class="flex">
-        <Button
-          v-tooltip="'Mobilitätscheck hinzufügen'"
-          icon="pi pi-plus"
-          rounded
-          aria-label="Mobilitätscheck hinzufügen"
-        />
+        <Button icon="pi pi-plus" label="Mobilitätscheck hinzufügen" size="small" />
       </RouterLink>
     </div>
     <MobilitaetscheckListe />

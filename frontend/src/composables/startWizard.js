@@ -39,7 +39,10 @@ const willkommen = (ctx, rolleText) => ({
 
 const NAV_VERWALTUNG = { ziel: 'nav-verwaltung', label: 'Zu finden unter „Verwaltung“' }
 const NAV_EINSTELLUNGEN = { ziel: 'nav-einstellungen', label: 'Zu finden unter „Einstellungen“' }
-const NAV_VORLAGEN = { ziel: 'nav-magistratsvorlagen', label: 'Zu finden unter „Magistratsvorlagen“' }
+const NAV_VORLAGEN = {
+  ziel: 'nav-magistratsvorlagen',
+  label: 'Zu finden unter „Magistratsvorlagen“'
+}
 
 const STEPS = {
   [ROLLE_VERWALTUNG]: (ctx) => [
@@ -90,10 +93,10 @@ const STEPS = {
     {
       key: 'bausteine',
       icon: 'pi pi-book',
-      title: 'Textblöcke, Indikatoren und Tags',
+      title: 'Textbausteine, Indikatoren und Tags',
       optional: true,
       paragraphs: [
-        'Textblöcke sind wiederverwendbare Formulierungen, Indikatoren Regelwerke oder Kennwerte zur Begründung einer Bewertung, Tags Schlagwörter zum Filtern.',
+        'Textbausteine sind wiederverwendbare Formulierungen, Indikatoren Regelwerke oder Kennwerte zur Begründung einer Bewertung, Tags Schlagwörter zum Filtern.',
         'Das ist optional – Sie können diese Bausteine auch später beim Arbeiten nach und nach ergänzen.'
       ],
       zeigt: NAV_VERWALTUNG,
@@ -101,10 +104,10 @@ const STEPS = {
       checklistItems: [
         {
           key: 'textbloecke',
-          title: 'Eigene Textblöcke anlegen',
+          title: 'Eigene Textbausteine anlegen',
           statusKey: 'textbloecke',
           optional: true,
-          action: { label: 'Textblöcke', to: { name: 'textblock' } }
+          action: { label: 'Textbausteine', to: { name: 'textblock' } }
         },
         {
           key: 'indikatoren',
@@ -123,12 +126,12 @@ const STEPS = {
       ],
       actions: [
         {
-          label: 'Textblöcke',
+          label: 'Textbausteine',
           to: { name: 'textblock' },
           spotlight: {
             ziel: 'textblock-neu',
-            title: 'Textblock hinzufügen',
-            text: 'Über dieses Plus legen Sie einen neuen Textblock an.'
+            title: 'Textbaustein hinzufügen',
+            text: 'Über dieses Plus legen Sie einen neuen Textbaustein an.'
           }
         },
         {
@@ -151,6 +154,22 @@ const STEPS = {
         }
       ]
     },
+    ...(ctx.istKommunaleAdmin
+      ? [
+          {
+            key: 'inhalte-teilen',
+            icon: 'pi pi-share-alt',
+            title: 'Inhalte mit anderen Kommunen teilen',
+            optional: true,
+            paragraphs: [
+              'Kommunen können Tags, Indikatoren und Textbausteine untereinander austauschen. Legen Sie fest, ob Ihre Kommune eigene Inhalte teilen darf und ob Inhalte anderer Kommunen bei Ihnen angezeigt werden.',
+              'Standardmäßig ist alles aktiviert. Sie können die Einstellungen jederzeit ändern.'
+            ],
+            einstellungen: 'inhalteTeilen',
+            zeigt: NAV_VERWALTUNG
+          }
+        ]
+      : []),
     ...(ctx.istKommunaleAdmin
       ? [
           {

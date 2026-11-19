@@ -1,9 +1,9 @@
 <template>
-  <BaseCard>
-    <div class="flex items-center justify-between mb-4">
-      <h5 class="text-lg font-semibold">Impressum</h5>
+  <div>
+    <div class="flex items-center justify-between gap-4 mb-2">
+      <BaseSubheading>Impressum</BaseSubheading>
     </div>
-    <p class="text-sm text-gray-500 mb-4">Das Impressum wird im Footer verlinkt.</p>
+    <p class="text-sm text-gray-600 mb-5">Das Impressum wird im Footer verlinkt.</p>
 
     <BaseSkeleton v-if="isLoading" :rows="1" row-height="16rem" />
     <template v-else>
@@ -37,7 +37,7 @@
         <Button label="Speichern" @click="submit" :loading="isSaving" />
       </div>
     </template>
-  </BaseCard>
+  </div>
 </template>
 
 <script setup>

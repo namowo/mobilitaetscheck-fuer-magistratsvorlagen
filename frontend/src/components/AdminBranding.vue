@@ -1,7 +1,7 @@
 <template>
-  <BaseCard>
-    <div class="flex items-center justify-between mb-4">
-      <h5 class="text-lg font-semibold">Branding</h5>
+  <div>
+    <div class="flex items-center justify-between gap-4 mb-2">
+      <BaseSubheading>Branding</BaseSubheading>
       <Button
         label="Branding zurücksetzen"
         icon="pi pi-refresh"
@@ -10,7 +10,7 @@
         @click="confirmResetAll"
       />
     </div>
-    <p class="text-sm text-gray-500 mb-4">
+    <p class="text-sm text-gray-600 mb-5">
       Passen Sie Titel, Favicon und Logos der Anwendung an. Nicht gesetzte Werte verwenden
       weiterhin die Standardwerte.
     </p>
@@ -144,7 +144,7 @@
     </template>
 
     <BrandingAssetPicker v-model:visible="pickerVisible" @select="assign" />
-  </BaseCard>
+  </div>
 </template>
 
 <script setup>

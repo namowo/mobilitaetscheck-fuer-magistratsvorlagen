@@ -1,176 +1,188 @@
 <template>
   <div class="flex flex-col gap-4">
-    <BaseCard>
-      <Tabs :value="activeTab" @update:value="activeTab = $event">
-        <TabList>
-          <Tab value="verwaltung">Verwaltung</Tab>
-          <Tab value="politik">Politik</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel value="verwaltung">
-            <div class="flex items-center justify-between mb-4 mt-2">
-              <h5 class="text-lg font-semibold">Gruppen</h5>
-              <Button icon="pi pi-plus" label="Neue Gruppe" @click="openCreate('Verwaltung')" />
-            </div>
-            <BaseSkeleton v-if="isLoading" variant="table" :columns="3" :rows="4" />
-            <DataTable v-else :value="verwaltungGruppen" class="w-full">
-              <template #empty>
-                <span class="text-gray-400 text-sm">Keine Gruppen vorhanden.</span>
+    <Tabs :value="activeTab" @update:value="activeTab = $event">
+      <TabList>
+        <Tab value="verwaltung">Verwaltung</Tab>
+        <Tab value="politik">Politik</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel value="verwaltung">
+          <div class="flex items-center justify-between mb-4 mt-2">
+            <h5 class="text-lg font-semibold">Gruppen</h5>
+            <Button icon="pi pi-plus" label="Neue Gruppe" @click="openCreate('Verwaltung')" />
+          </div>
+          <BaseSkeleton v-if="isLoading" variant="table" :columns="3" :rows="4" />
+          <DataTable
+            v-else
+            :value="verwaltungGruppen"
+            class="w-full"
+            paginator
+            :rows="20"
+            :rowsPerPageOptions="[10, 20, 50]"
+          >
+            <template #empty>
+              <span class="text-gray-400 text-sm">Keine Gruppen vorhanden.</span>
+            </template>
+            <Column field="name" header="Name" />
+            <Column header="" style="width: 100px">
+              <template #body="{ data }">
+                <div class="flex gap-1">
+                  <Button icon="pi pi-pencil" text @click="openEdit(data)" />
+                  <Button icon="pi pi-trash" severity="danger" text @click="deleteGruppe(data.id)" />
+                </div>
               </template>
-              <Column field="name" header="Name" />
-              <Column header="" style="width: 100px">
-                <template #body="{ data }">
-                  <div class="flex gap-1">
-                    <Button icon="pi pi-pencil" text @click="openEdit(data)" />
-                    <Button icon="pi pi-trash" severity="danger" text @click="deleteGruppe(data.id)" />
-                  </div>
-                </template>
-              </Column>
-            </DataTable>
+            </Column>
+          </DataTable>
 
-            <div class="border-t border-gray-200 my-4" />
-            <h5 class="text-lg font-semibold mb-1">Benutzerzuweisung</h5>
-            <p class="text-sm text-gray-500 mb-4">Benutzer per Drag &amp; Drop oder Auswahl zuweisen.</p>
-            <BaseSkeleton v-if="isLoadingUsers" variant="cards" :rows="4" row-height="12rem" />
-            <div v-else class="flex gap-3 overflow-x-auto pb-4 items-start">
-              <div class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3">
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="text-sm font-semibold text-gray-500">Ohne Gruppe</span>
-                  <span class="ml-auto text-xs bg-gray-200 text-gray-600 rounded-full px-2 py-0.5">
-                    {{ groupUserLists['none-verwaltung']?.length ?? 0 }}
-                  </span>
-                </div>
-                <draggable
-                  :list="groupUserLists['none-verwaltung'] ?? []"
-                  group="verwaltung-users"
-                  item-key="id"
-                  handle=".drag-handle"
-                  class="min-h-12"
-                  @change="onDragChange(null, $event)"
-                >
-                  <template #item="{ element }">
-                    <UserAssignItem
-                      :user="element"
-                      :options="verwaltungGruppeSelectOptions"
-                      @change-gruppe="(v) => onSelectGruppe(element, v)"
-                    />
-                  </template>
-                </draggable>
+          <div class="border-t border-gray-200 my-4" />
+          <h5 class="text-lg font-semibold mb-1">Benutzerzuweisung</h5>
+          <p class="text-sm text-gray-500 mb-4">Benutzer per Drag &amp; Drop oder Auswahl zuweisen.</p>
+          <BaseSkeleton v-if="isLoadingUsers" variant="cards" :rows="4" row-height="12rem" />
+          <div v-else class="flex gap-3 overflow-x-auto pb-4 items-start">
+            <div class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-sm font-semibold text-gray-500">Ohne Gruppe</span>
+                <span class="ml-auto text-xs bg-gray-200 text-gray-600 rounded-full px-2 py-0.5">
+                  {{ groupUserLists['none-verwaltung']?.length ?? 0 }}
+                </span>
               </div>
-              <div
-                v-for="g in verwaltungGruppen"
-                :key="g.id"
-                class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3"
+              <draggable
+                :list="groupUserLists['none-verwaltung'] ?? []"
+                group="verwaltung-users"
+                item-key="id"
+                handle=".drag-handle"
+                class="min-h-12"
+                @change="onDragChange(null, $event)"
               >
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="text-sm font-semibold truncate">{{ g.name }}</span>
-                  <span class="ml-auto text-xs bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 flex-shrink-0">
-                    {{ groupUserLists[g.id]?.length ?? 0 }}
-                  </span>
-                </div>
-                <draggable
-                  :list="groupUserLists[g.id] ?? []"
-                  group="verwaltung-users"
-                  item-key="id"
-                  handle=".drag-handle"
-                  class="min-h-12"
-                  @change="onDragChange(g.id, $event)"
-                >
-                  <template #item="{ element }">
-                    <UserAssignItem
-                      :user="element"
-                      :options="verwaltungGruppeSelectOptions"
-                      @change-gruppe="(v) => onSelectGruppe(element, v)"
-                    />
-                  </template>
-                </draggable>
+                <template #item="{ element }">
+                  <UserAssignItem
+                    :user="element"
+                    :options="verwaltungGruppeSelectOptions"
+                    @change-gruppe="(v) => onSelectGruppe(element, v)"
+                  />
+                </template>
+              </draggable>
+            </div>
+            <div
+              v-for="g in verwaltungGruppen"
+              :key="g.id"
+              class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3"
+            >
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-sm font-semibold truncate">{{ g.name }}</span>
+                <span class="ml-auto text-xs bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 flex-shrink-0">
+                  {{ groupUserLists[g.id]?.length ?? 0 }}
+                </span>
               </div>
+              <draggable
+                :list="groupUserLists[g.id] ?? []"
+                group="verwaltung-users"
+                item-key="id"
+                handle=".drag-handle"
+                class="min-h-12"
+                @change="onDragChange(g.id, $event)"
+              >
+                <template #item="{ element }">
+                  <UserAssignItem
+                    :user="element"
+                    :options="verwaltungGruppeSelectOptions"
+                    @change-gruppe="(v) => onSelectGruppe(element, v)"
+                  />
+                </template>
+              </draggable>
             </div>
-          </TabPanel>
+          </div>
+        </TabPanel>
 
-          <TabPanel value="politik">
-            <div class="flex items-center justify-between mb-4 mt-2">
-              <h5 class="text-lg font-semibold">Gruppen</h5>
-              <Button icon="pi pi-plus" label="Neue Gruppe" @click="openCreate('Politik')" />
-            </div>
-            <BaseSkeleton v-if="isLoading" variant="table" :columns="3" :rows="4" />
-            <DataTable v-else :value="politikGruppen" class="w-full">
-              <template #empty>
-                <span class="text-gray-400 text-sm">Keine Gruppen vorhanden.</span>
+        <TabPanel value="politik">
+          <div class="flex items-center justify-between mb-4 mt-2">
+            <h5 class="text-lg font-semibold">Gruppen</h5>
+            <Button icon="pi pi-plus" label="Neue Gruppe" @click="openCreate('Politik')" />
+          </div>
+          <BaseSkeleton v-if="isLoading" variant="table" :columns="3" :rows="4" />
+          <DataTable
+            v-else
+            :value="politikGruppen"
+            class="w-full"
+            paginator
+            :rows="20"
+            :rowsPerPageOptions="[10, 20, 50]"
+          >
+            <template #empty>
+              <span class="text-gray-400 text-sm">Keine Gruppen vorhanden.</span>
+            </template>
+            <Column field="name" header="Name" />
+            <Column header="" style="width: 100px">
+              <template #body="{ data }">
+                <div class="flex gap-1">
+                  <Button icon="pi pi-pencil" text @click="openEdit(data)" />
+                  <Button icon="pi pi-trash" severity="danger" text @click="deleteGruppe(data.id)" />
+                </div>
               </template>
-              <Column field="name" header="Name" />
-              <Column header="" style="width: 100px">
-                <template #body="{ data }">
-                  <div class="flex gap-1">
-                    <Button icon="pi pi-pencil" text @click="openEdit(data)" />
-                    <Button icon="pi pi-trash" severity="danger" text @click="deleteGruppe(data.id)" />
-                  </div>
-                </template>
-              </Column>
-            </DataTable>
+            </Column>
+          </DataTable>
 
-            <div class="border-t border-gray-200 my-4" />
-            <h5 class="text-lg font-semibold mb-1">Benutzerzuweisung</h5>
-            <p class="text-sm text-gray-500 mb-4">Benutzer per Drag &amp; Drop oder Auswahl zuweisen.</p>
-            <BaseSkeleton v-if="isLoadingUsers" variant="cards" :rows="4" row-height="12rem" />
-            <div v-else class="flex gap-3 overflow-x-auto pb-4 items-start">
-              <div class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3">
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="text-sm font-semibold text-gray-500">Ohne Gruppe</span>
-                  <span class="ml-auto text-xs bg-gray-200 text-gray-600 rounded-full px-2 py-0.5">
-                    {{ groupUserLists['none-politik']?.length ?? 0 }}
-                  </span>
-                </div>
-                <draggable
-                  :list="groupUserLists['none-politik'] ?? []"
-                  group="politik-users"
-                  item-key="id"
-                  handle=".drag-handle"
-                  class="min-h-12"
-                  @change="onDragChange(null, $event)"
-                >
-                  <template #item="{ element }">
-                    <UserAssignItem
-                      :user="element"
-                      :options="politikGruppeSelectOptions"
-                      @change-gruppe="(v) => onSelectGruppe(element, v)"
-                    />
-                  </template>
-                </draggable>
+          <div class="border-t border-gray-200 my-4" />
+          <h5 class="text-lg font-semibold mb-1">Benutzerzuweisung</h5>
+          <p class="text-sm text-gray-500 mb-4">Benutzer per Drag &amp; Drop oder Auswahl zuweisen.</p>
+          <BaseSkeleton v-if="isLoadingUsers" variant="cards" :rows="4" row-height="12rem" />
+          <div v-else class="flex gap-3 overflow-x-auto pb-4 items-start">
+            <div class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-sm font-semibold text-gray-500">Ohne Gruppe</span>
+                <span class="ml-auto text-xs bg-gray-200 text-gray-600 rounded-full px-2 py-0.5">
+                  {{ groupUserLists['none-politik']?.length ?? 0 }}
+                </span>
               </div>
-              <div
-                v-for="g in politikGruppen"
-                :key="g.id"
-                class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3"
+              <draggable
+                :list="groupUserLists['none-politik'] ?? []"
+                group="politik-users"
+                item-key="id"
+                handle=".drag-handle"
+                class="min-h-12"
+                @change="onDragChange(null, $event)"
               >
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="text-sm font-semibold truncate">{{ g.name }}</span>
-                  <span class="ml-auto text-xs bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 flex-shrink-0">
-                    {{ groupUserLists[g.id]?.length ?? 0 }}
-                  </span>
-                </div>
-                <draggable
-                  :list="groupUserLists[g.id] ?? []"
-                  group="politik-users"
-                  item-key="id"
-                  handle=".drag-handle"
-                  class="min-h-12"
-                  @change="onDragChange(g.id, $event)"
-                >
-                  <template #item="{ element }">
-                    <UserAssignItem
-                      :user="element"
-                      :options="politikGruppeSelectOptions"
-                      @change-gruppe="(v) => onSelectGruppe(element, v)"
-                    />
-                  </template>
-                </draggable>
-              </div>
+                <template #item="{ element }">
+                  <UserAssignItem
+                    :user="element"
+                    :options="politikGruppeSelectOptions"
+                    @change-gruppe="(v) => onSelectGruppe(element, v)"
+                  />
+                </template>
+              </draggable>
             </div>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </BaseCard>
+            <div
+              v-for="g in politikGruppen"
+              :key="g.id"
+              class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3"
+            >
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-sm font-semibold truncate">{{ g.name }}</span>
+                <span class="ml-auto text-xs bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 flex-shrink-0">
+                  {{ groupUserLists[g.id]?.length ?? 0 }}
+                </span>
+              </div>
+              <draggable
+                :list="groupUserLists[g.id] ?? []"
+                group="politik-users"
+                item-key="id"
+                handle=".drag-handle"
+                class="min-h-12"
+                @change="onDragChange(g.id, $event)"
+              >
+                <template #item="{ element }">
+                  <UserAssignItem
+                    :user="element"
+                    :options="politikGruppeSelectOptions"
+                    @change-gruppe="(v) => onSelectGruppe(element, v)"
+                  />
+                </template>
+              </draggable>
+            </div>
+          </div>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
 
     <!-- Create Dialog -->
     <Dialog

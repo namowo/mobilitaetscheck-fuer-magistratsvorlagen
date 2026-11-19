@@ -1,10 +1,13 @@
 <template>
   <div>
     <!-- Dialog: Neue Leitziele erstellen -->
-    <BaseModal v-model="isCreateModalOpen">
-      <template #header>
-        <h2>Neue Leitziele erstellen</h2>
-      </template>
+    <Dialog
+      v-model:visible="isCreateModalOpen"
+      header="Neue Leitziele erstellen"
+      modal
+      dismissableMask
+      class="w-full max-w-6xl"
+    >
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-1">
           <label for="createName" class="font-semibold">Name</label>
@@ -25,14 +28,17 @@
           <Button label="Erstellen" size="small" :disabled="!createForm.name" @click="onCreateSet" />
         </div>
       </template>
-    </BaseModal>
+    </Dialog>
 
 
     <!-- Dialog: Set bearbeiten -->
-    <BaseModal v-model="isEditModalOpen">
-      <template #header>
-        <h2>Leitziele bearbeiten</h2>
-      </template>
+    <Dialog
+      v-model:visible="isEditModalOpen"
+      header="Leitziele bearbeiten"
+      modal
+      dismissableMask
+      class="w-full max-w-6xl"
+    >
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-1">
           <label for="editName" class="font-semibold">Name</label>
@@ -53,12 +59,18 @@
           <Button label="Speichern" size="small" :disabled="!editForm.name" @click="onUpdateSet" />
         </div>
       </template>
-    </BaseModal>
+    </Dialog>
 
     <!-- Header -->
-    <div class="flex gap-4 items-center mb-5">
+    <div class="flex gap-4 items-center mb-2">
       <BaseSubheading>Leitziele</BaseSubheading>
     </div>
+    <p class="text-sm text-gray-600 mb-5">
+      Leitziele sind die Grundlage jedes Mobilitätschecks: Ein Leitziel-Set besteht aus Oberzielen
+      mit zugehörigen Unterzielen, anhand derer die Auswirkungen einer Magistratsvorlage bewertet
+      werden. Unter „Weitere Leitziele“ finden Sie Sets anderer Kommunen, die Sie als
+      Ausgangspunkt übernehmen können.
+    </p>
 
     <BaseSkeleton v-if="isLoading" :rows="3" row-height="4.5rem" />
 
@@ -230,6 +242,7 @@
 </template>
 
 <script setup>
+import Dialog from 'openvue/dialog'
 import { ref, computed, onMounted } from 'vue'
 import { fetchItems, deleteItem, updateItem } from '@/composables/crud'
 import { apiClient } from '@/services/axios'
@@ -240,7 +253,6 @@ import Button from 'openvue/button'
 import InputText from 'openvue/inputtext'
 import Textarea from 'openvue/textarea'
 import ToggleSwitch from 'openvue/toggleswitch'
-import BaseModal from '@/components/BaseModal.vue'
 import BaseCard from '@/components/BaseCard.vue'
 import BaseSubheading from '@/components/BaseSubheading.vue'
 import BaseTabs from '@/components/BaseTabs.vue'

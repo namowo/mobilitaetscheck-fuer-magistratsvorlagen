@@ -1,16 +1,19 @@
 <template>
-  <BaseModal v-model="isModalOpen">
-    <template #header>
-      <h2>Seite hinzufügen</h2>
-    </template>
+  <Dialog
+    v-model:visible="isModalOpen"
+    header="Seite hinzufügen"
+    modal
+    dismissableMask
+    class="w-full max-w-6xl"
+  >
     <AdminDokumentationFormular :editMode="false" @add-item="onSubmit" />
-  </BaseModal>
+  </Dialog>
 
-  <div class="flex gap-4 items-center justify-between mb-5">
+  <div class="flex gap-4 items-center justify-between mb-2">
     <BaseSubheading>Dokumentationsseiten</BaseSubheading>
     <Button label="Seite hinzufügen" icon="pi pi-plus" size="small" @click="toggleModal" />
   </div>
-  <p class="text-sm text-gray-500 mb-4">
+  <p class="text-sm text-gray-600 mb-5">
     Ziehen Sie die Einträge, um die Reihenfolge der öffentlichen Dokumentationsseite zu ändern.
   </p>
 
@@ -37,6 +40,7 @@
 </template>
 
 <script setup>
+import Dialog from 'openvue/dialog'
 import { ref, onMounted } from 'vue'
 import draggable from 'vuedraggable'
 import { fetchItems, deleteItem, createItem, updateItem } from '@/composables/crud'

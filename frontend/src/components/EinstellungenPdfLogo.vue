@@ -1,6 +1,8 @@
 <template>
   <div>
-    <BaseSubheading class="mb-3">Logo für PDF-Export</BaseSubheading>
+    <div class="flex gap-4 items-center mb-2">
+      <BaseSubheading>Logo für PDF-Export</BaseSubheading>
+    </div>
     <p class="mb-5 text-sm text-gray-600">
       Das Logo Ihrer Kommune erscheint oben links in allen exportierten PDFs. Es wird automatisch
       verkleinert (maximal 45 × 14 mm, Seitenverhältnis bleibt erhalten) und überdeckt keine
@@ -8,7 +10,7 @@
     </p>
 
     <BaseSkeleton v-if="isLoading" :rows="1" row-height="8rem" />
-    <BaseCard v-else>
+    <div v-else>
       <div class="flex flex-wrap items-center gap-6">
         <div
           class="flex h-24 w-64 items-center justify-center rounded border border-dashed border-gray-300 bg-white p-2"
@@ -47,14 +49,13 @@
           />
         </div>
       </div>
-    </BaseCard>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import Button from 'openvue/button'
-import BaseCard from '@/components/BaseCard.vue'
 import { apiClient } from '@/services/axios'
 import { toastService } from '@/services/toast'
 

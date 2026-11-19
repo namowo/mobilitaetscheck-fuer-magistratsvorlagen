@@ -5,7 +5,13 @@
         <Menu :model="items" class="w-fit">
           <template #item="{ item, props }">
             <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-              <a :href="href" v-bind="props.action" @click="navigate">
+              <a
+                :href="href"
+                v-bind="props.action"
+                :class="{ 'bg-gray-200 font-semibold rounded-md': isActive(item) }"
+                :aria-current="isActive(item) ? 'page' : undefined"
+                @click="navigate"
+              >
                 <span :class="item.icon" />
                 <span class="ml-2">{{ item.label }}</span>
               </a>
@@ -24,7 +30,13 @@
 <script setup>
 import { computed } from 'vue'
 import Menu from 'openvue/menu'
+import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+
+const route = useRoute()
+
+// Aktiv auch auf Unterseiten des Menüpunkts
+const isActive = (item) => route.path === item.route || route.path.startsWith(`${item.route}/`)
 
 const authStore = useAuthStore()
 

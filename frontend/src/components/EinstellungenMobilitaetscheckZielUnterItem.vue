@@ -1,9 +1,12 @@
 <template>
   <div v-bind="$attrs">
-    <BaseModal v-model="editMode">
-      <template #header>
-        <h2>Unterziel bearbeiten</h2>
-      </template>
+    <Dialog
+      v-model:visible="editMode"
+      header="Unterziel bearbeiten"
+      modal
+      dismissableMask
+      class="w-full max-w-6xl"
+    >
       <EinstellungenMobilitaetscheckFormularZielUnter
         :editMode="true"
         :item="props.item"
@@ -11,7 +14,7 @@
         :zielOber="props.item.zielOber"
         @update-item="onUpdate"
       />
-    </BaseModal>
+    </Dialog>
     <div class="grid grid-cols-12 gap-x-2 px-2 py-1 ms-3 hover:bg-gray-200 rounded-lg">
       <div class="col-span-10 flex items-center gap-2">
         <IconDrag class="w-4" />
@@ -27,6 +30,7 @@
 </template>
 
 <script setup>
+import Dialog from 'openvue/dialog'
 import { ref } from 'vue'
 import EinstellungenMobilitaetscheckFormularZielUnter from '@/components/EinstellungenMobilitaetscheckFormularZielUnter.vue'
 import ButtonBearbeiten from '@/components/ButtonBearbeiten.vue'

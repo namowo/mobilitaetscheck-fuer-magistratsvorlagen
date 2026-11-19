@@ -119,7 +119,8 @@ export const exportItem = async ({ model, modelId, detail }) => {
     const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
     const link = document.createElement('a')
     link.href = url
-    const disposition = response.headers['content-disposition'] || response.headers['contentDisposition'] || ''
+    const disposition =
+      response.headers['content-disposition'] || response.headers['contentDisposition'] || ''
     const match = disposition.match(/filename[^;=\n]*=([^;\n]*)/)
     const fileName = match ? match[1].trim().replace(/^["']|["']$/g, '') : `export_${modelId}.pdf`
     link.setAttribute('download', fileName)

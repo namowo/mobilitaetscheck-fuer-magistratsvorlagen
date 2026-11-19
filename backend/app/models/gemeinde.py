@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from sqlalchemy import ARRAY, ForeignKey, String, false, text
+from sqlalchemy import ARRAY, ForeignKey, String, false, text, true
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
@@ -36,6 +36,30 @@ class Gemeinde(Base):
         default=False,
         server_default=false(),
         comment="Klimacheck für diese Gemeinde freigeschaltet (durch Systemadmin)",
+    )
+    fremde_tags_anzeigen: Mapped[bool] = mapped_column(
+        nullable=False,
+        default=True,
+        server_default=true(),
+        comment="Für andere Kommunen sichtbare Tags in dieser Gemeinde anzeigen",
+    )
+    fremde_indikatoren_anzeigen: Mapped[bool] = mapped_column(
+        nullable=False,
+        default=True,
+        server_default=true(),
+        comment="Für andere Kommunen sichtbare Indikatoren in dieser Gemeinde anzeigen",
+    )
+    fremde_textbausteine_anzeigen: Mapped[bool] = mapped_column(
+        nullable=False,
+        default=True,
+        server_default=true(),
+        comment="Für andere Kommunen sichtbare Textbausteine in dieser Gemeinde anzeigen",
+    )
+    inhalte_teilen: Mapped[bool] = mapped_column(
+        nullable=False,
+        default=True,
+        server_default=true(),
+        comment="Nutzer:innen dürfen Tags, Indikatoren und Textbausteine mit anderen Kommunen teilen",
     )
     pdf_logo_dateiname: Mapped[Optional[str]] = mapped_column(
         String,
