@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.deps import current_platform_admin, get_async_session
-from app.crud.branding_bild import crud_branding_asset, crud_branding_slot_zuweisung, crud_logo_liste_eintrag
+from app.crud.branding_bild import is_asset_used_on_startseite, crud_branding_asset, crud_branding_slot_zuweisung, crud_logo_liste_eintrag
 from app.models.branding_asset import BrandingAsset
 from app.models.branding_slot_zuweisung import BrandingSlotZuweisung
 from app.models.logo_liste_eintrag import LogoListeEintrag
@@ -37,7 +37,10 @@ async def _is_asset_in_use(db: AsyncSession, asset_id: int) -> bool:
     listen_result = await db.execute(
         select(LogoListeEintrag.id).where(LogoListeEintrag.asset_id == asset_id)
     )
-    return listen_result.scalars().first() is not None
+    if listen_result.scalars().first() is not None:
+        return True
+    asset = await db.get(BrandingAsset, asset_id)
+    return asset is not None and await is_asset_used_on_startseite(db, asset.dateiname)
 
 
 async def _to_asset_read(db: AsyncSession, asset: BrandingAsset) -> BrandingAssetRead:

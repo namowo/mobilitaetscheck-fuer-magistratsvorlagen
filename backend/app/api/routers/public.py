@@ -247,6 +247,41 @@ async def get_public_magistratsvorlage_vorhanden(db: AsyncSession = Depends(get_
     return {"vorhanden": result.scalar_one() > 0}
 
 
+class StartseiteKennzahlen(BaseModel):
+    magistratsvorlagen: int
+    mobilitaetschecks: int
+    gemeinden: int
+
+
+@router.get("/startseite/kennzahlen", response_model=StartseiteKennzahlen)
+async def get_public_startseite_kennzahlen(db: AsyncSession = Depends(get_async_session)):
+    """Return counts of publicly visible content for the homepage's figures section."""
+    veroeffentlichte_vorlagen = select(Magistratsvorlage.id).where(
+        Magistratsvorlage.veroeffentlicht == True
+    )
+    magistratsvorlagen = await db.scalar(
+        select(func.count()).select_from(veroeffentlichte_vorlagen.subquery())
+    )
+    mobilitaetschecks = await db.scalar(
+        select(func.count())
+        .select_from(MobilitaetscheckEingabe)
+        .where(
+            MobilitaetscheckEingabe.veroeffentlicht == True,
+            MobilitaetscheckEingabe.magistratsvorlage_id.in_(veroeffentlichte_vorlagen),
+        )
+    )
+    gemeinden = await db.scalar(
+        select(func.count(func.distinct(Magistratsvorlage.gemeinde_id))).where(
+            Magistratsvorlage.veroeffentlicht == True
+        )
+    )
+    return StartseiteKennzahlen(
+        magistratsvorlagen=magistratsvorlagen or 0,
+        mobilitaetschecks=mobilitaetschecks or 0,
+        gemeinden=gemeinden or 0,
+    )
+
+
 @router.get("/magistratsvorlage", response_model=list[MagistratsvorlageRead])
 async def get_public_magistratsvorlagen(
     gemeinde_id: int,

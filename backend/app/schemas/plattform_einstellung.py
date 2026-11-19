@@ -1,10 +1,21 @@
 import re
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 from app.core.config import DEFAULT_PDF_FOOTER_TEXT
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 RechtstextModus = Literal["inhalt", "url"]
 HEX_COLOR_PATTERN = r"^#[0-9A-Fa-f]{6}$"
+STARTSEITE_BLOCK_TYPEN = {
+    "hero",
+    "text",
+    "video",
+    "kacheln",
+    "kennzahlen",
+    "schritte",
+    "faq",
+    "aufruf",
+}
+STARTSEITE_MAX_BLOECKE = 50
 
 
 class PlattformEinstellungBase(BaseModel):
@@ -45,6 +56,11 @@ class PlattformEinstellungBase(BaseModel):
     startseite_inhalt: Optional[str] = Field(
         None, description="Textkörper (HTML) der Startseite, ersetzt den Standard-Hero-Text."
     )
+    startseite_bloecke: Optional[list[dict[str, Any]]] = Field(
+        None,
+        description="Abschnitte der Startseite als Liste von Blöcken (je mit 'id' und 'typ'). "
+        "NULL = Standardaufbau.",
+    )
     kontakt_email: Optional[str] = Field(
         None,
         description="Kontakt-E-Mail-Adresse für Freischaltungsanfragen bei der Registrierung.",
@@ -61,6 +77,22 @@ class PlattformEinstellungBase(BaseModel):
         None,
         description="Titel der Anwendung (Browser-Tab-Titel). Leer = Standardtitel.",
     )
+
+    @field_validator("startseite_bloecke")
+    @classmethod
+    def validate_startseite_bloecke(
+        cls, value: Optional[list[dict[str, Any]]]
+    ) -> Optional[list[dict[str, Any]]]:
+        if value is None:
+            return None
+        if len(value) > STARTSEITE_MAX_BLOECKE:
+            raise ValueError(f"Maximal {STARTSEITE_MAX_BLOECKE} Abschnitte erlaubt.")
+        for block in value:
+            if block.get("typ") not in STARTSEITE_BLOCK_TYPEN:
+                raise ValueError(f"Unbekannter Abschnittstyp: {block.get('typ')!r}")
+            if not isinstance(block.get("id"), str) or not block["id"]:
+                raise ValueError("Jeder Abschnitt benötigt eine 'id'.")
+        return value
 
     @field_validator("theme_color")
     @classmethod
