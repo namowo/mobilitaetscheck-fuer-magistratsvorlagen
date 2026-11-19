@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.8.0](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/compare/v1.7.0...v1.8.0) (2026-11-19)
+
+
+### Features
+
+* geteilte Einträge zwischen Kommunen, einheitliche Listen & neue Mobilitätscheck-Ansicht ([b82771c](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/b82771cd0d1ce414a22016521bf9e8c443f271ed))
+* improve form UX, Magistratsvorlage page and loading states ([c2a6060](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/c2a6060e7ae313554fa0c655e2ec3f9d6989fcde))
+* improve form UX, Magistratsvorlage page and loading states ([e72123f](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/e72123fe8a30c213907f07f9bd6eddf51bbe9118))
+* interactive Einführungswizard and tool name from Anwendungstitel ([85cefba](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/85cefba3c68c94da1171591d5b3dada1b992a93a))
+* interactive Einführungswizard and tool name from Anwendungstitel ([558de05](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/558de0533d84dd181d0679f32a48ab822fadfda5))
+* make GitHub link subtle and add namowo credit in footer ([90c9d1a](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/90c9d1a29cd2d956110b87a87999947fbe07d344))
+* section-based, admin-customizable Startseite with video embeds ([8c4c43f](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/8c4c43f19b235502333357bf1eb316b23723949d))
+* section-based, admin-customizable Startseite with video embeds ([ce0dba3](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/ce0dba3a18ee9f6a12c1ee065e2d2bc0fdbaa6fb))
+* shared entries across Kommunen, unified list UI and modern Mobilitätscheck view ([afc6152](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/afc615238f8b2ef8194cdf5b1c60be916b007981))
+* subtle GitHub link and namowo credit in footer ([e82720b](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/commit/e82720bb4f6e405f7c9ce3a4689c2a7c2d3c6e86))
+
 ## [1.7.0](https://github.com/namowo/mobilitaetscheck-fuer-magistratsvorlagen/compare/v1.6.0...v1.7.0) (2026-11-04)
 
 
