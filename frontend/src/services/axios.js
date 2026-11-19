@@ -43,7 +43,13 @@ apiClient.interceptors.request.use((config) => {
 
 // Add global response interceptor
 apiClient.interceptors.response.use(
-  (response) => response, // Pass successful responses through
+  (response) => {
+    // Let interested UI (e.g. the docked Einführungswizard) know that data was changed
+    if (response.config?.method && response.config.method.toLowerCase() !== 'get') {
+      window.dispatchEvent(new CustomEvent('api-daten-geaendert'))
+    }
+    return response
+  },
   (error) => {
     let errorMessage = 'An unexpected error occurred.' // Default error message
 

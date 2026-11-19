@@ -23,6 +23,7 @@
         icon="pi pi-plus"
         rounded
         aria-label="Neues Gebiet hinzufügen"
+        data-tour="gebiet-neu"
         @click="visible = true"
       />
     </div>

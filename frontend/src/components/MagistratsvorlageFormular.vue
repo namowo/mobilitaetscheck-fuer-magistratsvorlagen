@@ -38,7 +38,7 @@
 
     <!-- Editable form for Verwaltung -->
     <form v-else class="grid grid-cols-1 gap-y-4 my-7" @submit.prevent="onSubmit">
-      <div class="form-group field">
+      <div class="form-group field" data-tour="vorlage-formular-start">
         <FloatLabel variant="on">
           <InputText
             id="verwaltungsvorgangNr"

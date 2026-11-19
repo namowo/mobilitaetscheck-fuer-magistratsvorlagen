@@ -27,7 +27,7 @@
             v-if="![3].includes(authStore.effectiveRolleId) || authStore.effectiveIsLocalSuperuser"
             :to="{ name: 'magistratsvorlage-liste' }"
           >
-            <Button label="Magistratsvorlagen" />
+            <Button label="Magistratsvorlagen" data-tour="nav-magistratsvorlagen" />
           </router-link>
           <router-link v-if="authStore.effectiveRolleId === 3" :to="{ name: 'admin-dashboard' }">
             <Button label="Systemadministration" />
@@ -46,6 +46,7 @@
             v-tooltip.left="'Gebiete, Leitziele, Textblöcke, Indikatoren und Tags Ihrer Kommune verwalten'"
             label="Verwaltung"
             icon="pi pi-sliders-h"
+            data-tour="nav-verwaltung"
           />
         </router-link>
         <router-link
@@ -56,6 +57,7 @@
             v-tooltip.left="'Accounts, Einladungen und Gruppen Ihrer Kommune verwalten'"
             label="Einstellungen"
             icon="pi pi-users"
+            data-tour="nav-einstellungen"
           />
         </router-link>
 
@@ -63,29 +65,49 @@
           v-tooltip.right="'Profil und Abmelden'"
           :label="authStore.userInitialien"
           shape="circle"
+          class="cursor-pointer"
+          data-tour="profil-menue"
           @click="toggle"
         />
 
         <Popover ref="op">
-          <div class="flex flex-col gap-4 w-[11rem]">
-            <router-link :to="{ name: 'profil' }">
-              <Button icon="pi pi-user" label="Profil" class="w-full" text plain />
-            </router-link>
-            <Button
-              v-if="wizardAvailable && !setupComplete"
-              icon="pi pi-compass"
-              label="Einführung starten"
-              class="w-full"
-              text
-              plain
-              @click="startEinfuehrung"
-            />
-            <Button
-              icon="pi pi-sign-out"
-              label="Abmelden"
-              class="w-full"
-              @click="authStore.logout"
-            />
+          <div class="w-60 flex flex-col">
+            <!-- Who is logged in -->
+            <div class="flex items-center gap-3 px-2 pb-3">
+              <Avatar :label="authStore.userInitialien" shape="circle" class="shrink-0" />
+              <div class="min-w-0">
+                <div class="text-xs text-gray-500">Angemeldet als</div>
+                <div class="truncate text-sm font-medium text-gray-800" :title="authStore.userEmail">
+                  {{ authStore.userEmail }}
+                </div>
+              </div>
+            </div>
+
+            <div class="border-t border-gray-200 py-1">
+              <!-- custom: avoid the router-link-active styling of the menu bar links -->
+              <router-link v-slot="{ navigate }" :to="{ name: 'profil' }" custom>
+                <button type="button" class="menu-eintrag" @click="schliessenUnd(navigate)">
+                  <i class="pi pi-user" />
+                  <span>Profil</span>
+                </button>
+              </router-link>
+              <button
+                v-if="wizardManuellStartbar"
+                type="button"
+                class="menu-eintrag"
+                @click="startEinfuehrung"
+              >
+                <i class="pi pi-compass" />
+                <span>Einführung starten</span>
+              </button>
+            </div>
+
+            <div class="border-t border-gray-200 pt-1">
+              <button type="button" class="menu-eintrag menu-eintrag--abmelden" @click="abmelden">
+                <i class="pi pi-sign-out" />
+                <span>Abmelden</span>
+              </button>
+            </div>
           </div>
         </Popover>
       </div>
@@ -118,12 +140,22 @@ const op = ref()
 const {
   open: openWizard,
   available: wizardAvailable,
-  setupComplete,
+  manuellStartbar: wizardManuellStartbar,
   refreshStatus
 } = useStartWizard()
 const startEinfuehrung = () => {
   op.value.hide()
   openWizard(0)
+}
+
+const schliessenUnd = (navigate) => {
+  op.value.hide()
+  navigate()
+}
+
+const abmelden = () => {
+  op.value.hide()
+  authStore.logout()
 }
 
 const toggle = (event) => {
@@ -139,6 +171,25 @@ const toggle = (event) => {
 .router-link-active,
 .router-link-exact-active {
   @apply block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500;
+}
+
+.menu-eintrag {
+  @apply flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm text-gray-700 transition-colors;
+}
+.menu-eintrag:hover,
+.menu-eintrag:focus-visible {
+  @apply bg-gray-100 text-gray-900 outline-none;
+}
+.menu-eintrag i {
+  @apply w-4 text-center text-gray-500;
+}
+.menu-eintrag--abmelden,
+.menu-eintrag--abmelden i {
+  @apply text-red-700;
+}
+.menu-eintrag--abmelden:hover,
+.menu-eintrag--abmelden:focus-visible {
+  @apply bg-red-50 text-red-800;
 }
 
 .relative-toolbar {

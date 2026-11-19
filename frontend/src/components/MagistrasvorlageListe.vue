@@ -71,7 +71,12 @@
     </Drawer>
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-      <InputText v-model="searchQuery" placeholder="Nach Magistratsvorlage suchen" class="w-1/2" />
+      <InputText
+        v-model="searchQuery"
+        placeholder="Nach Magistratsvorlage suchen"
+        class="w-1/2"
+        data-tour="vorlagen-suche"
+      />
       <SelectButton
         v-model="filterVonMirErstellt"
         :options="[

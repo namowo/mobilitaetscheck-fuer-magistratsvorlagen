@@ -1,13 +1,19 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useTitle } from '@vueuse/core'
 import { apiClient } from '@/services/axios'
 import { applyThemeColor } from '@/utils/theme'
 
+export const STANDARD_APP_NAME = 'MobiChecks-Hessen'
+
 export const useEinstellungStore = defineStore('einstellung', () => {
   const einstellung = ref({})
   const isLoaded = ref(false)
   const title = useTitle()
+
+  // Name of the tool as shown in the UI (Branding → Anwendungstitel). "Mobilitätscheck"
+  // refers to the PDF output only, so the fallback is the tool's name.
+  const appName = computed(() => einstellung.value.webAppTitle?.trim() || STANDARD_APP_NAME)
 
   async function fetchEinstellung() {
     try {
@@ -37,5 +43,5 @@ export const useEinstellungStore = defineStore('einstellung', () => {
     }
   }
 
-  return { einstellung, isLoaded, fetchEinstellung }
+  return { einstellung, isLoaded, appName, fetchEinstellung }
 })
