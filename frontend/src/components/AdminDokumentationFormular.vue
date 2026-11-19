@@ -25,7 +25,7 @@
         Button ist kein Teil des hier bearbeitbaren Inhalts.
       </Message>
       <div class="w-full">
-        <label class="block text-sm text-gray-500 mb-1">Inhalt</label>
+        <label class="block text-sm text-gray-500 mb-1">Inhalt <LabelOptional /></label>
         <RichContentEditor v-model="inhaltModel" />
       </div>
       <div class="flex justify-end items-center">

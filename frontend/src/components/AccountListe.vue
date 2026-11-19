@@ -33,7 +33,7 @@
         />
       </div>
 
-      <BaseSpinner v-if="isLoading" />
+      <BaseSkeleton v-if="isLoading" variant="table" :columns="5" :rows="5" />
       <DataTable
         v-else
         :value="filteredUsers"
@@ -115,7 +115,7 @@
               optionValue="id"
               class="w-full"
             />
-            <label for="editGruppe">Gruppe</label>
+            <label for="editGruppe">Gruppe <LabelOptional /></label>
           </FloatLabel>
         </div>
         <div class="flex items-center gap-x-3">

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="grid grid-cols-2 w-full items-center">
-      <BaseHeading>Neuer Klimacheck</BaseHeading>
+      <BaseSubheading>Neuer Klimacheck</BaseSubheading>
       <div class="flex w-full justify-end">
         <ButtonZuruecksetzen @click="refreshPage()">zurücksetzen</ButtonZuruecksetzen>
       </div>

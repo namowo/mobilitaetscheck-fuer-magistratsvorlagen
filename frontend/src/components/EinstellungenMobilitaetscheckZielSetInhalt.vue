@@ -1,6 +1,6 @@
 <template>
   <div class="p-3">
-    <BaseSpinner v-if="isLoading" class="my-2" />
+    <BaseSkeleton v-if="isLoading" :rows="3" row-height="2.5rem" />
 
     <div v-else-if="!setDetail" class="text-gray-400 text-sm">Keine Daten verfügbar.</div>
 
@@ -131,7 +131,6 @@ import draggable from 'vuedraggable'
 import { apiClient } from '@/services/axios'
 import { toastService } from '@/services/toast'
 import Button from 'openvue/button'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 
 const props = defineProps({
   set: { type: Object, required: true },

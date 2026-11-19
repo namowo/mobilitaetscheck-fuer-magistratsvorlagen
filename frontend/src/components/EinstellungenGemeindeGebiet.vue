@@ -31,7 +31,7 @@
       <InputText id="searchQuery" v-model="searchQuery" class="w-full" />
       <label for="searchQuery">Nach Gebiet suchen</label>
     </FloatLabel>
-    <BaseSpinner v-if="isLoading" class="m-10" />
+    <BaseSkeleton v-if="isLoading" :rows="5" />
     <div v-else-if="items.length === 0">
       <p class="font-lg font-bold m-5">Keine Gebiete vorhanden.</p>
     </div>
@@ -80,7 +80,6 @@ import Dialog from 'openvue/dialog'
 import InputText from 'openvue/inputtext'
 import FloatLabel from 'openvue/floatlabel'
 import BaseCard from '@/components/BaseCard.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import EinstellungenGemeindeGebietFormular from './EinstellungenGemeindeGebietFormular.vue'
 
 const isLoading = ref(false)

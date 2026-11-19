@@ -1,7 +1,7 @@
 <template>
   <BaseCard>
     <h4 class="text-xl font-bold dark:text-white mb-4">Benutzerangaben</h4>
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" variant="form" :rows="4" class="max-w-md" />
     <form v-else @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4 max-w-md">
       <!-- Read-only info -->
       <div class="bg-gray-50 rounded-lg p-3 grid grid-cols-1 gap-y-1 text-sm">
@@ -68,7 +68,7 @@
               <span v-else>Keine Ergebnisse gefunden.</span>
             </template>
           </Select>
-          <label for="gruppeId">{{ gruppeLabel }}</label>
+          <label for="gruppeId">{{ gruppeLabel }} <LabelOptional /></label>
         </FloatLabel>
       </div>
 

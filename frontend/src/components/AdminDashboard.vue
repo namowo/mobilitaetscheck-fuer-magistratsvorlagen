@@ -12,7 +12,7 @@
       />
     </div>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" variant="cards" :rows="6" row-height="5rem" />
     <div v-else-if="stats">
       <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
         <StatTile label="Benutzer" :value="stats.anzahlUser" icon="pi pi-users" />

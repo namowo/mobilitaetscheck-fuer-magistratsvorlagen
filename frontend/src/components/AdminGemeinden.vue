@@ -8,7 +8,7 @@
 
       <InputText v-model="searchQuery" placeholder="Kommune suchen…" class="w-full mb-4" />
 
-      <BaseSpinner v-if="isLoading" />
+      <BaseSkeleton v-if="isLoading" variant="table" :columns="4" :rows="5" />
       <DataTable v-else :value="filteredGemeinden" class="w-full">
         <template #empty>
           <span class="text-gray-400 text-sm">Keine Kommune gefunden.</span>
@@ -66,7 +66,7 @@
           }}</small>
         </div>
         <div class="field">
-          <label for="newDomains" class="block text-sm text-gray-500 mb-1">E-Mail-Domains</label>
+          <label for="newDomains" class="block text-sm text-gray-500 mb-1">E-Mail-Domains <LabelOptional /></label>
           <InputChips
             inputId="newDomains"
             v-model="createDomains"
@@ -120,7 +120,7 @@
           }}</small>
         </div>
         <div class="field">
-          <label for="editDomains" class="block text-sm text-gray-500 mb-1">E-Mail-Domains</label>
+          <label for="editDomains" class="block text-sm text-gray-500 mb-1">E-Mail-Domains <LabelOptional /></label>
           <InputChips
             inputId="editDomains"
             v-model="editDomains"

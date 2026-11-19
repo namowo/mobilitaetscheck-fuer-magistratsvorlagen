@@ -11,7 +11,7 @@
           })
         "
       />
-      <BaseHeading>Klimacheck bearbeiten</BaseHeading>
+      <BaseSubheading>Klimacheck bearbeiten</BaseSubheading>
     </div>
     <KlimarelevanzpruefungFormulare />
   </div>

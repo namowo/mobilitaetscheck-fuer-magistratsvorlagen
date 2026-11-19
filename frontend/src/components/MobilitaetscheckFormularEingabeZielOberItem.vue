@@ -33,7 +33,28 @@
             :class="tangiert ? 'bg-white text-blue-600' : 'bg-gray-200 text-gray-600'"
             >{{ tangiert ? 'tangiert' : 'nicht tangiert' }}</span
           >
-          <ToggleSwitch v-else v-model="tangiert" @click.stop :invalid="!!errors.tangiert" />
+          <div
+            v-else
+            class="flex flex-none items-center gap-2"
+            v-tooltip.top="
+              tangiert
+                ? 'Die Vorlage tangiert dieses Oberziel. Zum Abwählen klicken.'
+                : 'Die Vorlage tangiert dieses Oberziel nicht. Zum Auswählen klicken.'
+            "
+          >
+            <span
+              class="w-28 px-2.5 py-0.5 rounded-full text-center text-xs font-medium"
+              :class="tangiert ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'"
+              aria-hidden="true"
+              >{{ tangiert ? 'tangiert' : 'nicht tangiert' }}</span
+            >
+            <ToggleSwitch
+              v-model="tangiert"
+              @click.stop
+              :invalid="!!errors.tangiert"
+              :aria-label="`${props.item.zielOber.name}: tangiert`"
+            />
+          </div>
         </div>
 
         <!-- Unter-Ziele -->

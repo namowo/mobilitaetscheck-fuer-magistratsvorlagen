@@ -5,7 +5,7 @@
     </div>
     <p class="text-sm text-gray-500 mb-4">Das Impressum wird im Footer verlinkt.</p>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" :rows="1" row-height="16rem" />
     <template v-else>
       <SelectButton
         v-model="modus"

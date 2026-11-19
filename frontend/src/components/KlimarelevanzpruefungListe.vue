@@ -97,7 +97,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onActivated } from 'vue'
 import { useRoute } from 'vue-router'
 import { deleteItem, exportItem, fetchItems } from '@/composables/crud'
 import Button from 'openvue/button'
@@ -116,6 +116,13 @@ onMounted(async () => {
   isLoading.value = true
   await fetchData()
   isLoading.value = false
+})
+
+// Beim Zurückkehren in den (zwischengespeicherten) Reiter still aktualisieren.
+let ersteAktivierung = true
+onActivated(() => {
+  if (ersteAktivierung) return (ersteAktivierung = false)
+  fetchData()
 })
 
 const fetchData = async () => {

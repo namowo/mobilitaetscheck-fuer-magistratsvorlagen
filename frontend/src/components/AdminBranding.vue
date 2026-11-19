@@ -15,10 +15,10 @@
       weiterhin die Standardwerte.
     </p>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" variant="form" :rows="2" />
     <template v-else>
       <div class="flex flex-col gap-1 mb-6">
-        <label for="web-app-title" class="font-semibold text-sm">Anwendungstitel</label>
+        <label for="web-app-title" class="font-semibold text-sm">Anwendungstitel <LabelOptional /></label>
         <div class="flex items-center gap-3">
           <InputText
             id="web-app-title"
@@ -45,7 +45,7 @@
         </div>
       </div>
       <div class="flex flex-col gap-1 mb-6">
-        <label for="pdf-fusszeile" class="font-semibold text-sm">PDF-Fußzeile</label>
+        <label for="pdf-fusszeile" class="font-semibold text-sm">PDF-Fußzeile <LabelOptional /></label>
         <Textarea
           id="pdf-fusszeile"
           v-model="pdfFusszeileText"
@@ -116,7 +116,7 @@
                   class="w-full"
                   placeholder="https://…"
                 />
-                <label :for="`link-${slot.slot}`">Link-Ziel</label>
+                <label :for="`link-${slot.slot}`">Link-Ziel <LabelOptional /></label>
               </FloatLabel>
               <Button
                 label="Link speichern"

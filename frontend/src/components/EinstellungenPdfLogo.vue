@@ -7,7 +7,7 @@
       Inhalte. Ohne eigenes Logo wird das Standard-Logo verwendet. Erlaubt sind PNG und JPEG bis 2 MB.
     </p>
 
-    <BaseSpinner v-if="isLoading" class="m-10" />
+    <BaseSkeleton v-if="isLoading" :rows="1" row-height="8rem" />
     <BaseCard v-else>
       <div class="flex flex-wrap items-center gap-6">
         <div
@@ -55,7 +55,6 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import Button from 'openvue/button'
 import BaseCard from '@/components/BaseCard.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import { apiClient } from '@/services/axios'
 import { toastService } from '@/services/toast'
 

@@ -2,7 +2,7 @@
   <div>
     <div class="flex items-center gap-5">
       <BaseSubheading>Klimachecks</BaseSubheading>
-      <RouterLink :to="`${route.fullPath}/neu`">
+      <RouterLink :to="`${route.fullPath}/neu`" class="flex">
         <Button
           v-tooltip="'Klimacheck hinzufügen'"
           icon="pi pi-plus"

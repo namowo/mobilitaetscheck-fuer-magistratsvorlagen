@@ -7,7 +7,7 @@
       richtet sich an die drei Benutzergruppen der Plattform.
     </p>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" variant="text" :rows="4" />
     <div v-else class="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-x-8 gap-y-8">
       <nav class="md:sticky md:top-24 self-start">
         <ul class="flex flex-row md:flex-col flex-wrap gap-2">
@@ -53,7 +53,6 @@
 import { onMounted, ref } from 'vue'
 import Button from 'openvue/button'
 import BaseHeading from '@/components/BaseHeading.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import { apiClient } from '@/services/axios'
 import { useKommuneAnfrageMailto } from '@/composables/kommuneAnfrageMailto'
 

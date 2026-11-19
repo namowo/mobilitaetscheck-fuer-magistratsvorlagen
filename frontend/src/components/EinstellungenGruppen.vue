@@ -12,7 +12,7 @@
               <h5 class="text-lg font-semibold">Gruppen</h5>
               <Button icon="pi pi-plus" label="Neue Gruppe" @click="openCreate('Verwaltung')" />
             </div>
-            <BaseSpinner v-if="isLoading" />
+            <BaseSkeleton v-if="isLoading" variant="table" :columns="3" :rows="4" />
             <DataTable v-else :value="verwaltungGruppen" class="w-full">
               <template #empty>
                 <span class="text-gray-400 text-sm">Keine Gruppen vorhanden.</span>
@@ -31,7 +31,7 @@
             <div class="border-t border-gray-200 my-4" />
             <h5 class="text-lg font-semibold mb-1">Benutzerzuweisung</h5>
             <p class="text-sm text-gray-500 mb-4">Benutzer per Drag &amp; Drop oder Auswahl zuweisen.</p>
-            <BaseSpinner v-if="isLoadingUsers" />
+            <BaseSkeleton v-if="isLoadingUsers" variant="cards" :rows="4" row-height="12rem" />
             <div v-else class="flex gap-3 overflow-x-auto pb-4 items-start">
               <div class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3">
                 <div class="flex items-center gap-2 mb-3">
@@ -93,7 +93,7 @@
               <h5 class="text-lg font-semibold">Gruppen</h5>
               <Button icon="pi pi-plus" label="Neue Gruppe" @click="openCreate('Politik')" />
             </div>
-            <BaseSpinner v-if="isLoading" />
+            <BaseSkeleton v-if="isLoading" variant="table" :columns="3" :rows="4" />
             <DataTable v-else :value="politikGruppen" class="w-full">
               <template #empty>
                 <span class="text-gray-400 text-sm">Keine Gruppen vorhanden.</span>
@@ -112,7 +112,7 @@
             <div class="border-t border-gray-200 my-4" />
             <h5 class="text-lg font-semibold mb-1">Benutzerzuweisung</h5>
             <p class="text-sm text-gray-500 mb-4">Benutzer per Drag &amp; Drop oder Auswahl zuweisen.</p>
-            <BaseSpinner v-if="isLoadingUsers" />
+            <BaseSkeleton v-if="isLoadingUsers" variant="cards" :rows="4" row-height="12rem" />
             <div v-else class="flex gap-3 overflow-x-auto pb-4 items-start">
               <div class="w-56 flex-shrink-0 bg-gray-50 rounded-lg p-3">
                 <div class="flex items-center gap-2 mb-3">
