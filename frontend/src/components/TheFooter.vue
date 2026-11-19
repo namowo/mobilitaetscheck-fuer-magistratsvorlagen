@@ -43,14 +43,6 @@
               <BookOpen :size="18" class="shrink-0" />
               <span>Dokumentation und Hilfe</span>
             </router-link>
-            <a
-              class="footer-link"
-              href="https://github.com/ritmo-hsrm/mobilitaetscheck-fuer-magistratsvorlagen"
-              target="_blank"
-            >
-              <Github :size="18" class="shrink-0" />
-              <span>Github-Repo</span>
-            </a>
           </nav>
 
           <nav class="flex flex-col gap-2.5 items-start">
@@ -121,7 +113,18 @@
           style="color: rgb(var(--primary-200))"
         >
           <Heart :size="14" class="shrink-0 fill-current text-red-400" />
-          <span>&copy; 2026 Hochschule RheinMain</span>
+          <span>&copy; 2026 namowo &times; Hochschule RheinMain</span>
+          <span aria-hidden="true" class="mx-1">·</span>
+          <a
+            class="github-link"
+            href="https://github.com/ritmo-hsrm/mobilitaetscheck-fuer-magistratsvorlagen"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub-Repository"
+            title="GitHub-Repository"
+          >
+            <Github :size="14" />
+          </a>
         </p>
       </div>
     </footer>
@@ -176,6 +179,16 @@ const einstellungStore = useEinstellungStore()
 
 .footer-link:hover :deep(svg) {
   transform: scale(1.15) rotate(-6deg);
+}
+
+.github-link {
+  display: inline-flex;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.github-link:hover {
+  opacity: 1;
 }
 
 .footer-link :deep(svg) {
