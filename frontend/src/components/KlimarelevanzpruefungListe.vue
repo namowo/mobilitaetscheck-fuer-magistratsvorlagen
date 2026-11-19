@@ -3,7 +3,8 @@
     <DataView
       :value="isLoading ? Array(5).fill({}) : klimarelevanzpruefungListe"
       paginator
-      :rows="10"
+      :rows="20"
+      :rowsPerPageOptions="[10, 20, 50]"
     >
       <template #list="slotProps">
         <div class="flex flex-col">

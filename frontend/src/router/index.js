@@ -217,6 +217,11 @@ const router = createRouter({
           component: () => import('@/views/EinstellungenTagView.vue')
         },
         {
+          path: 'fremde-eintraege',
+          name: 'fremde-eintraege',
+          component: () => import('@/views/EinstellungenFremdeEintraegeView.vue')
+        },
+        {
           path: 'gemeinde-gebiet',
           name: 'gemeinde-gebiet',
           component: () => import('@/views/EinstellungenGemeindeGebietView.vue')

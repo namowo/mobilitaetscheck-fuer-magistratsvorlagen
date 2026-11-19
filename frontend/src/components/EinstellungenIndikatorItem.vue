@@ -1,103 +1,116 @@
 <template>
-  <BaseModal v-model="editMode" @close="toggleEditMode">
-    <template #header>
-      <h2>Indikator hinzufügen</h2>
-    </template>
+  <Dialog
+    v-model:visible="editMode"
+    header="Indikator bearbeiten"
+    modal
+    dismissableMask
+    class="w-full max-w-[50rem]"
+  >
     <EinstellungenIndikatorFormular
       :editMode="true"
       :item="props.item"
-      :tags="tags"
+      :tags="props.tags"
       @update-item="onUpdate"
+      @delete-item="onDelete"
     />
-  </BaseModal>
-  <BaseCard>
-    <div class="grid grid-cols-12 gap-x-2">
-      <div class="col-span-10 grid grid-cols-1 gap-2">
-        <h3>
-          <div v-if="props.item.quelleUrl">
-            <a
-              v-tooltip.top="'Quelle öffnen'"
-              :href="props.item.quelleUrl"
-              target="_blank"
-              class="w-fit flex items-center gap-2 text-blue-800 hover:underline"
-            >
-              <span>{{ props.item.name }}</span>
-            </a>
-          </div>
-          <div v-else class="flex items-center gap-2">
-            <span v-tooltip.top="'Keine URL hinterlegt'">{{ props.item.name }}</span>
-          </div>
-        </h3>
-
-        <div class="flex items-center gap-2">
-          <div v-if="props.item.tags.length > 0" class="flex items-center gap-2">
-            <div v-for="tag in props.item.tags" :key="tag.id">
-              <Tag :value="tag.name" />
-            </div>
-          </div>
+  </Dialog>
+  <div
+    :role="andereGemeinde ? undefined : 'button'"
+    :tabindex="andereGemeinde ? undefined : 0"
+    :aria-label="andereGemeinde ? undefined : `Indikator ${props.item.name} bearbeiten`"
+    :class="[
+      'group flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-4 transition',
+      andereGemeinde
+        ? 'bg-gray-50'
+        : 'cursor-pointer hover:bg-blue-100/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-400'
+    ]"
+    @click="openEdit"
+    @keydown.enter.self="openEdit"
+  >
+    <div class="flex items-start gap-3 min-w-0 flex-1">
+      <span
+        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700"
+      >
+        <i class="pi pi-chart-bar" />
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="text-gray-900 break-words leading-snug">{{ props.item.name }}</p>
+        <a
+          v-if="props.item.quelleUrl"
+          v-tooltip.top="'Quelle in neuem Tab öffnen'"
+          :href="props.item.quelleUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-1 inline-flex max-w-full items-center gap-1 text-sm text-blue-700 hover:underline"
+          @click.stop
+          @keydown.stop
+        >
+          <i class="pi pi-external-link text-xs" />
+          <span class="truncate">{{ quelleHost }}</span>
+        </a>
+        <div v-if="props.item.tags?.length" class="flex flex-wrap items-center gap-1.5 mt-2">
+          <Tag
+            v-for="tag in props.item.tags"
+            :key="tag.id"
+            :value="tag.name"
+            severity="secondary"
+            icon="pi pi-tag"
+            class="!text-xs"
+          />
         </div>
       </div>
-      <div class="col-span-2 flex items-center justify-end gap-1">
-        <ToggleSwitch
-          v-model="gemeindespezifisch"
-          v-tooltip="'Status gemeindespezifisch'"
-          @change="onPublish"
-          :disabled="andereGemeinde"
-        />
-        <ButtonBearbeiten @click="toggleEditMode" :disabled="andereGemeinde" noLabel />
-        <ButtonLoeschen @delete-confirmed="onDelete" :disabled="andereGemeinde" noLabel />
-      </div>
     </div>
-  </BaseCard>
+    <div class="pl-12 sm:pl-0 shrink-0">
+      <BadgeSichtbarkeit
+        :gemeindespezifisch="props.item.gemeindespezifisch"
+        :andereGemeinde="andereGemeinde"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import Dialog from 'openvue/dialog'
+import { computed, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import EinstellungenIndikatorFormular from '@/components/EinstellungenIndikatorFormular.vue'
-import ButtonLoeschen from '@/components/ButtonLoeschen.vue'
-import ButtonBearbeiten from '@/components/ButtonBearbeiten.vue'
 import Tag from 'openvue/tag'
-import ToggleSwitch from 'openvue/toggleswitch'
-
-const authStore = useAuthStore()
-const editMode = ref(false)
-const gemeindespezifisch = ref()
-
-const toggleEditMode = () => {
-  editMode.value = !editMode.value
-}
+import EinstellungenIndikatorFormular from '@/components/EinstellungenIndikatorFormular.vue'
+import BadgeSichtbarkeit from '@/components/BadgeSichtbarkeit.vue'
 
 const props = defineProps({
   item: Object,
   tags: Array
 })
 
-onMounted(() => {
-  gemeindespezifisch.value = props.item.gemeindespezifisch
+const emit = defineEmits(['delete-item', 'update-item'])
+
+const editMode = ref(false)
+const authStore = useAuthStore()
+
+// Indikatoren anderer Kommunen sind sichtbar, aber nicht bearbeitbar
+const andereGemeinde = computed(() => props.item.gemeindeId !== authStore.gemeindeId)
+
+// Kompakte Anzeige der Quelle (nur Domain)
+const quelleHost = computed(() => {
+  try {
+    return new URL(props.item.quelleUrl).hostname.replace(/^www\./, '')
+  } catch {
+    return props.item.quelleUrl
+  }
 })
 
-const andereGemeinde = computed(() => {
-  return props.item.gemeindeId !== authStore.gemeindeId
-})
-
-const emit = defineEmits(['delete-item', 'update-item', 'publish-item'])
-
-const onPublish = () => {
-  emit('publish-item', {
-    modelId: props.item.id,
-    values: { gemeindespezifisch: gemeindespezifisch.value }
-  })
+const openEdit = () => {
+  if (andereGemeinde.value) return
+  editMode.value = true
 }
 
 const onUpdate = (values) => {
   emit('update-item', values)
-  toggleEditMode()
+  editMode.value = false
 }
 
-const onDelete = () => {
-  emit('delete-item', props.item.id)
+const onDelete = (modelId) => {
+  emit('delete-item', modelId)
+  editMode.value = false
 }
 </script>
-
-<style></style>

@@ -7,7 +7,7 @@
           <Listbox
             v-model="selectedVorgaenge"
             :options="vorgangOptions"
-            class="w-64"
+            class="w-full"
             multiple
             showClear
           />
@@ -19,7 +19,7 @@
             :options="gebietOptions"
             optionLabel="name"
             optionValue="id"
-            class="w-64"
+            class="w-full"
             multiple
             showClear
           />
@@ -31,7 +31,7 @@
             :options="tagOptions"
             optionLabel="name"
             optionValue="id"
-            class="w-64"
+            class="w-full"
             multiple
             showClear
           />
@@ -43,7 +43,7 @@
           showIcon
           selectionMode="range"
           :manualInput="false"
-          class="w-64"
+          class="w-full"
         />
         <Card>
           <template #content>
@@ -70,160 +70,220 @@
       </div>
     </Drawer>
 
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-      <InputText
-        v-model="searchQuery"
-        placeholder="Nach Magistratsvorlage suchen"
-        class="w-1/2"
-        data-tour="vorlagen-suche"
-      />
-      <SelectButton
-        v-model="filterVonMirErstellt"
-        :options="[
-          { label: 'Alle', value: false, icon: 'pi pi-users' },
-          { label: 'Von mir', value: true, icon: 'pi pi-user' }
-        ]"
-        optionLabel="label"
-        optionValue="value"
+    <!-- Toolbar -->
+    <div class="flex flex-col md:flex-row md:items-center gap-3 mb-4">
+      <IconField class="w-full md:max-w-md" data-tour="vorlagen-suche">
+        <InputIcon class="pi pi-search" />
+        <InputText
+          v-model="searchQuery"
+          placeholder="Nach Magistratsvorlage suchen"
+          class="w-full"
+          aria-label="Nach Magistratsvorlage suchen"
+        />
+      </IconField>
+      <p
+        v-if="!isLoading"
+        class="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap"
+        aria-live="polite"
       >
-        <template #option="slotProps">
-          <i :class="slotProps.option.icon"></i>
-          <span class="ml-2">{{ slotProps.option.label }}</span>
-        </template>
-      </SelectButton>
-      <div class="flex gap-4">
+        {{ filteredMagistratsvorlagen.length }}
+        {{ filteredMagistratsvorlagen.length === 1 ? 'Magistratsvorlage' : 'Magistratsvorlagen' }}
+        <span v-if="filteredMagistratsvorlagen.length !== magistratsvorlageListe.length">
+          von {{ magistratsvorlageListe.length }}
+        </span>
+      </p>
+      <div class="flex items-center gap-2 md:ml-auto">
+        <SelectButton
+          v-model="filterVonMirErstellt"
+          :options="[
+            { label: 'Alle', value: false, icon: 'pi pi-users' },
+            { label: 'Von mir', value: true, icon: 'pi pi-user' }
+          ]"
+          optionLabel="label"
+          optionValue="value"
+          :allowEmpty="false"
+        >
+          <template #option="slotProps">
+            <i :class="slotProps.option.icon"></i>
+            <span class="ml-2">{{ slotProps.option.label }}</span>
+          </template>
+        </SelectButton>
         <Button
+          v-if="hatAktiveFilter"
           v-tooltip.top="'Filter zurücksetzen'"
-          icon="pi pi-undo"
+          icon="pi pi-filter-slash"
+          aria-label="Filter zurücksetzen"
           @click="resetFilters"
+          severity="secondary"
+          variant="text"
+        />
+        <Button
+          label="Filter"
+          icon="pi pi-sliders-h"
+          @click="drawerVisible = true"
+          :badge="countFilter !== '0' ? countFilter : undefined"
           severity="secondary"
           outlined
         />
-        <Button
-          v-tooltip.top="'Filter'"
-          icon="pi pi-sliders-h"
-          @click="drawerVisible = true"
-          :badge="countFilter"
-        />
       </div>
     </div>
+
     <DataView
       :value="isLoading ? Array(5).fill({}) : filteredMagistratsvorlagen"
-      paginator
-      :rows="10"
+      :paginator="!isLoading"
+      :rows="20"
+      :rowsPerPageOptions="[10, 20, 50]"
+      class="vorlagen-liste"
     >
+      <template #empty>
+        <div
+          class="flex flex-col items-center justify-center gap-3 py-16 text-center rounded-xl border border-dashed border-gray-300 dark:border-gray-600"
+        >
+          <i class="pi pi-inbox text-4xl text-gray-300 dark:text-gray-600" />
+          <div class="font-semibold">Keine Magistratsvorlagen gefunden</div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            Passe die Suche oder die Filter an.
+          </p>
+          <Button
+            v-if="hatAktiveFilter"
+            label="Filter zurücksetzen"
+            icon="pi pi-filter-slash"
+            size="small"
+            severity="secondary"
+            outlined
+            @click="resetFilters"
+          />
+        </div>
+      </template>
       <template #list="slotProps">
-        <div class="flex flex-col">
+        <ul
+          class="overflow-hidden rounded-xl border border-gray-200 bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700"
+        >
           <template v-if="isLoading === true">
-            <div v-for="i in slotProps.items" :key="i">
-              <BaseCard>
-                <div class="flex flex-col xl:flex-row xl:items-start gap-6">
-                  <Skeleton class="!w-9/12 sm:!w-64 xl:!w-40 !h-24 mx-auto" />
-                  <div
-                    class="flex flex-col sm:flex-row justify-between items-center xl:items-start flex-1 gap-6"
-                  >
-                    <div class="flex flex-col items-center sm:items-start gap-4">
-                      <Skeleton width="8rem" height="2rem" />
-                      <Skeleton width="6rem" height="1rem" />
-
-                      <div class="flex items-center gap-4">
-                        <Skeleton width="6rem" height="1rem" />
-                        <Skeleton width="3rem" height="1rem" />
-                      </div>
-                    </div>
-                    <div class="flex sm:flex-col items-center sm:items-end gap-4 sm:gap-2">
-                      <Skeleton width="4rem" height="2rem" />
-                      <Skeleton size="3rem" shape="circle" />
-                    </div>
-                  </div>
+            <li
+              v-for="(_, i) in slotProps.items"
+              :key="i"
+              class="flex flex-col md:flex-row md:items-center gap-4 px-5 py-4"
+            >
+              <div class="flex-1 flex flex-col gap-2">
+                <Skeleton width="60%" height="1.25rem" />
+                <Skeleton width="12rem" height="0.875rem" />
+                <div class="flex gap-2">
+                  <Skeleton width="5rem" height="1.5rem" borderRadius="1rem" />
+                  <Skeleton width="4rem" height="1.5rem" borderRadius="1rem" />
                 </div>
-              </BaseCard>
-            </div>
+              </div>
+              <div class="flex gap-2">
+                <Skeleton width="9rem" height="2rem" borderRadius="1rem" />
+                <Skeleton width="7rem" height="2rem" borderRadius="1rem" />
+              </div>
+            </li>
           </template>
           <template v-else>
-            <div v-for="(item, index) in slotProps.items" :key="index">
+            <li v-for="item in slotProps.items" :key="item.id">
               <router-link
                 :to="{ name: 'magistratsvorlage-id-daten', params: { id: item.id } }"
                 custom
                 v-slot="{ navigate, href }"
               >
-                <BaseCard
-                  class="hover:bg-gray-50"
+                <div
+                  role="link"
+                  tabindex="0"
                   :data-href="href"
+                  class="vorlage-zeile group flex flex-col md:flex-row md:items-center gap-4 px-5 py-4 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50 focus-visible:outline-none focus-visible:bg-gray-50"
                   @click="navigate"
                   @keydown.enter.prevent="navigate"
                   @keydown.space.prevent="navigate"
-                  tabindex="0"
                 >
-                  <template #header
-                    ><span class="font-bold text-lg">{{ item.name }}</span></template
-                  >
-                  <div class="grid grid-cols-12 gap-4">
-                    <div class="col-span-5 flex grid grid-cols-5 gap-x-2">
-                      <div class="col-span-1 font-bold grid grid-cols-1 gap-y-1">
-                        <div>Nr.</div>
-                        <div>Datum</div>
-                        <div v-if="item.gemeindeGebiete.length > 0">Gebiete</div>
-                        <div v-if="item.tags.length > 0">Tags</div>
-                      </div>
-                      <div class="col-span-4 grid grid-cols-1">
-                        <div>{{ item.verwaltungsvorgangNr }}</div>
-                        <div>{{ datumFormatieren(item.verwaltungsvorgangDatum) }}</div>
-                        <div v-if="item.gemeindeGebiete.length > 0" class="flex items-center gap-2">
-                          <span v-for="gebiet in item.gemeindeGebiete" :key="gebiet.id">
-                            <Tag :value="gebiet.name" severity="secondary" />
-                          </span>
-                        </div>
-                        <div v-if="item.tags.length > 0" class="flex items-center gap-2">
-                          <span v-for="tag in item.tags" :key="tag.id">
-                            <Tag :value="'#' + tag.name" severity="info" />
-                          </span>
-                        </div>
-                      </div>
+                  <div class="flex-1 min-w-0">
+                    <div
+                      class="font-semibold text-base leading-snug text-gray-900 dark:text-gray-100 group-hover:text-[var(--p-primary-700)]"
+                    >
+                      {{ item.name }}
                     </div>
-                    <div class="col-span-7 font-bold flex items-center justify-center">
-                      <div class="flex items-center justify-center gap-4">
-                        <router-link
-                          :to="{
-                            name: 'magistratsvorlage-id-mobilitaetscheck',
-                            params: { id: item.id }
-                          }"
-                        >
-                          <Button
-                            :icon="
-                              item.mobilitaetschecks.length > 0
-                                ? 'pi pi-check-circle text-green-500'
-                                : 'pi pi-times-circle text-red-400'
-                            "
-                            label="Mobilitätscheck"
-                            variant="text"
-                          />
-                        </router-link>
-                        <router-link
-                          v-if="!isPolitik && authStore.klimacheckAktiv"
-                          :to="{
-                            name: 'magistratsvorlage-id-klimarelevanzpruefung',
-                            params: { id: item.id }
-                          }"
-                        >
-                          <Button
-                            :icon="
-                              item.klimarelevanzpruefungen.length > 0
-                                ? 'pi pi-check-circle text-green-500'
-                                : 'pi pi-times-circle text-red-400'
-                            "
-                            label="Klimacheck"
-                            variant="text"
-                          />
-                        </router-link>
-                      </div>
+                    <div
+                      class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400"
+                    >
+                      <span v-if="item.verwaltungsvorgangNr" class="inline-flex items-center gap-1.5">
+                        <i class="pi pi-hashtag text-xs" aria-hidden="true" />
+                        <span class="sr-only">Nr.</span>{{ item.verwaltungsvorgangNr }}
+                      </span>
+                      <span v-if="item.verwaltungsvorgangDatum" class="inline-flex items-center gap-1.5">
+                        <i class="pi pi-calendar text-xs" aria-hidden="true" />
+                        <span class="sr-only">Datum</span>
+                        {{ datumFormatieren(item.verwaltungsvorgangDatum) }}
+                      </span>
+                    </div>
+                    <div
+                      v-if="item.gemeindeGebiete?.length || item.tags?.length"
+                      class="mt-2 flex flex-wrap items-center gap-1.5"
+                    >
+                      <Tag
+                        v-for="gebiet in item.gemeindeGebiete"
+                        :key="'g' + gebiet.id"
+                        :value="gebiet.name"
+                        icon="pi pi-map-marker"
+                        severity="secondary"
+                        rounded
+                      />
+                      <Tag
+                        v-for="tag in item.tags"
+                        :key="'t' + tag.id"
+                        :value="'#' + tag.name"
+                        severity="info"
+                        rounded
+                      />
                     </div>
                   </div>
-                </BaseCard>
+
+                  <div class="flex flex-wrap items-center gap-2 md:justify-end" @click.stop @keydown.stop>
+                    <router-link
+                      :to="{ name: 'magistratsvorlage-id-mobilitaetscheck', params: { id: item.id } }"
+                      tabindex="-1"
+                    >
+                      <Button
+                        :icon="item.mobilitaetschecks?.length ? 'pi pi-check-circle' : 'pi pi-circle'"
+                        label="Mobilitätscheck"
+                        :severity="item.mobilitaetschecks?.length ? 'success' : 'secondary'"
+                        :variant="item.mobilitaetschecks?.length ? undefined : 'outlined'"
+                        size="small"
+                        rounded
+                        :aria-label="
+                          'Mobilitätscheck ' +
+                          (item.mobilitaetschecks?.length ? 'vorhanden' : 'nicht vorhanden')
+                        "
+                        :class="item.mobilitaetschecks?.length ? 'status-vorhanden' : 'status-fehlt'"
+                      />
+                    </router-link>
+                    <router-link
+                      v-if="!isPolitik && authStore.klimacheckAktiv"
+                      :to="{ name: 'magistratsvorlage-id-klimarelevanzpruefung', params: { id: item.id } }"
+                      tabindex="-1"
+                    >
+                      <Button
+                        :icon="item.klimarelevanzpruefungen?.length ? 'pi pi-check-circle' : 'pi pi-circle'"
+                        label="Klimacheck"
+                        :severity="item.klimarelevanzpruefungen?.length ? 'success' : 'secondary'"
+                        :variant="item.klimarelevanzpruefungen?.length ? undefined : 'outlined'"
+                        size="small"
+                        rounded
+                        :aria-label="
+                          'Klimacheck ' +
+                          (item.klimarelevanzpruefungen?.length ? 'vorhanden' : 'nicht vorhanden')
+                        "
+                        :class="item.klimarelevanzpruefungen?.length ? 'status-vorhanden' : 'status-fehlt'"
+                      />
+                    </router-link>
+                    <i
+                      class="pi pi-chevron-right hidden md:block ml-2 text-gray-300 transition-transform group-hover:translate-x-0.5 group-hover:text-gray-500"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </div>
               </router-link>
-            </div>
+            </li>
           </template>
-        </div>
+        </ul>
       </template>
     </DataView>
   </div>
@@ -238,6 +298,8 @@ import Card from 'openvue/card'
 import DataView from 'openvue/dataview'
 import DatePicker from 'openvue/datepicker'
 import Drawer from 'openvue/drawer'
+import IconField from 'openvue/iconfield'
+import InputIcon from 'openvue/inputicon'
 import InputText from 'openvue/inputtext'
 import Tag from 'openvue/tag'
 import SelectButton from 'openvue/selectbutton'
@@ -289,6 +351,8 @@ const countFilter = computed(() => {
   if (filterVonMirErstellt.value) count++
   return String(count)
 })
+
+const hatAktiveFilter = computed(() => countFilter.value !== '0' || !!searchQuery.value)
 
 const resetFilters = () => {
   selectedVorgaenge.value = []
@@ -380,4 +444,28 @@ const filteredMagistratsvorlagen = computed(() => {
 })
 </script>
 
-<style></style>
+<style scoped>
+.vorlagen-liste :deep(.p-dataview-content) {
+  background: transparent;
+}
+.vorlagen-liste :deep(.p-paginator) {
+  background: transparent;
+  margin-top: 0.75rem;
+}
+.vorlage-zeile:focus-visible {
+  box-shadow: inset 3px 0 0 var(--p-primary-color);
+}
+.status-vorhanden {
+  background: var(--p-green-50, #f0fdf4);
+  border-color: var(--p-green-200, #bbf7d0);
+  color: var(--p-green-700, #15803d);
+}
+.status-vorhanden:hover {
+  background: var(--p-green-100, #dcfce7) !important;
+  border-color: var(--p-green-300, #86efac) !important;
+  color: var(--p-green-800, #166534) !important;
+}
+.status-fehlt {
+  border-style: dashed;
+}
+</style>

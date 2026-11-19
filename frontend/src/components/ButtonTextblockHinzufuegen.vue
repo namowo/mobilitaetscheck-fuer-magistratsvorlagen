@@ -65,7 +65,7 @@
             class="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 border-b border-gray-50 last:border-0"
             @click="addTextblock(block)"
           >
-            {{ block.name }}
+            <span class="line-clamp-2">{{ htmlZuText(block.name) }}</span>
           </li>
         </ul>
 
@@ -82,26 +82,30 @@
       </div>
     </transition>
 
-    <BaseModal v-model="isModalOpen" @close="isModalOpen = false">
-      <template #header>
-        <h2>Neuen Textbaustein anlegen</h2>
-      </template>
+    <Dialog
+      v-model:visible="isModalOpen"
+      header="Neuen Textbaustein anlegen"
+      modal
+      dismissableMask
+      class="w-full max-w-[50rem]"
+    >
       <EinstellungenTextblockFormular
         :editMode="false"
         :tags="availableTags"
         @add-item="onCreateTextblock"
       />
-    </BaseModal>
+    </Dialog>
   </div>
 </template>
 
 <script setup>
+import Dialog from 'openvue/dialog'
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import Tag from 'openvue/tag'
 import InputText from 'openvue/inputtext'
 import { fetchItems, createItem } from '@/composables/crud'
-import BaseModal from '@/components/BaseModal.vue'
 import EinstellungenTextblockFormular from '@/components/EinstellungenTextblockFormular.vue'
+import { htmlZuText } from '@/utils/html'
 
 const textblocks = ref([])
 const availableTags = ref([])
@@ -167,7 +171,7 @@ const filteredTextblocks = computed(() => {
   }
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase()
-    result = result.filter((block) => block.name.toLowerCase().includes(q))
+    result = result.filter((block) => htmlZuText(block.name).toLowerCase().includes(q))
   }
   return result
 })

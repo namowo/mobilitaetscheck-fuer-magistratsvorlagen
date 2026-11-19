@@ -1,6 +1,12 @@
 <template>
-  <BaseCard>
-    <h5 class="text-lg font-semibold mb-4">Einladung senden</h5>
+  <div>
+    <div class="flex items-center gap-4 mb-2">
+      <BaseSubheading>Einladungen</BaseSubheading>
+    </div>
+    <p class="text-sm text-gray-600 mb-5">
+      Laden Sie neue Benutzer in eine Kommune ein. Die eingeladene Person erhält einen Link zur
+      Registrierung, der für die gewählte Dauer gültig ist.
+    </p>
     <form @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4 max-w-md">
       <div class="field">
         <FloatLabel variant="on">
@@ -102,7 +108,7 @@
 
       <Button label="Einladung senden" type="submit" :loading="isSubmitting" class="w-fit" />
     </form>
-  </BaseCard>
+  </div>
 </template>
 
 <script setup>

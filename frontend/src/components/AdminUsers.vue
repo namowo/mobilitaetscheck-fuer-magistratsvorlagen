@@ -1,16 +1,19 @@
 <template>
   <div>
-    <BaseCard>
-      <div class="flex items-center justify-between mb-3">
-        <h5 class="text-lg font-semibold">Alle Benutzer</h5>
+    <div>
+      <div class="flex items-center gap-4 mb-2">
+        <BaseSubheading>Benutzer</BaseSubheading>
+      </div>
+      <p class="text-sm text-gray-600 mb-5">
+        Alle Benutzerkonten der Plattform über alle Kommunen hinweg.
+      </p>
+      <div class="flex flex-wrap gap-2 mb-3">
         <InputText
           v-model="filters['global'].value"
           placeholder="Suchen…"
           size="small"
           class="w-56"
         />
-      </div>
-      <div class="flex gap-2 mb-3">
         <Select
           v-model="filterGemeinde"
           :options="gemeindeFilterOptions"
@@ -37,13 +40,14 @@
       <DataTable
         v-else
         :value="filteredUsers"
-        :paginator="filteredUsers.length > 20"
-        :rows="20"
         size="small"
         sortMode="single"
         v-model:filters="filters"
         :globalFilterFields="['vorname', 'nachname', 'email', 'gemeinde.name', 'rolle.name']"
         class="w-full"
+        paginator
+        :rows="20"
+        :rowsPerPageOptions="[10, 20, 50]"
       >
         <template #empty>
           <span class="text-gray-400 text-sm">Keine Benutzer gefunden.</span>
@@ -82,7 +86,7 @@
           </template>
         </Column>
       </DataTable>
-    </BaseCard>
+    </div>
 
     <Dialog
       v-model:visible="editVisible"

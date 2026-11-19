@@ -1,26 +1,32 @@
 <template>
   <div v-bind="$attrs">
-    <BaseModal v-model="editMode">
-      <template #header>
-        <h2>Leitziel bearbeiten</h2>
-      </template>
+    <Dialog
+      v-model:visible="editMode"
+      header="Leitziel bearbeiten"
+      modal
+      dismissableMask
+      class="w-full max-w-6xl"
+    >
       <EinstellungenMobilitaetscheckFormularZielOber
         :editMode="true"
         :item="props.item"
         @update-item="onUpdateZielOber"
       />
-    </BaseModal>
-    <BaseModal v-model="addMode">
-      <template #header>
-        <h2>Unterziel hinzufügen</h2>
-      </template>
+    </Dialog>
+    <Dialog
+      v-model:visible="addMode"
+      header="Unterziel hinzufügen"
+      modal
+      dismissableMask
+      class="w-full max-w-6xl"
+    >
       <EinstellungenMobilitaetscheckFormularZielUnter
         :zielOberId="props.item.id"
         :zielOber="props.item"
         @add-item="onSubmit"
         :naechsteNr="naechsteNr"
       />
-    </BaseModal>
+    </Dialog>
     <BaseCard>
       <div class="grid grid-cols-12 gap-x-2 items-center hover:bg-gray-200 p-2 rounded-lg">
         <div class="col-span-10 flex items-center font-bold gap-2">
@@ -56,6 +62,7 @@
 </template>
 
 <script setup>
+import Dialog from 'openvue/dialog'
 import { computed, ref, onMounted } from 'vue'
 import {
   createItem,
