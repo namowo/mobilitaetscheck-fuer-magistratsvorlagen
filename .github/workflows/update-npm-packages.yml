@@ -18,10 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-
-      - name: Update root packages
-        run: npm update
+          node-version: 22
 
       - name: Update frontend packages
         working-directory: frontend

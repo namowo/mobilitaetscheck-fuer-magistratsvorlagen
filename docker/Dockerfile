@@ -5,7 +5,7 @@ FROM node:22 AS frontend-build
 
 WORKDIR /frontend
 
-COPY frontend/package*.json ./
+COPY frontend/package*.json frontend/.puppeteerrc.cjs ./
 RUN npm ci
 
 COPY frontend .
