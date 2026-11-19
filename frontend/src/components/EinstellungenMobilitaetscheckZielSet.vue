@@ -7,11 +7,11 @@
       </template>
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-1">
-          <label for="createName" class="font-semibold">Name *</label>
+          <label for="createName" class="font-semibold">Name</label>
           <InputText id="createName" v-model="createForm.name" class="w-full" />
         </div>
         <div class="flex flex-col gap-1">
-          <label for="createBeschreibung" class="font-semibold">Beschreibung</label>
+          <label for="createBeschreibung" class="font-semibold">Beschreibung <LabelOptional /></label>
           <Textarea id="createBeschreibung" v-model="createForm.beschreibung" rows="3" class="w-full" />
         </div>
         <div class="flex items-center gap-2">
@@ -35,11 +35,11 @@
       </template>
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-1">
-          <label for="editName" class="font-semibold">Name *</label>
+          <label for="editName" class="font-semibold">Name</label>
           <InputText id="editName" v-model="editForm.name" class="w-full" />
         </div>
         <div class="flex flex-col gap-1">
-          <label for="editBeschreibung" class="font-semibold">Beschreibung</label>
+          <label for="editBeschreibung" class="font-semibold">Beschreibung <LabelOptional /></label>
           <Textarea id="editBeschreibung" v-model="editForm.beschreibung" rows="3" class="w-full" />
         </div>
         <div class="flex items-center gap-2">
@@ -60,7 +60,7 @@
       <BaseSubheading>Leitziele</BaseSubheading>
     </div>
 
-    <BaseSpinner v-if="isLoading" class="m-10" />
+    <BaseSkeleton v-if="isLoading" :rows="3" row-height="4.5rem" />
 
     <div v-else>
       <BaseTabs :tabs="tabs" :disableUrlAltering="false">
@@ -242,7 +242,6 @@ import Textarea from 'openvue/textarea'
 import ToggleSwitch from 'openvue/toggleswitch'
 import BaseModal from '@/components/BaseModal.vue'
 import BaseCard from '@/components/BaseCard.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import BaseSubheading from '@/components/BaseSubheading.vue'
 import BaseTabs from '@/components/BaseTabs.vue'
 import ButtonLoeschen from '@/components/ButtonLoeschen.vue'

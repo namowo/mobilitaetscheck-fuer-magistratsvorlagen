@@ -23,7 +23,7 @@
       <InputText id="searchQuery" v-model="searchQuery" class="w-full" />
       <label for="searchQuery">Nach Indikator suchen</label>
     </FloatLabel>
-    <BaseSpinner v-if="isLoading" class="m-10" />
+    <BaseSkeleton v-if="isLoading" :rows="5" />
     <div v-else-if="indikatoren.length === 0">
       <p class="font-lg font-bold m-5">Keine Indikatoren vorhanden.</p>
     </div>
@@ -47,7 +47,6 @@ import { createItem, deleteItem, fetchItems, updateItem } from '@/composables/cr
 import Button from 'openvue/button'
 import InputText from 'openvue/inputtext'
 import FloatLabel from 'openvue/floatlabel'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import EinstellungenIndikatorFormular from '@/components/EinstellungenIndikatorFormular.vue'
 import EinstellungenIndikatorItem from '@/components/EinstellungenIndikatorItem.vue'
 

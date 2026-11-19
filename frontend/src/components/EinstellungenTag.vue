@@ -23,7 +23,7 @@
       <InputText id="searchQuery" v-model="searchQuery" class="w-full" />
       <label for="searchQuery">Nach Tag suchen</label>
     </FloatLabel>
-    <BaseSpinner v-if="isLoading" class="m-10" />
+    <BaseSkeleton v-if="isLoading" :rows="5" />
     <div v-else-if="tags.length === 0">
       <p class="font-lg font-bold m-5">Keine Tags vorhanden.</p>
     </div>
@@ -47,7 +47,6 @@ import InputText from 'openvue/inputtext'
 import FloatLabel from 'openvue/floatlabel'
 import EinstellungenTagFormular from '@/components/EinstellungenTagFormular.vue'
 import EinstellungenTagItem from '@/components/EinstellungenTagItem.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import Button from 'openvue/button'
 
 const isLoading = ref(false)

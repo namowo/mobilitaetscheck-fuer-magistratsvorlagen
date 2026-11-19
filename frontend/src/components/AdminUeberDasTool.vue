@@ -7,7 +7,7 @@
       Dieser Inhalt wird auf der öffentlichen Seite "Über das Tool" angezeigt.
     </p>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" :rows="1" row-height="16rem" />
     <template v-else>
       <RichContentEditor v-model="inhalt" />
       <div class="flex justify-between mt-4">

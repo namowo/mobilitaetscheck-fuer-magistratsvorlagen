@@ -1,12 +1,24 @@
 <template>
   <div class="max-w-5xl">
     <div
-      class="flex items-center gap-2 cursor-pointer select-none text-gray-600 hover:text-gray-900"
-      @click="showList = !showList"
+      class="flex items-center gap-2 select-none"
+      :class="
+        keineTextblocks
+          ? 'text-gray-400 cursor-not-allowed'
+          : 'cursor-pointer text-gray-600 hover:text-gray-900'
+      "
+      :aria-disabled="keineTextblocks"
+      @click="!keineTextblocks && (showList = !showList)"
     >
       <i :class="showList ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" class="text-xs" />
       <span class="text-sm font-medium">Textbausteine</span>
     </div>
+    <small v-if="keineTextblocks" class="block mt-1 text-xs text-gray-500">
+      Für Ihre Kommune sind noch keine Textbausteine angelegt.
+      <RouterLink :to="{ name: 'textblock' }" class="underline hover:text-gray-700"
+        >Textbausteine anlegen</RouterLink
+      >
+    </small>
 
     <transition name="slide">
       <div v-if="showList" class="mt-2 border border-gray-200 rounded-lg bg-white shadow-sm">
@@ -100,12 +112,16 @@ const showAllTags = ref(false)
 const hasOverflow = ref(false)
 const tagRowRef = ref(null)
 const isModalOpen = ref(false)
+const textblocksGeladen = ref(false)
+const keineTextblocks = computed(() => textblocksGeladen.value && textblocks.value.length === 0)
 
 onMounted(async () => {
   ;[textblocks.value, availableTags.value] = await Promise.all([
     fetchItems('/einstellungen/textblock'),
     fetchItems('/einstellungen/tag')
   ])
+  textblocks.value ??= []
+  textblocksGeladen.value = true
 })
 
 watch(showList, async (val) => {

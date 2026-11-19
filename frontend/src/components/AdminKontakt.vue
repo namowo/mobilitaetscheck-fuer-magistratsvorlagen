@@ -8,7 +8,7 @@
       anfragen möchten, die noch nicht Teil des Mobilitätschecks ist.
     </p>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" variant="form" :rows="1" />
     <template v-else>
       <div class="field">
         <FloatLabel variant="on">

@@ -11,7 +11,7 @@
         @uploader="(e) => uploadAndSelect(e.files[0])"
       />
 
-      <BaseSpinner v-if="isLoading" />
+      <BaseSkeleton v-if="isLoading" variant="cards" :rows="8" row-height="6rem" />
       <div v-else-if="assets.length === 0" class="text-sm text-gray-400 text-center py-4">
         Noch keine Bilder hochgeladen.
       </div>

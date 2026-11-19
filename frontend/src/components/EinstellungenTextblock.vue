@@ -21,7 +21,7 @@
       <InputText id="searchQuery" v-model="searchQuery" class="w-full" />
       <label for="searchQuery">Nach Textblock suchen</label>
     </FloatLabel>
-    <BaseSpinner v-if="isLoading" class="m-10" />
+    <BaseSkeleton v-if="isLoading" :rows="5" />
     <div v-else-if="textblocks.length === 0">
       <p class="font-lg font-bold m-5">Keine Textblöcke vorhanden.</p>
     </div>
@@ -44,7 +44,6 @@ import { computed, ref, onMounted } from 'vue'
 import { fetchItems, deleteItem, createItem, updateItem } from '@/composables/crud'
 import EinstellungenTextblockFormular from '@/components/EinstellungenTextblockFormular.vue'
 import EinstellungenTextblockItem from '@/components/EinstellungenTextblockItem.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 import Button from 'openvue/button'
 import InputText from 'openvue/inputtext'
 import FloatLabel from 'openvue/floatlabel'

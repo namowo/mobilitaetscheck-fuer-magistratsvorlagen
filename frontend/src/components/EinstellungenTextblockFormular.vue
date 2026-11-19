@@ -20,7 +20,7 @@
             class="w-full"
             :invalid="!!errors.tagIds"
           />
-          <label for="name">Tags auswählen</label>
+          <label for="name">Tags auswählen <LabelOptional /></label>
         </FloatLabel>
         <small v-if="errors.tagIds" id="name-help" class="p-error block">{{ errors.tagIds }}</small>
       </div>

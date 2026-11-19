@@ -1,9 +1,9 @@
 <template>
   <div class="max-w-6xl">
     <div class="grid grid-cols-2 w-full items-center">
-      <BaseHeading>Neuer Mobilitätscheck</BaseHeading>
+      <BaseSubheading>Neuer Mobilitätscheck</BaseSubheading>
       <div class="flex w-full justify-end">
-        <ButtonZuruecksetzen @click="refreshPage()">zurücksetzen</ButtonZuruecksetzen>
+        <ButtonZuruecksetzen :disabled="isLoading" @click="confirmReset()">zurücksetzen</ButtonZuruecksetzen>
       </div>
     </div>
     <div v-if="isLoading" class="grid grid-cols-1 gap-y-4 mt-4">
@@ -30,14 +30,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchItem } from '@/composables/crud'
+import { fetchItem, updateItemSilent } from '@/composables/crud'
+import { useConfirm } from 'openvue/useconfirm'
+import { useToast } from 'openvue/usetoast'
 import ButtonZuruecksetzen from '@/components/ButtonZuruecksetzen.vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import MobilitaetscheckFormularEingabeZielOber from '@/components/MobilitaetscheckFormularEingabeZielOber.vue'
 import Skeleton from 'openvue/skeleton'
 
 const route = useRoute()
-const router = useRouter()
+const confirm = useConfirm()
+const toast = useToast()
 
 const eingabeZielOber = ref({})
 const isLoading = ref(false)
@@ -55,8 +58,52 @@ onMounted(async () => {
   await fetchEingabeZielOber()
 })
 
-const refreshPage = () => {
-  router.go() // Reloads the current route
+// Alle Eingaben werden automatisch gespeichert – ein Neuladen der Seite setzt daher nichts
+// zurück. Stattdessen werden alle Ober- und Unterziele serverseitig auf leer gesetzt.
+const resetEingaben = async () => {
+  isLoading.value = true
+  const oberziele = eingabeZielOber.value?.eingabeZielOber ?? []
+  try {
+    await Promise.all(
+      oberziele.flatMap((ober) => [
+        updateItemSilent({
+          model: 'mobilitaetscheck/eingabe/ziel/ober',
+          modelId: ober.id,
+          values: { tangiert: false, eingabeId: ober.eingabeId, zielOberId: ober.zielOberId }
+        }),
+        ...(ober.eingabeZielUnter ?? []).map((unter) =>
+          updateItemSilent({
+            model: 'mobilitaetscheck/eingabe/ziel/unter',
+            modelId: unter.id,
+            values: {
+              tangiert: false,
+              auswirkung: 0,
+              auswirkungRaeumlichId: null,
+              anmerkung: null,
+              indikatorIds: [],
+              eingabeZielOberId: unter.eingabeZielOberId,
+              zielUnterId: unter.zielUnterId
+            }
+          })
+        )
+      ])
+    )
+    toast.add({ severity: 'success', detail: 'Eingaben wurden zurückgesetzt.', life: 3000 })
+  } finally {
+    await fetchEingabeZielOber()
+  }
+}
+
+const confirmReset = () => {
+  confirm.require({
+    message:
+      'Alle Angaben zu Ober- und Unterzielen dieses Mobilitätschecks werden gelöscht. Der Name bleibt erhalten.',
+    header: 'Eingaben zurücksetzen',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: { label: 'Abbrechen', severity: 'secondary', outlined: true },
+    acceptProps: { label: 'Zurücksetzen', severity: 'danger' },
+    accept: resetEingaben
+  })
 }
 </script>
 

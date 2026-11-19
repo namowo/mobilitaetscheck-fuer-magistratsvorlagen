@@ -9,11 +9,11 @@
       erreichbar. Leer lassen, um den Standardtext anzuzeigen.
     </p>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" variant="form" :rows="3" />
     <template v-else>
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-1">
-          <label for="startseite-titel" class="font-semibold text-sm">Titel</label>
+          <label for="startseite-titel" class="font-semibold text-sm">Titel <LabelOptional /></label>
           <InputText
             id="startseite-titel"
             v-model="titel"
@@ -21,7 +21,7 @@
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label for="startseite-untertitel" class="font-semibold text-sm">Untertitel</label>
+          <label for="startseite-untertitel" class="font-semibold text-sm">Untertitel <LabelOptional /></label>
           <InputText
             id="startseite-untertitel"
             v-model="untertitel"
@@ -29,7 +29,7 @@
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="font-semibold text-sm">Text</label>
+          <label class="font-semibold text-sm">Text <LabelOptional /></label>
           <RichContentEditor v-model="inhalt" />
         </div>
       </div>

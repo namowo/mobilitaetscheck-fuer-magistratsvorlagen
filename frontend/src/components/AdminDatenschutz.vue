@@ -8,7 +8,7 @@
       angezeigt. Sie müssen ihr zustimmen, um ein Konto anlegen zu können.
     </p>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" :rows="1" row-height="16rem" />
     <template v-else>
       <SelectButton
         v-model="modus"

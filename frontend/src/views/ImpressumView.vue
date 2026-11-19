@@ -2,7 +2,7 @@
   <div>
     <BaseHeading>Impressum</BaseHeading>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" variant="text" :rows="3" />
     <div v-else-if="modus === 'url' && url">
       <p>
         Sie werden weitergeleitet zu:

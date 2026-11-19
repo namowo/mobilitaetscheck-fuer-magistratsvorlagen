@@ -29,13 +29,28 @@
           :class="tangiert ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500'"
           >{{ tangiert ? 'tangiert' : 'nicht tangiert' }}</span
         >
-        <ToggleSwitch
+        <div
           v-else
-          v-model="tangiert"
-          @click.stop
-          :invalid="!!errors.tangiert"
-          class="flex-none"
-        />
+          class="flex flex-none items-center gap-2"
+          v-tooltip.top="
+            tangiert
+              ? 'Die Vorlage tangiert dieses Unterziel. Zum Abwählen klicken.'
+              : 'Die Vorlage tangiert dieses Unterziel nicht. Zum Auswählen klicken.'
+          "
+        >
+          <span
+            class="w-28 px-2.5 py-0.5 rounded-full text-center text-xs font-medium"
+            :class="tangiert ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500'"
+            aria-hidden="true"
+            >{{ tangiert ? 'tangiert' : 'nicht tangiert' }}</span
+          >
+          <ToggleSwitch
+            v-model="tangiert"
+            @click.stop
+            :invalid="!!errors.tangiert"
+            :aria-label="`${item.zielUnter.name}: tangiert`"
+          />
+        </div>
       </div>
 
       <!-- Felder wenn tangiert — READ ONLY: strukturierter Text -->
@@ -203,6 +218,7 @@
               optionValue="id"
               class="w-full dont-close-on-select"
               display="chip"
+              :disabled="keineIndikatoren"
               :invalid="!!errors.indikatorIds"
               empty-filter-message="Keine Ergebnisse gefunden"
               :pt="{
@@ -213,6 +229,12 @@
             />
             <label for="indikatoren">Indikatoren auswählen</label>
           </FloatLabel>
+          <small v-if="keineIndikatoren" class="block mt-1 text-xs text-gray-500">
+            Für Ihre Kommune sind noch keine Indikatoren angelegt.
+            <RouterLink :to="{ name: 'indikator' }" class="underline hover:text-gray-700"
+              >Indikatoren anlegen</RouterLink
+            >
+          </small>
         </div>
       </div>
     </div>
@@ -256,6 +278,10 @@ const props = defineProps({
 })
 
 const optionsIndikatoren = ref([])
+const indikatorenGeladen = ref(false)
+const keineIndikatoren = computed(
+  () => indikatorenGeladen.value && optionsIndikatoren.value.length === 0
+)
 const tickmarkLabels = useStorage('cachedTickmarkLabels', {})
 const optionsAuswirkungRaeumlich = useStorage('cachedAuswirkungRaeumlich', [])
 const sliderKey = ref(0)
@@ -273,7 +299,8 @@ const fetchOptions = async () => {
   if (Object.keys(tickmarkLabels.value).length === 0) {
     tickmarkLabels.value = await fetchItem('/option/mobilitaetscheck/auswirkung-tickmarks')
   }
-  optionsIndikatoren.value = await fetchItems('/einstellungen/indikator')
+  optionsIndikatoren.value = (await fetchItems('/einstellungen/indikator')) ?? []
+  indikatorenGeladen.value = true
 }
 
 const { defineField, handleSubmit, validate, errors, setFieldValue, setValues } = useForm({

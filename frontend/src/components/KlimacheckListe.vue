@@ -5,7 +5,7 @@
       <label for="searchQuery">Nach Klimacheck suchen</label>
     </FloatLabel> -->
     <!-- Display list of submissions -->
-    <BaseSpinner v-if="isLoading" class="m-10" />
+    <BaseSkeleton v-if="isLoading" :rows="1" row-height="5rem" />
     <div v-else-if="eingaben.length === 0">
       <p class="font-lg font-bold m-5">Keine Klimachecks gefunden.</p>
     </div>
@@ -26,11 +26,10 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, onActivated } from 'vue'
 import { useRoute } from 'vue-router'
 import { copyItem, deleteItem, exportItem, fetchItems, updateItem } from '@/composables/crud'
 import KlimacheckListeItem from '@/components/KlimacheckListeItem.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 
 const eingaben = ref([])
 const isLoading = ref(false)
@@ -41,8 +40,15 @@ onMounted(async () => {
   await fetchEingaben()
 })
 
-const fetchEingaben = async () => {
-  isLoading.value = true
+// Beim Zurückkehren in den (zwischengespeicherten) Reiter still aktualisieren.
+let ersteAktivierung = true
+onActivated(() => {
+  if (ersteAktivierung) return (ersteAktivierung = false)
+  fetchEingaben({ still: true })
+})
+
+const fetchEingaben = async ({ still = false } = {}) => {
+  if (!still) isLoading.value = true
   eingaben.value = await fetchItems(`klimacheck/eingabe/magistratsvorlage/${route.params.id}`)
   isLoading.value = false
 }

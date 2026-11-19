@@ -9,7 +9,7 @@
       Werte ersetzt und müssen erhalten bleiben.
     </p>
 
-    <BaseSpinner v-if="isLoading" />
+    <BaseSkeleton v-if="isLoading" :rows="4" row-height="3.5rem" />
     <Accordion v-else v-model:value="activeKey">
       <AccordionPanel v-for="vorlage in vorlagen" :key="vorlage.key" :value="vorlage.key">
         <AccordionHeader>{{ labels[vorlage.key] || vorlage.key }}</AccordionHeader>

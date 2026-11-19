@@ -166,7 +166,7 @@
               inputClass="w-full"
             />
           </FloatLabel>
-          <small>* Falls nicht vorhanden: Begründung der Alternativlosigkeit </small>
+          <small>Falls nicht vorhanden: Begründung der Alternativlosigkeit </small>
 
           <small v-if="errors.alternativen" id="alternativen-help" class="p-error block">{{
             errors.alternativen

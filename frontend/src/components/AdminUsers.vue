@@ -33,7 +33,7 @@
         />
       </div>
 
-      <BaseSpinner v-if="isLoading" />
+      <BaseSkeleton v-if="isLoading" variant="table" :columns="5" :rows="5" />
       <DataTable
         v-else
         :value="filteredUsers"

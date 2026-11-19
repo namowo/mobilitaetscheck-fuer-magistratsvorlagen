@@ -14,7 +14,7 @@
     Ziehen Sie die Einträge, um die Reihenfolge der öffentlichen Dokumentationsseite zu ändern.
   </p>
 
-  <BaseSpinner v-if="isLoading" class="m-10" />
+  <BaseSkeleton v-if="isLoading" :rows="4" />
   <div v-else-if="seiten.length === 0" class="text-sm text-gray-400 text-center py-4">
     Noch keine Dokumentationsseiten vorhanden.
   </div>
@@ -45,7 +45,6 @@ import { useToast } from 'openvue/usetoast'
 import Button from 'openvue/button'
 import AdminDokumentationFormular from '@/components/AdminDokumentationFormular.vue'
 import AdminDokumentationItem from '@/components/AdminDokumentationItem.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 
 const MODEL = 'admin/dokumentation'
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseSpinner v-if="isLoadingData" />
+    <BaseSkeleton v-if="isLoadingData" variant="form" :rows="2" />
     <div
       v-else-if="!hasStandard"
       class="my-7 p-4 bg-yellow-50 border border-yellow-300 rounded flex flex-col gap-2"
@@ -32,7 +32,7 @@
       </div>
 
       <div v-if="!isPolitik" class="form-group field">
-        <label for="zielSetId" class="block mb-1 font-medium text-sm">Leitziele *</label>
+        <label for="zielSetId" class="block mb-1 font-medium text-sm">Leitziele</label>
         <Select
           id="zielSetId"
           v-model="zielSetId"
@@ -79,7 +79,6 @@ import InputText from 'openvue/inputtext'
 import FloatLabel from 'openvue/floatlabel'
 import Select from 'openvue/select'
 import ButtonSpeichern from '@/components/ButtonSpeichern.vue'
-import BaseSpinner from '@/components/BaseSpinner.vue'
 
 const route = useRoute()
 const router = useRouter()
