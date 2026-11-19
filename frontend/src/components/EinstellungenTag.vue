@@ -15,6 +15,7 @@
         icon="pi pi-plus"
         rounded
         aria-label="Neuen Tag hinzufügen"
+        data-tour="tag-neu"
         @click="toggleModal"
       />
     </div>

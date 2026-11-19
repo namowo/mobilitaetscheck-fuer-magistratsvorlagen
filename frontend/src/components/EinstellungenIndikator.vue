@@ -15,6 +15,7 @@
         icon="pi pi-plus"
         rounded
         aria-label="Neuen Indikator hinzufügen"
+        data-tour="indikator-neu"
         @click="toggleModal"
       />
     </div>

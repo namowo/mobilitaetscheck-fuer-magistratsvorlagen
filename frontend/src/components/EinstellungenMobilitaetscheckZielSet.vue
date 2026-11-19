@@ -79,6 +79,7 @@
               <Button
                 label="Neue Leitziele erstellen"
                 icon="pi pi-plus"
+                data-tour="leitziele-neu"
                 size="small"
                 @click="openCreateModal"
               />

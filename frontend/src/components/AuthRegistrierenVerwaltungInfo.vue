@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-1 gap-y-4 mt-4">
     <Message v-if="kommuneNichtDabei && kontaktEmail" severity="info" class="text-left">
-      Ihre Kommune ist noch nicht Teil des Mobilitätschecks. Bitte senden Sie uns eine Nachricht. Wir stehen Ihnen beratend bei Einführung des Mobichecks zur Seite.
+      Ihre Kommune ist noch nicht Teil von {{ einstellungStore.appName }}. Bitte senden Sie uns eine Nachricht. Wir stehen Ihnen beratend bei der Einführung von {{ einstellungStore.appName }} zur Seite.
     </Message>
 
     <Message v-else-if="gemeindeId" severity="info" class="text-left">
@@ -26,6 +26,9 @@ import { onMounted } from 'vue'
 import Button from 'openvue/button'
 import Message from 'openvue/message'
 import { useKommuneAnfrageMailto } from '@/composables/kommuneAnfrageMailto'
+import { useEinstellungStore } from '@/stores/einstellung'
+
+const einstellungStore = useEinstellungStore()
 
 defineProps({
   gemeindeId: { type: [Number, String], default: null },

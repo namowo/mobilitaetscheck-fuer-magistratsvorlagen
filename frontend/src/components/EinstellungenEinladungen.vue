@@ -1,7 +1,7 @@
 <template>
   <BaseCard>
     <h5 class="text-lg font-semibold mb-4">Einladung senden</h5>
-    <form @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4 max-w-md">
+    <form @submit.prevent="onSubmit" class="grid grid-cols-1 gap-y-4 max-w-md" data-tour="einladung-formular">
 
       <div class="field">
         <FloatLabel variant="on">
